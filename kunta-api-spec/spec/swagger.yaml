@@ -3,7 +3,6 @@ info:
   title: Kunta API
   description: One API to rule them all. One API to find them, One API to bring them all and in the darkness bind them.
   version: "0.0.1"
-host: demo.kuntaapi.fi
 schemes:
   - https
 basePath: /v1
@@ -109,6 +108,10 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Resource could not be found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -139,6 +142,10 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Resource could not be found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -171,6 +178,10 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Resource could not be found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -211,6 +222,10 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Resource could not be found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -249,6 +264,10 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Resource could not be found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -286,6 +305,10 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Resource could not be found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -321,6 +344,10 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Resource could not be found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -383,6 +410,10 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Resource could not be found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -447,6 +478,14 @@ definitions:
       message:
         type: string
   BadRequest:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  NotFound:
     type: object
     properties:
       code:

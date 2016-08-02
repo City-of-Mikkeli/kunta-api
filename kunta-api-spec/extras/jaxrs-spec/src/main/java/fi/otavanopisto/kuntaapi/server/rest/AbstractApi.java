@@ -4,6 +4,7 @@ import fi.otavanopisto.kuntaapi.server.rest.model.BadRequest;
 import fi.otavanopisto.kuntaapi.server.rest.model.Forbidden;
 import fi.otavanopisto.kuntaapi.server.rest.model.InternalServerError;
 import fi.otavanopisto.kuntaapi.server.rest.model.NotImplemented;
+import fi.otavanopisto.kuntaapi.server.rest.model.NotFound;
 import javax.ws.rs.core.Response;
 
 public abstract class AbstractApi {
@@ -14,6 +15,16 @@ public abstract class AbstractApi {
     entity.setMessage(message);
     return Response
       .status(Response.Status.BAD_REQUEST)
+      .entity(entity)
+      .build();
+  }
+  
+  protected Response createNotFound(String message) {
+    NotFound entity = new NotFound();
+    entity.setCode(Response.Status.NOT_FOUND.getStatusCode());
+    entity.setMessage(message);
+    return Response
+      .status(Response.Status.NOT_FOUND)
       .entity(entity)
       .build();
   }
