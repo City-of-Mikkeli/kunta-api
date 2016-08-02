@@ -1,0 +1,464 @@
+swagger: '2.0'
+info:
+  title: Kunta API
+  description: One API to rule them all. One API to find them, One API to bring them all and in the darkness bind them.
+  version: "0.0.1"
+host: demo.kuntaapi.fi
+schemes:
+  - https
+basePath: /v1
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /services:
+    post:
+      operationId: createService
+      summary: Create a service
+      description: |
+        Creates new municipal service.
+      parameters:
+        - name: body
+          in: body
+          description: Service definition
+          required: true
+          schema:
+            $ref: '#/definitions/Service'
+      tags:
+        - Services
+      responses:
+        200:
+          description: An array of services
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Service'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+        501:
+          description: Returned when selected service source does support modification of data
+          schema:
+            $ref: '#/definitions/NotImplemented'
+    get:
+      operationId: listServices
+      summary: List services
+      description: |
+        The services endpoint returns list of municipal services.
+      parameters:
+        - name: service_type_id
+          in: query
+          description: Services filtered by type
+          required: false
+          type: string
+      tags:
+        - Services
+      responses:
+        200:
+          description: An array of services
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Service'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /services/{serviceId}:
+    get:
+      operationId: findService
+      summary: Find a service by id
+      description: |
+        Returns single service by it's unique id.
+      parameters:
+        - name: serviceId
+          in: path
+          description: Service id
+          required: true
+          type: string
+      tags:
+        - Services
+      responses:
+        200:
+          description: Returns a single municipal service
+          schema:
+            $ref: '#/definitions/Service'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+    put:
+      operationId: updateService
+      summary: Update a service
+      description: |
+        Updates a single municipal service
+      parameters:
+        - name: serviceId
+          in: path
+          description: Service id
+          required: true
+          type: string
+      tags:
+        - Services
+      responses:
+        200:
+          description: Created service
+          schema:
+            $ref: '#/definitions/Service'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+        501:
+          description: Returned when selected service source does support modification of data
+          schema:
+            $ref: '#/definitions/NotImplemented'            
+    delete:
+      operationId: deleteService
+      summary: Delete a service
+      description: |
+        Delete a single municipal service
+      parameters:
+        - name: serviceId
+          in: path
+          description: Service id
+          required: true
+          type: string
+      tags:
+        - Services
+      responses:
+        204:
+          description: Empty response indicating a succesfull removal
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /services/{serviceId}/datas:
+    get:
+      operationId: listServiceDatas
+      summary: List service datas
+      description: |
+        Returns list of data fields assigned to the specified service
+      parameters:
+        - name: serviceId
+          in: path
+          description: Service id
+          required: true
+          type: string
+        - name: sourceId
+          in: query
+          description: |
+            Service source id. When specified datas of only specified source are listed. Default is to list datas of all sources.
+          required: false
+          type: string
+      tags:
+        - Services
+        - Service Data
+      responses:
+        200:
+          description: List of data fields
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ServiceData'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /services/{serviceId}/datas/{dataId}:
+    get:
+      operationId: findServiceData
+      summary: Find single service data field by id
+      description: |
+        Returns a single service data field by id
+      parameters:
+        - name: serviceId
+          in: path
+          description: Service id
+          required: true
+          type: string
+        - name: dataId
+          in: path
+          description: |
+            Service data field id.
+          required: true
+          type: string
+      tags:
+        - Services
+        - Service Data
+      responses:
+        200:
+          description: List of data fields
+          schema:
+            $ref: '#/definitions/ServiceData'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+    put:
+      operationId: updateServiceData
+      summary: Update single service data field by id
+      description: |
+        Update a single service data field by id
+      parameters:
+        - name: serviceId
+          in: path
+          description: Service id
+          required: true
+          type: string
+        - name: dataId
+          in: path
+          description: |
+            Service data field id.
+          required: true
+          type: string
+      tags:
+        - Services
+        - Service Data
+      responses:
+        200:
+          description: Updated data field
+          schema:
+            $ref: '#/definitions/ServiceData'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+    delete:
+      operationId: deleteServiceData
+      summary: Delete single service data field by id
+      description: |
+        Delete a single service data field by id
+      parameters:
+        - name: serviceId
+          in: path
+          description: Service id
+          required: true
+          type: string
+        - name: dataId
+          in: path
+          description: |
+            Service data field id.
+          required: true
+          type: string
+      tags:
+        - Services
+        - Service Data
+      responses:
+        204:
+          description: Empty result indicating successful deletion.
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /serviceSources:
+    get:
+      operationId: listServiceSources
+      summary: List service sources
+      description: |
+        Returns list of service sources.
+      tags:
+        - Services
+        - Sources
+        - Services Sources
+      responses:
+        200:
+          description: An array of service sources
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ServiceSource'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /serviceSources/{serviceSourceId}:
+    get:
+      operationId: findServiceSource
+      summary: Find a service by id
+      description: |
+        Returns single service by it's unique id.
+      parameters:
+        - name: serviceSourceId
+          in: path
+          description: Service source id
+          required: true
+          type: string
+      tags:
+        - Services
+        - Sources
+        - Services Sources
+      responses:
+        200:
+          description: Returns a single service source
+          schema:
+            $ref: '#/definitions/ServiceSource'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+definitions:
+  Service:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier representing a specific service.
+      description:
+        type: string
+        description: Description of the service
+      name:
+        type: string
+        description: Name of the service.
+      source_ids:  
+        type: array
+        description: Name of the service.
+        items:
+          type: string
+  ServiceData:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier representing a specific service.
+      name:
+        type: string
+        description: Name of the service.
+      source_id:
+        type: string
+        description: Identifier of data's source
+      value:
+        type: string
+        description: Value
+  ServiceSource:
+    type: object
+    description: Specifies a single source for the service
+    properties:
+      id:
+        type: string
+        description: id of the service source
+      name:
+        type: string
+        description: name of the service source
+  InternalServerError:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  Forbidden:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  BadRequest:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  NotImplemented:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
