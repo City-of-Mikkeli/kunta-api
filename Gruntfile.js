@@ -74,6 +74,11 @@ module.exports = function(grunt) {
           }
         }
       }
+    },
+    publish: {
+      'publish-javascript-client': {
+        src: ['kunta-api-spec/languages/javascript']
+      }
     }
   });
   
@@ -82,6 +87,7 @@ module.exports = function(grunt) {
   grunt.registerTask('create-javascript-client', ['clean:clean-javascript', 'shell:generate-javascript-client']);
   grunt.registerTask('create-php-client', ['clean:clean-php', 'shell:generate-php-client']);
   grunt.registerTask('create-jaxrs-spec', ['clean:clean-jaxrs', 'shell:generate-jaxrs-spec', 'clean:clean-jaxrs-generated-cruft', 'copy:copy-jaxrs-extras', 'shell:install-jaxrs-spec']);
+  grunt.registerTask('publish-javascript-client', ['publish:publish-javascript-client']);
   
   grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client' ]);
 };
