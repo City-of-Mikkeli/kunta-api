@@ -46,6 +46,7 @@ module.exports = function(grunt) {
         command : 'java -jar kunta-api-spec/swagger-codegen-cli.jar generate \
           -i kunta-api-spec/spec/swagger.yaml \
           -l javascript \
+          --template-dir kunta-api-spec/templates/javascript \
           -o kunta-api-spec/languages/javascript/ \
           --additional-properties usePromises=true,projectName=kunta-api-client'
       },
@@ -87,7 +88,7 @@ module.exports = function(grunt) {
   grunt.registerTask('create-javascript-client', ['clean:clean-javascript', 'shell:generate-javascript-client']);
   grunt.registerTask('create-php-client', ['clean:clean-php', 'shell:generate-php-client']);
   grunt.registerTask('create-jaxrs-spec', ['clean:clean-jaxrs', 'shell:generate-jaxrs-spec', 'clean:clean-jaxrs-generated-cruft', 'copy:copy-jaxrs-extras', 'shell:install-jaxrs-spec']);
-  grunt.registerTask('publish-javascript-client', ['publish:publish-javascript-client']);
+  grunt.registerTask('publish-javascript-client', ['create-javascript-client', 'publish:publish-javascript-client']);
   
   grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client' ]);
 };
