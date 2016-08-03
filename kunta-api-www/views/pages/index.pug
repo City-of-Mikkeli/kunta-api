@@ -4,140 +4,75 @@ block content
   // Main
   article#main
     header.special.container
-      span.icon.fa-bar-chart-o
+      span.icon.fa.fa-heart-o
       h2
-        | As this is my 
-        strong twentieth
-        |  freebie for HTML5 UP
+        strong Mikkelissä 
+        | voi asua lähellä luontoa,
         br
-        | 					I decided to give it a really creative name.
-      p
-        | Turns out 
-        strong Twenty
-        |  was the best I could come up with. Anyway, lame name aside,
-        br
-        | 					it's minimally designed, fully responsive, built on HTML5/CSS3/
-        strong skel
-        | ,
-        | 					and, like all my stuff,
-        br
-        | 					released for free under the 
-        a(href='http://html5up.net/license') Creative Commons Attribution 3.0
-        |  license. Have fun!
+        | moderneista palveluista tinkimättä.
+      p Ihmisten rento elämänasenne, toimiva kaupunkikeskusta, Saimaan läheisyys ja luonnonkauniit taajamat tekevät Mikkelistä Mikkelin.
+      p Mikkeli on virkeä lähes 55 000 asukkaan kaupunki hyvien liikenneyhteyksien varrella Saimaan rannalla, vain parin tunnin ajomatkan päässä pääkaupunkiseudusta.     
     // One
     section.wrapper.style2.container.special-alt
       .row.half
-        div(class='8u')
-          header
-            h2
-              | Behold the 
-              strong icons
-              |  that visualize what you’re all about. or just take up space. your call bro.
-          p
-            | Sed tristique purus vitae volutpat ultrices. Aliquam eu elit eget arcu comteger ut fermentum lorem. Lorem ipsum dolor sit amet. Sed tristique purus vitae volutpat ultrices. eu elit eget commodo. Sed tristique purus vitae volutpat ultrices. Aliquam eu elit eget arcu commodo.
+        div(class='6u') !{latestNews.content}
+          br
           footer
             ul.buttons
               li
-                a.button(href='#') Find Out More
-        div(class='4u skel-cell-important')
-          ul.featured-icons
-            li
-              span.icon.fa-clock-o
-                span.label Feature 1
-            li
-              span.icon.fa-volume-up
-                span.label Feature 2
-            li
-              span.icon.fa-laptop
-                span.label Feature 3
-            li
-              span.icon.fa-inbox
-                span.label Feature 4
-            li
-              span.icon.fa-lock
-                span.label Feature 5
-            li
-              span.icon.fa-cog
-                span.label Feature 6
+                a.button(href=latestNews.link) Lue lisää
+        div(class='6u skel-cell-important')
+          header
+            h2 #{latestNews.title}
     // Two
     section.wrapper.style1.container.special
       .row
         div(class='4u')
           section
-            span.icon.featured.fa-check
+            span.icon.featured.fa-gavel
             header
-              h3 This is Something
+              h3 Osallistu ja vaikuta
             p
-              | Sed tristique purus vitae volutpat ultrices. Aliquam eu elit eget arcu commodo suscipit dolor nec nibh. Proin a ullamcorper elit, et sagittis turpis. Integer ut fermentum.
+              | Ole mukana kehittämässä kaupunkia ja sen toimintaa.
+            ul.buttons
+              li
+                a.button(href='#') Lue lisää
         div(class='4u')
           section
-            span.icon.featured.fa-check
+            span.icon.featured.fa-users
             header
-              h3 Also Something
+              h3 Avoimet työpaikat
             p
-              | Sed tristique purus vitae volutpat ultrices. Aliquam eu elit eget arcu commodo suscipit dolor nec nibh. Proin a ullamcorper elit, et sagittis turpis. Integer ut fermentum.
+              | Olisiko Mikkelin kaupunki sinun tulevaisuuden työnantajasi?
+            ul.buttons
+              li
+                a.button(href='#') Lue lisää
         div(class='4u')
           section
-            span.icon.featured.fa-check
+            span.icon.featured.fa-university
             header
-              h3 Probably Something
+              h3 Kuulutukset
             p
-              | Sed tristique purus vitae volutpat ultrices. Aliquam eu elit eget arcu commodo suscipit dolor nec nibh. Proin a ullamcorper elit, et sagittis turpis. Integer ut fermentum.
+              | Tarkista Mikkelin kaupungin viimeaikaiset kuulutukset.
+            ul.buttons
+              li
+                a.button(href='#') Lue lisää
     // Three
     section.wrapper.style3.container.special
       header.major
         h2
-          | Next look at this 
-          strong cool stuff
+          strong Mikkelissä 
+          | tapahtuu
       .row
-        div(class='6u')
-          section
-            a.image.featured(href='#')
-              img(src='images/pic01.jpg', alt='')
-            header
-              h3 A Really Fast Train
-            p
-              | Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.
-        div(class='6u')
-          section
-            a.image.featured(href='#')
-              img(src='images/pic02.jpg', alt='')
-            header
-              h3 An Airport Terminal
-            p
-              | Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.
-      .row
-        div(class='6u')
-          section
-            a.image.featured(href='#')
-              img(src='images/pic03.jpg', alt='')
-            header
-              h3 Hyperspace Travel
-            p
-              | Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.
-        div(class='6u')
-          section
-            a.image.featured(href='#')
-              img(src='images/pic04.jpg', alt='')
-            header
-              h3 And Another Train
-            p
-              | Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.
-      footer.major
-        ul.buttons
-          li
-            a.button(href='#') See More
-  // CTA
-  section#cta
-    header
-      h2
-        | Ready to do 
-        strong something
-        | ?
-      p Proin a ullamcorper elit, et sagittis turpis integer ut fermentum.
-    footer
-      ul.buttons
-        li
-          a.button.special(href='#') Take My Money
-        li
-          a.button(href='#') LOL Wut
+        each article, index in news
+          if index < 4    
+            div(class='6u')
+              section
+                header
+                  h3 #{article.title}
+                div !{article.content}
+                br
+                ul.buttons
+                  li
+                    a.button(href=article.link) Lue lisää
+                br
