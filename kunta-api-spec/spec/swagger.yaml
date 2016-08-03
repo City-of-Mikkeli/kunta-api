@@ -3,21 +3,28 @@ info:
   title: Kunta API
   description: One API to rule them all. One API to find them, One API to bring them all and in the darkness bind them.
   version: "0.0.1"
+host: demo.kuntaapi.fi
 schemes:
   - https
 basePath: /v1
 consumes:
-  - application/json
+  - application/json;charset=utf-8
 produces:
-  - application/json
+  - application/json;charset=utf-8
 paths:
-  /services:
+  /organizations/{organizationId}/services:
     post:
       operationId: createService
       summary: Create a service
       description: |
         Creates new municipal service.
       parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
         - name: body
           in: body
           description: Service definition
@@ -41,6 +48,10 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Not found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -55,11 +66,12 @@ paths:
       description: |
         The services endpoint returns list of municipal services.
       parameters:
-        - name: service_type_id
-          in: query
-          description: Services filtered by type
-          required: false
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
           type: string
+          format: uuid
       tags:
         - Services
       responses:
@@ -77,22 +89,33 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
+        404:
+          description: Not found
+          schema:
+            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
-  /services/{serviceId}:
+  /organizations/{organizationId}/services/{serviceId}:
     get:
       operationId: findService
       summary: Find a service by id
       description: |
         Returns single service by it's unique id.
       parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
       tags:
         - Services
       responses:
@@ -109,7 +132,7 @@ paths:
           schema:
             $ref: '#/definitions/Forbidden'
         404:
-          description: Resource could not be found
+          description: Not found
           schema:
             $ref: '#/definitions/NotFound'
         500:
@@ -122,11 +145,18 @@ paths:
       description: |
         Updates a single municipal service
       parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
       tags:
         - Services
       responses:
@@ -143,7 +173,7 @@ paths:
           schema:
             $ref: '#/definitions/Forbidden'
         404:
-          description: Resource could not be found
+          description: Not found
           schema:
             $ref: '#/definitions/NotFound'
         500:
@@ -160,11 +190,18 @@ paths:
       description: |
         Delete a single municipal service
       parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
       tags:
         - Services
       responses:
@@ -179,20 +216,26 @@ paths:
           schema:
             $ref: '#/definitions/Forbidden'
         404:
-          description: Resource could not be found
+          description: Not found
           schema:
             $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
-  /services/{serviceId}/datas:
+  /organizations/{organizationId}/services/{serviceId}/datas:
     get:
       operationId: listServiceDatas
       summary: List service datas
       description: |
         Returns list of data fields assigned to the specified service
       parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
@@ -204,6 +247,7 @@ paths:
             Service source id. When specified datas of only specified source are listed. Default is to list datas of all sources.
           required: false
           type: string
+          format: uuid
       tags:
         - Services
         - Service Data
@@ -223,31 +267,39 @@ paths:
           schema:
             $ref: '#/definitions/Forbidden'
         404:
-          description: Resource could not be found
+          description: Not found
           schema:
             $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
-  /services/{serviceId}/datas/{dataId}:
+  /organizations/{organizationId}/services/{serviceId}/datas/{dataId}:
     get:
       operationId: findServiceData
       summary: Find single service data field by id
       description: |
         Returns a single service data field by id
       parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
         - name: dataId
           in: path
           description: |
             Service data field id.
           required: true
           type: string
+          format: uuid
       tags:
         - Services
         - Service Data
@@ -265,7 +317,7 @@ paths:
           schema:
             $ref: '#/definitions/Forbidden'
         404:
-          description: Resource could not be found
+          description: Not found
           schema:
             $ref: '#/definitions/NotFound'
         500:
@@ -278,17 +330,25 @@ paths:
       description: |
         Update a single service data field by id
       parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
         - name: dataId
           in: path
           description: |
             Service data field id.
           required: true
           type: string
+          format: uuid
       tags:
         - Services
         - Service Data
@@ -306,7 +366,7 @@ paths:
           schema:
             $ref: '#/definitions/Forbidden'
         404:
-          description: Resource could not be found
+          description: Not found
           schema:
             $ref: '#/definitions/NotFound'
         500:
@@ -319,17 +379,25 @@ paths:
       description: |
         Delete a single service data field by id
       parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
         - name: dataId
           in: path
           description: |
             Service data field id.
           required: true
           type: string
+          format: uuid
       tags:
         - Services
         - Service Data
@@ -345,7 +413,7 @@ paths:
           schema:
             $ref: '#/definitions/Forbidden'
         404:
-          description: Resource could not be found
+          description: Not found
           schema:
             $ref: '#/definitions/NotFound'
         500:
@@ -393,6 +461,7 @@ paths:
           description: Service source id
           required: true
           type: string
+          format: uuid
       tags:
         - Services
         - Sources
@@ -410,10 +479,6 @@ paths:
           description: Attempted to make a call with unauthorized client
           schema:
             $ref: '#/definitions/Forbidden'
-        404:
-          description: Resource could not be found
-          schema:
-            $ref: '#/definitions/NotFound'
         500:
           description: Internal server error
           schema:
@@ -426,16 +491,39 @@ definitions:
         type: string
         description: Unique identifier representing a specific service.
       description:
-        type: string
-        description: Description of the service
+        $ref: '#/definitions/LocalizedValue'
       name:
-        type: string
-        description: Name of the service.
+        $ref: '#/definitions/LocalizedValue'
       source_ids:  
         type: array
         description: Name of the service.
         items:
           type: string
+      electronic_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
+      phone_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
+      printable_form_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
+      service_location_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
+      webpage_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
   ServiceData:
     type: object
     properties:
@@ -485,14 +573,6 @@ definitions:
         format: int32
       message:
         type: string
-  NotFound:
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
   NotImplemented:
     type: object
     properties:
@@ -501,3 +581,16 @@ definitions:
         format: int32
       message:
         type: string
+  NotFound:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  LocalizedValue:
+    type: object
+    additionalProperties: {
+      type: string
+    }
