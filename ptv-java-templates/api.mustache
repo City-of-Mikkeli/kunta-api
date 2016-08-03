@@ -1,0 +1,51 @@
+{{>licenseInfo}}
+package {{package}};
+
+import {{modelPackage}}.*;
+
+{{#imports}}import {{import}};
+{{/imports}}
+
+{{^fullJavaUtil}}
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+{{/fullJavaUtil}}
+
+{{>generatedAnnotation}}
+{{#operations}}
+public class {{classname}} {
+
+  public {{classname}}(ApiClient client) {
+    this.client = client;
+  }
+  
+  {{#operation}}
+  /**
+   * {{summary}}
+   * {{notes}}{{#allParams}}
+   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}{{/allParams}}
+   */
+  public ApiResponse<{{#returnType}}{{{returnType}}}{{/returnType}}> {{operationId}}({{#allParams}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+    Map<String, Object> queryParams = new HashMap<>();
+    Map<String, Object> formParams = new HashMap<>();
+    {{#queryParams}}if ({{paramName}} != null)
+    queryParams.put("{{baseName}}", {{paramName}});
+    {{/queryParams}}
+    
+    {{#formParams}}if ({{paramName}} != null)
+      formParams.put("{{baseName}}", {{paramName}});
+    {{/formParams}}
+    
+    String path = "{{{path}}}"{{#pathParams}}
+      .replaceAll("\\{" + "{{baseName}}" + "\\}", {{paramName}}){{/pathParams}};
+      
+    ResultType<{{{returnType}}}> resultType = new ResultType<{{{returnType}}}>() {};
+    return client.do{{httpMethod}}Request(path, resultType, queryParams, formParams);
+  }
+  {{/operation}}
+  
+  private ApiClient client;
+}
+{{/operations}}
