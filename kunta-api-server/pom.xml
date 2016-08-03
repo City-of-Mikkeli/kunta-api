@@ -48,6 +48,7 @@
     <wildfly-spec-api.version>10.0.0.Final</wildfly-spec-api.version>
     
     <kunta-api-spec.version>0.0.1-SNAPSHOT</kunta-api-spec.version>
+    <ptv-rest-client.version>1.0.0</ptv-rest-client.version>
   </properties>
   
   <dependencyManagement>
@@ -71,12 +72,49 @@
         <version>2.6</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archive>
+            <manifestEntries>
+              <Dependencies>org.apache.httpcomponents</Dependencies>
+            </manifestEntries>
+          </archive>
         </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.bsc.maven</groupId>
+        <artifactId>maven-processor-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>process</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <processors>
+                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+              </processors>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>        
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.0.7.Final</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
 
   <dependencies>
+  
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
   
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
@@ -101,7 +139,78 @@
       <artifactId>kunta-api-spec</artifactId>
       <version>${kunta-api-spec.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>fi.otavanopisto.ptv.rest-client</groupId>
+      <artifactId>rest-client</artifactId>
+      <version>${ptv-rest-client.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.jboss.spec.javax.interceptor</groupId>
+      <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-infinispan</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
 </project>
