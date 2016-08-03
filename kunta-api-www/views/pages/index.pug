@@ -1,6 +1,7 @@
 extends ../layout/front-page.pug
 
 block content
+  // Main
   article#main
     header.special.container
       span.icon.fa-bar-chart-o
@@ -26,7 +27,7 @@ block content
     // One
     section.wrapper.style2.container.special-alt
       .row.half
-        .8u
+        div(class='8u')
           header
             h2
               | Behold the 
@@ -38,7 +39,7 @@ block content
             ul.buttons
               li
                 a.button(href='#') Find Out More
-        .4u.skel-cell-important
+        div(class='4u skel-cell-important')
           ul.featured-icons
             li
               span.icon.fa-clock-o
@@ -61,21 +62,21 @@ block content
     // Two
     section.wrapper.style1.container.special
       .row
-        .4u
+        div(class='4u')
           section
             span.icon.featured.fa-check
             header
               h3 This is Something
             p
               | Sed tristique purus vitae volutpat ultrices. Aliquam eu elit eget arcu commodo suscipit dolor nec nibh. Proin a ullamcorper elit, et sagittis turpis. Integer ut fermentum.
-        .4u
+        div(class='4u')
           section
             span.icon.featured.fa-check
             header
               h3 Also Something
             p
               | Sed tristique purus vitae volutpat ultrices. Aliquam eu elit eget arcu commodo suscipit dolor nec nibh. Proin a ullamcorper elit, et sagittis turpis. Integer ut fermentum.
-        .4u
+        div(class='4u')
           section
             span.icon.featured.fa-check
             header
@@ -89,35 +90,35 @@ block content
           | Next look at this 
           strong cool stuff
       .row
-        .6u
+        div(class='6u')
           section
             a.image.featured(href='#')
-              img(src='/images/pic01.jpg', alt='')
+              img(src='images/pic01.jpg', alt='')
             header
               h3 A Really Fast Train
             p
               | Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.
-        .6u
+        div(class='6u')
           section
             a.image.featured(href='#')
-              img(src='/images/pic02.jpg', alt='')
+              img(src='images/pic02.jpg', alt='')
             header
               h3 An Airport Terminal
             p
               | Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.
       .row
-        .6u
+        div(class='6u')
           section
             a.image.featured(href='#')
-              img(src='/images/pic03.jpg', alt='')
+              img(src='images/pic03.jpg', alt='')
             header
               h3 Hyperspace Travel
             p
               | Sed tristique purus vitae volutpat commodo suscipit amet sed nibh. Proin a ullamcorper sed blandit. Sed tristique purus vitae volutpat commodo suscipit ullamcorper sed blandit lorem ipsum dolore.
-        .6u
+        div(class='6u')
           section
             a.image.featured(href='#')
-              img(src='/images/pic04.jpg', alt='')
+              img(src='images/pic04.jpg', alt='')
             header
               h3 And Another Train
             p
