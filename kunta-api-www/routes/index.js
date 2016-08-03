@@ -7,7 +7,6 @@ module.exports = function(app){
     feed('https://open.mikkeli.fi/rss', function(err, articles) {
       if (err) throw err;
         var latestNews = articles.shift();
-        console.log(latestNews);
         res.render('pages/index.pug', {
           latestNews: latestNews,
           news: articles
