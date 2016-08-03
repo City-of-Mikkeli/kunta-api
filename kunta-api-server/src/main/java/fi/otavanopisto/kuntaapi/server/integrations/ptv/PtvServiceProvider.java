@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import fi.otavanopisto.kuntaapi.server.controllers.OrganizationController;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.persistence.model.OrganizationIdentifier;
+import fi.otavanopisto.kuntaapi.server.rest.model.LocalizedValue;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.ptv.client.ApiResponse;
 import fi.otavanopisto.ptv.client.model.IVmOpenApiService;
@@ -77,16 +78,17 @@ public class PtvServiceProvider implements ServiceProvider {
     
     for (IVmOpenApiService ptvService : ptvServices) {
       Service service = new Service();
-      service.setName(getLocalizedItemValue(locale, "Name", ptvService.getServiceNames()));
-      service.setDescription(getLocalizedItemValue(locale, "ShortDescription", ptvService.getServiceDescriptions()));
+      service.setName(getLocalizedValue("Name", ptvService.getServiceNames()));
+      service.setDescription(getLocalizedValue("ShortDescription", ptvService.getServiceDescriptions()));
       result.add(service);
     }
     
     return result;
   }
   
-  private String getLocalizedItemValue(Locale locale, String type, List<VmOpenApiLocalizedListItem> items) {
+  private LocalizedValue getLocalizedValue(String type, List<VmOpenApiLocalizedListItem> items) {
     if (items != null && !items.isEmpty()) {
+      LocalizedValue result = new LocalizedValue();
       List<VmOpenApiLocalizedListItem> typeItems = new ArrayList<>();
       
       for (VmOpenApiLocalizedListItem item : items) {
@@ -97,12 +99,10 @@ public class PtvServiceProvider implements ServiceProvider {
       
       if (!typeItems.isEmpty()) {
         for (VmOpenApiLocalizedListItem item : typeItems) {
-          if (locale.getLanguage().equals(item.getLanguage())) {
-            return item.getValue();
-          }
+          result.put(item.getLanguage(), item.getValue());
         }
       
-        return typeItems.get(0).getValue();
+        return result;
       }
     }
     

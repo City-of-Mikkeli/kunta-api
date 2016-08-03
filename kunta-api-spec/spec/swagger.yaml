@@ -24,6 +24,7 @@ paths:
           description: Organization id
           required: true
           type: string
+          format: uuid
         - name: body
           in: body
           description: Service definition
@@ -70,6 +71,7 @@ paths:
           description: Organization id
           required: true
           type: string
+          format: uuid
       tags:
         - Services
       responses:
@@ -107,11 +109,13 @@ paths:
           description: Organization id
           required: true
           type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
       tags:
         - Services
       responses:
@@ -146,11 +150,13 @@ paths:
           description: Organization id
           required: true
           type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
       tags:
         - Services
       responses:
@@ -189,11 +195,13 @@ paths:
           description: Organization id
           required: true
           type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
       tags:
         - Services
       responses:
@@ -227,6 +235,7 @@ paths:
           description: Organization id
           required: true
           type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
@@ -238,6 +247,7 @@ paths:
             Service source id. When specified datas of only specified source are listed. Default is to list datas of all sources.
           required: false
           type: string
+          format: uuid
       tags:
         - Services
         - Service Data
@@ -276,17 +286,20 @@ paths:
           description: Organization id
           required: true
           type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
         - name: dataId
           in: path
           description: |
             Service data field id.
           required: true
           type: string
+          format: uuid
       tags:
         - Services
         - Service Data
@@ -322,17 +335,20 @@ paths:
           description: Organization id
           required: true
           type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
         - name: dataId
           in: path
           description: |
             Service data field id.
           required: true
           type: string
+          format: uuid
       tags:
         - Services
         - Service Data
@@ -368,17 +384,20 @@ paths:
           description: Organization id
           required: true
           type: string
+          format: uuid
         - name: serviceId
           in: path
           description: Service id
           required: true
           type: string
+          format: uuid
         - name: dataId
           in: path
           description: |
             Service data field id.
           required: true
           type: string
+          format: uuid
       tags:
         - Services
         - Service Data
@@ -442,6 +461,7 @@ paths:
           description: Service source id
           required: true
           type: string
+          format: uuid
       tags:
         - Services
         - Sources
@@ -471,16 +491,39 @@ definitions:
         type: string
         description: Unique identifier representing a specific service.
       description:
-        type: string
-        description: Description of the service
+        $ref: '#/definitions/LocalizedValue'
       name:
-        type: string
-        description: Name of the service.
+        $ref: '#/definitions/LocalizedValue'
       source_ids:  
         type: array
         description: Name of the service.
         items:
           type: string
+      electronic_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
+      phone_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
+      printable_form_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
+      service_location_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
+      webpage_channel_ids:
+        type: array
+        items:
+          type: string
+          format: uuid
   ServiceData:
     type: object
     properties:
@@ -546,3 +589,8 @@ definitions:
         format: int32
       message:
         type: string
+  LocalizedValue:
+    type: object
+    additionalProperties: {
+      type: string
+    }
