@@ -10,44 +10,10 @@ header#header
       li.submenu
         a(href='#') Palveluopas
         ul
-          li
-            a(href='#') Ajankohtaiset palvelut
-          li
-            a(href='#') Asiakaspalvelu
-          li
-            a(href='#') Asuminen
-          li
-            a(href='#') Elinkeinot
-          li
-            a(href='#') Kaavoitus
-          li
-            a(href='#') Kadut ja liikenne
-          li
-            a(href='#') Kartat ja mittaus
-          li
-            a(href='#') Kulttuuri ja kirjasto
-          li
-            a(href='#') Liikunta
-          li
-            a(href='#') Matkailu
-          li
-            a(href='#') Nuoriso
-          li
-            a(href='#') Opetus ja koulutus
-          li
-            a(href='#') Perhepalvelut
-          li
-            a(href='#') Rakentaminen
-          li
-            a(href='#') Ruoka ja puhtaus
-          li
-            a(href='#') Sosiaali- ja terveyspalvelut
-          li
-            a(href='#') Turvallisuus
-          li
-            a(href='#') Työ
-          li
-            a(href='#') Ympäristö
+          each serviceClass in serviceClasses
+            li
+              a(href='#')
+                = serviceClass.name
       li.submenu
         a(href='#') Päätöksenteko
         ul

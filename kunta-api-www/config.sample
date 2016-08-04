@@ -1,0 +1,8 @@
+{
+  "api": {
+    "basePath": "http://demo.kuntaapi.fi/v1"
+  },
+  "defaults": {
+    "organizationId": "UUID"
+  }
+}
