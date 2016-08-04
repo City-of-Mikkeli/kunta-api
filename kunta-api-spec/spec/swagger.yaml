@@ -3,6 +3,30 @@ info:
   title: Kunta API
   description: One API to rule them all. One API to find them, One API to bring them all and in the darkness bind them.
   version: "0.0.1"
+templates: 
+  serviceChannelCommon: &ServiceChannelCommon
+    id:
+      type: string
+      format: uuid
+    organizationId:
+      type: string
+      format: uuid
+    description:
+      $ref: '#/definitions/LocalizedValue'
+    name:
+      $ref: '#/definitions/LocalizedValue'
+    webPages:
+      type: array
+      items:
+        $ref: '#/definitions/WebPage'
+    serviceHours:
+      type: array
+      items:
+        $ref: '#/definitions/ServiceHour'
+    supportContacts:
+      type: array
+      items:
+        $ref: '#/definitions/Support'
 host: demo.kuntaapi.fi
 schemes:
   - https
@@ -420,6 +444,49 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/services/{serviceId}/electronicChannels:
+    get:
+      operationId: listServiceElectornicChannels
+      summary: List service electornic channels
+      description: |
+        Lists service electronic channels
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: serviceId
+          in: path
+          description: Service id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Services
+        - ServiceChannels
+      responses:
+        200:
+          description: List of service electornic channels
+          schema:
+            $ref: '#/definitions/ServiceElectronicChannel'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        404:
+          description: Not found
+          schema:
+            $ref: '#/definitions/NotFound'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'            
   /serviceSources:
     get:
       operationId: listServiceSources
@@ -489,6 +556,7 @@ definitions:
     properties:
       id:
         type: string
+        format: uuid
         description: Unique identifier representing a specific service.
       description:
         $ref: '#/definitions/LocalizedValue'
@@ -524,6 +592,24 @@ definitions:
         items:
           type: string
           format: uuid
+  ServiceElectronicChannel:
+    type: object
+    properties:
+      <<: *ServiceChannelCommon
+      signatureQuantity:
+        type: integer
+      requiresSignature:
+        type: boolean
+      requiresAuthentication:
+        type: boolean
+      urls:
+        type: array
+        items:
+          $ref: '#/definitions/LanguageItem'
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/Attachment'
   ServiceData:
     type: object
     properties:
@@ -549,6 +635,84 @@ definitions:
       name:
         type: string
         description: name of the service source
+  LocalizedValue:
+    type: object
+    additionalProperties: {
+      type: string
+    }
+  LanguageItem:
+    type: object
+    properties:
+      language:
+        type: string
+      value:
+        type: string
+  Support:
+    properties:
+      email:
+        type: string
+      phone:
+        type: string
+      phoneChargeDescription:
+        type: string
+      language:
+        type: string
+      serviceChargeTypes:
+        type: array
+        items:
+          type: string
+  Attachment:
+    properties:
+      type:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      url:
+        type: string
+      language:
+        type: string
+  WebPage:
+    properties:
+      type:
+        type: string
+      value:
+        type: string
+      url:
+        type: string
+      language:
+        type: string
+  ServiceHour:
+    properties:
+      serviceHourType:
+        type: string
+      exceptionHourType:
+        type: string
+      validFrom:
+        type: string
+        format: date-time
+      validTo:
+        type: string
+        format: date-time
+      monday:
+        type: boolean
+      tuesday:
+        type: boolean
+      wednesday:
+        type: boolean
+      thursday:
+        type: boolean
+      friday:
+        type: boolean
+      saturday:
+        type: boolean
+      sunday:
+        type: boolean
+      opens:
+        type: string
+      closes:
+        type: string
   InternalServerError:
     type: object
     properties:
@@ -589,8 +753,3 @@ definitions:
         format: int32
       message:
         type: string
-  LocalizedValue:
-    type: object
-    additionalProperties: {
-      type: string
-    }
