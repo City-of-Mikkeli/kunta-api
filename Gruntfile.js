@@ -122,6 +122,22 @@ module.exports = function(grunt) {
             cwd: 'ptv-rest-client'
           }
         }
+      },
+      'pack-javascript-client': {
+        command: 'npm pack',
+        options: {
+          execOptions: {
+            cwd: 'kunta-api-spec/languages/javascript'
+          }
+        }
+      },
+      'install-javascript-client-www': {
+        command: 'npm install ../kunta-api-spec/languages/javascript/kunta-api-client-0.0.1.tgz',
+        options: {
+          execOptions: {
+            cwd: 'kunta-api-www'
+          }
+        }
       }
     },
     publish: {
@@ -131,13 +147,13 @@ module.exports = function(grunt) {
     }
   });
   
-  
   grunt.registerTask('download-dependencies', 'if:require-swagger-codegen');
   grunt.registerTask('create-javascript-client', ['clean:clean-javascript', 'shell:generate-javascript-client']);
   grunt.registerTask('create-php-client', ['clean:clean-php', 'shell:generate-php-client']);
   grunt.registerTask('create-jaxrs-spec', ['clean:clean-jaxrs', 'shell:generate-jaxrs-spec', 'clean:clean-jaxrs-generated-cruft', 'copy:copy-jaxrs-extras', 'shell:install-jaxrs-spec']);
   grunt.registerTask('publish-javascript-client', ['create-javascript-client', 'publish:publish-javascript-client']);
   grunt.registerTask('generate-ptv-java-client', ['clean:clean-ptv-java-client', 'shell:generate-ptv-java-client', 'clean:clean-ptv-java-client-cruft', 'copy:copy-ptv-rest-client-extras', 'shell:install-ptv-java-client']);
+  grunt.registerTask('install-javascript-client-to-www', ['shell:pack-javascript-client', 'shell:install-javascript-client-www']);
   
-  grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client' ]);
+  grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-javascript-client-to-www']);
 };
