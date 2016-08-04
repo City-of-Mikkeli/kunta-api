@@ -12,5 +12,10 @@
     "express": "^4.14.0",
     "feed-read": "0.0.1",
     "pug": "^2.0.0-beta4"
+  },
+  "devDependencies": {
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-sass": "^1.2.0"
   }
 }
