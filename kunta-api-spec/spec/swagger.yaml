@@ -3,30 +3,6 @@ info:
   title: Kunta API
   description: One API to rule them all. One API to find them, One API to bring them all and in the darkness bind them.
   version: "0.0.1"
-templates: 
-  serviceChannelCommon: &ServiceChannelCommon
-    id:
-      type: string
-      format: uuid
-    organizationId:
-      type: string
-      format: uuid
-    description:
-      $ref: '#/definitions/LocalizedValue'
-    name:
-      $ref: '#/definitions/LocalizedValue'
-    webPages:
-      type: array
-      items:
-        $ref: '#/definitions/WebPage'
-    serviceHours:
-      type: array
-      items:
-        $ref: '#/definitions/ServiceHour'
-    supportContacts:
-      type: array
-      items:
-        $ref: '#/definitions/Support'
 host: demo.kuntaapi.fi
 schemes:
   - https
@@ -105,6 +81,45 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Service'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        404:
+          description: Not found
+          schema:
+            $ref: '#/definitions/NotFound'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/serviceClasses/:
+    get:
+      operationId: listServiceClasses
+      summary: List service classes for an organization
+      description: |
+        Returns list of organization's service classes
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Services
+        - Service Categories
+      responses:
+        200:
+          description: Returns a list of organization's service classes
+          schema:
+            type: array
+            items: 
+              $ref: '#/definitions/ServiceClass'
         400:
           description: Invalid request was sent to the server
           schema:
@@ -592,6 +607,50 @@ definitions:
         items:
           type: string
           format: uuid
+  ServiceClass:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      code:
+        type: string
+      ontologyType:
+        type: string
+      uri:
+        type: string
+      parentId:
+        type: string
+        format: uuid
+      parentUri:
+        type: string
+  ServiceChannelCommon: 
+    type: object
+    properties: &ServiceChannelCommon
+      id:
+        type: string
+        format: uuid
+      organizationId:
+        type: string
+        format: uuid
+      description:
+        $ref: '#/definitions/LocalizedValue'
+      name:
+        $ref: '#/definitions/LocalizedValue'
+      webPages:
+        type: array
+        items:
+          $ref: '#/definitions/WebPage'
+      serviceHours:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceHour'
+      supportContacts:
+        type: array
+        items:
+          $ref: '#/definitions/Support'
   ServiceElectronicChannel:
     type: object
     properties:

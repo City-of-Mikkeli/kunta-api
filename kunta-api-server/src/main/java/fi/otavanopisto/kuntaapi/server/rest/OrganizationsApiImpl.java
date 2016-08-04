@@ -13,14 +13,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 
 @Path("/services")
 public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Inject
   private Instance<ServiceProvider> serviceProviders;
+
+  @Inject
+  private Instance<ServiceClassProvider> serviceClassProvider;
   
   @Context
   private HttpServletRequest request;
@@ -68,6 +73,34 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     return Response.ok(services)
       .build();
   }
+
+  @Override
+  public Response updateService(String organizationId, String serviceId) {
+    return createNotImplemented("Not implemented");
+  }
+
+  @Override
+  public Response updateServiceData(String organizationId, String serviceId, String dataId) {
+    return createNotImplemented("Not implemented");
+  }
+
+  @Override
+  public Response listServiceElectornicChannels(String organizationId, String serviceId) {
+    return createNotImplemented("Not implemented");
+  }
+  
+  @Override
+  public Response listServiceClasses(String organizationId) {
+    // TODO: Merge provider results
+    
+    List<ServiceClass> result = new ArrayList<>();
+    for (ServiceClassProvider serviceClassProvider : getServiceClassProviders()) {
+      result.addAll(serviceClassProvider.listOrganizationServiceClasses(organizationId));
+    }
+    
+    return Response.ok(result)
+      .build();
+  }
   
   private List<ServiceProvider> getServiceProviders() {
     // TODO: Prioritize providers
@@ -81,16 +114,18 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     
     return Collections.unmodifiableList(result);
   }
-
-  @Override
-  public Response updateService(String organizationId, String serviceId) {
-    return createNotImplemented("Not implemented");
-  }
-
-  @Override
-  public Response updateServiceData(String organizationId, String serviceId, String dataId) {
-    return createNotImplemented("Not implemented");
-  }
   
+  private List<ServiceClassProvider> getServiceClassProviders() {
+    // TODO: Prioritize providers
+    
+    List<ServiceClassProvider> result = new ArrayList<>();
+    
+    Iterator<ServiceClassProvider> iterator = serviceClassProvider.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
 }
 
