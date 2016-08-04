@@ -2,6 +2,7 @@
 
 var config = require(__dirname + '/../config.json');
 var feed = require("feed-read");
+
 var KuntaApi = require(__dirname + '/../kunta-api')({
   basePath: config.api.basePath
 });
@@ -9,12 +10,22 @@ var ServicesApi = new KuntaApi.ServicesApi();
 
 module.exports = function(app){
   app.get('/', function(req, res) {
+    var feedPromise = new Promise(function(resolve,reject) {
+      feed(config.defaults.newsFeed, function (err, articles) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(articles);
+        }
+      });  
+    });
     
-    ServicesApi.listServiceClasses(config.defaults.organizationId).then(function(apiServiceClasses) {
-      feed('https://open.mikkeli.fi/rss', function(err, articles) {
-        if (err) throw err;
-        
-        // TODO: use locale
+    var serviceClassesPromise = ServicesApi.listServiceClasses(config.defaults.organizationId);
+    
+    Promise.all([feedPromise, serviceClassesPromise])
+      .then(function (promises) { 
+        var articles = promises[0];
+        var apiServiceClasses = promises[1];
         
         var serviceClasses = apiServiceClasses.map(function (apiServiceClass) {
           return {
@@ -33,9 +44,8 @@ module.exports = function(app){
           news: articles,
           serviceClasses: serviceClasses
         });
-      });
     }, function(error) {
-      console.error(error);
+      res.status(500).send(error);
     });
   });
 };
