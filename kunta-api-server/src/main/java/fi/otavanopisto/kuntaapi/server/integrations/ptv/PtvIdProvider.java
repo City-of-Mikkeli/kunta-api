@@ -20,11 +20,11 @@ public class PtvIdProvider implements IdProvider {
 
   @Override
   public boolean canTranslate(String source, String target) {
-    if (PtvConsts.SOURCE.equals(source) && KuntaApiConsts.SOURCE.equals(target)) {
+    if (PtvConsts.IDENTIFIFER_NAME.equals(source) && KuntaApiConsts.IDENTIFIER_NAME.equals(target)) {
       return true;
     }
     
-    if (PtvConsts.SOURCE.equals(target) && KuntaApiConsts.SOURCE.equals(source)) {
+    if (PtvConsts.IDENTIFIFER_NAME.equals(target) && KuntaApiConsts.IDENTIFIER_NAME.equals(source)) {
       return true;
     }
     
@@ -36,16 +36,16 @@ public class PtvIdProvider implements IdProvider {
     Identifier identifier;
     
     switch (organizationId.getSource()) {
-      case PtvConsts.SOURCE:
+      case PtvConsts.IDENTIFIFER_NAME:
         identifier = identifierController.findIdentifierById(organizationId);
         if (identifier != null) {
-          return new OrganizationId(KuntaApiConsts.SOURCE, identifier.getKuntaApiId());
+          return new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
         }
       break;
-      case KuntaApiConsts.SOURCE:
-        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.ORGANIZATION, PtvConsts.SOURCE, organizationId.getId());
+      case KuntaApiConsts.IDENTIFIER_NAME:
+        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.ORGANIZATION, PtvConsts.IDENTIFIFER_NAME, organizationId.getId());
         if (identifier != null) {
-          return new OrganizationId(PtvConsts.SOURCE, identifier.getSourceId());
+          return new OrganizationId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
         }
       break;
     }

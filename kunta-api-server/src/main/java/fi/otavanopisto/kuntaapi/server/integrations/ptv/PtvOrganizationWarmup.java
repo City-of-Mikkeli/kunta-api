@@ -22,8 +22,8 @@ import fi.otavanopisto.ptv.client.model.VmOpenApiGuidPage;
 @Singleton
 public class PtvOrganizationWarmup {
   
-  private static final int TIMER_INITIAL = 2000;
-  private static final int TIMER_INTERVAL = 1000;
+  private static final int TIMER_INITIAL = 60000;
+  private static final int TIMER_INTERVAL = 60000;
   
   @Inject
   private Logger logger;
@@ -65,9 +65,9 @@ public class PtvOrganizationWarmup {
       VmOpenApiGuidPage pageData = response.getResponse();
       
       for (String guid : pageData.getGuidList()) {
-        Identifier identifier = identifierController.findIdentifierByTypeSourceAndId(IdType.ORGANIZATION, PtvConsts.SOURCE, guid);
+        Identifier identifier = identifierController.findIdentifierByTypeSourceAndId(IdType.ORGANIZATION, PtvConsts.IDENTIFIFER_NAME, guid);
         if (identifier == null) {
-          identifierController.createIdentifier(IdType.ORGANIZATION, PtvConsts.SOURCE, guid);
+          identifierController.createIdentifier(IdType.ORGANIZATION, PtvConsts.IDENTIFIFER_NAME, guid);
           discoverCount++;
         }
       }
@@ -84,10 +84,11 @@ public class PtvOrganizationWarmup {
     
     if (hasMore) {
       page++;
-      startTimer(TIMER_INTERVAL);
     } else {
-      logger.info("Organizations update complete");
+      page = 0;
     }
+    
+    startTimer(TIMER_INTERVAL);
   }
   
   private int page;

@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
@@ -64,8 +65,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Override
   public Response listServices(String organizationIdParam, String serviceClassIdParam) {
-    OrganizationId organizationId  = new OrganizationId(organizationIdParam);
-    ServiceClassId serviceClassId = new ServiceClassId(serviceClassIdParam);
+    OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    ServiceClassId serviceClassId = new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, serviceClassIdParam);
     
     // TODO: Merge services
     
@@ -96,7 +97,7 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Override
   public Response listServiceClasses(String organizationIdParam) {
-    OrganizationId organizationId  = new OrganizationId(organizationIdParam);
+    OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
 
     // TODO: Merge provider results
     

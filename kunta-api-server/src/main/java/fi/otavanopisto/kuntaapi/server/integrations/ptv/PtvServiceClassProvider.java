@@ -37,7 +37,7 @@ public class PtvServiceClassProvider implements ServiceClassProvider {
 
   @Override
   public List<ServiceClass> listOrganizationServiceClasses(OrganizationId organizationId) {
-    OrganizationId ptvOrganizationId = idController.translateOrganizationId(organizationId, PtvConsts.SOURCE);
+    OrganizationId ptvOrganizationId = idController.translateOrganizationId(organizationId, PtvConsts.IDENTIFIFER_NAME);
     
     ApiResponse<VmOpenApiOrganization> organizationResponse = ptvApi.getOrganizationApi()
         .apiOrganizationByIdGet(ptvOrganizationId.getId());
@@ -83,8 +83,8 @@ public class PtvServiceClassProvider implements ServiceClassProvider {
     
     List<ServiceClass> result = new ArrayList<>(ptvServiceClasses.size());
     for (VmOpenApiFintoItem ptvServiceClass : ptvServiceClasses) {
-      ServiceClassId ptvId = new ServiceClassId(PtvConsts.SOURCE, ptvServiceClass.getId());
-      ServiceClassId kuntaApiId = idController.translateServiceClassId(ptvId, KuntaApiConsts.SOURCE);
+      ServiceClassId ptvId = new ServiceClassId(PtvConsts.IDENTIFIFER_NAME, ptvServiceClass.getId());
+      ServiceClassId kuntaApiId = idController.translateServiceClassId(ptvId, KuntaApiConsts.IDENTIFIER_NAME);
       if (kuntaApiId == null) {
         logger.severe(String.format("Could not translate %s into Kunta API id", ptvServiceClass.getId()));
         continue;  
