@@ -11,9 +11,11 @@ import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import fi.otavanopisto.kuntaapi.server.controllers.OrganizationController;
+import fi.otavanopisto.kuntaapi.server.integrations.IdController;
+import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
+import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
-import fi.otavanopisto.kuntaapi.server.persistence.model.OrganizationIdentifier;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 import fi.otavanopisto.ptv.client.ApiResponse;
 import fi.otavanopisto.ptv.client.model.IVmOpenApiService;
@@ -31,18 +33,14 @@ public class PtvServiceClassProvider implements ServiceClassProvider {
   private PtvApi ptvApi;
   
   @Inject
-  private OrganizationController organizationController;
+  private IdController idController;
 
   @Override
-  public List<ServiceClass> listOrganizationServiceClasses(String organizationId) {
-    OrganizationIdentifier organizationIdentifier = organizationController.findOrganizationIdentifierBySourceAndUuid(PtvConsts.SOURCE, organizationId);
-    if (organizationIdentifier == null) {
-      logger.warning(String.format("Could not find ptv organization for organizationId %s", organizationId));
-      return Collections.emptyList();
-    }
+  public List<ServiceClass> listOrganizationServiceClasses(OrganizationId organizationId) {
+    OrganizationId ptvOrganizationId = idController.translateOrganizationId(organizationId, PtvConsts.SOURCE);
     
     ApiResponse<VmOpenApiOrganization> organizationResponse = ptvApi.getOrganizationApi()
-        .apiOrganizationByIdGet(organizationIdentifier.getSourceId());
+        .apiOrganizationByIdGet(ptvOrganizationId.getId());
     
     if (!organizationResponse.isOk()) {
       logger.severe(String.format("finding organization failed for organizationId %s", organizationId));
@@ -85,8 +83,15 @@ public class PtvServiceClassProvider implements ServiceClassProvider {
     
     List<ServiceClass> result = new ArrayList<>(ptvServiceClasses.size());
     for (VmOpenApiFintoItem ptvServiceClass : ptvServiceClasses) {
-      // TODO: Incorrect ids 
+      ServiceClassId ptvId = new ServiceClassId(PtvConsts.SOURCE, ptvServiceClass.getId());
+      ServiceClassId kuntaApiId = idController.translateServiceClassId(ptvId, KuntaApiConsts.SOURCE);
+      if (kuntaApiId == null) {
+        logger.severe(String.format("Could not translate %s into Kunta API id", ptvServiceClass.getId()));
+        continue;  
+      }
+      
       ServiceClass serviceClass = new ServiceClass();
+      serviceClass.setId(kuntaApiId.getId());
       serviceClass.setCode(ptvServiceClass.getCode());
       serviceClass.setName(ptvServiceClass.getName());
       serviceClass.setOntologyType(ptvServiceClass.getOntologyType());

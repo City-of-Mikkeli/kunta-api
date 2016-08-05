@@ -10,9 +10,12 @@ import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import fi.otavanopisto.kuntaapi.server.controllers.OrganizationController;
+import fi.otavanopisto.kuntaapi.server.integrations.IdController;
+import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
+import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
-import fi.otavanopisto.kuntaapi.server.persistence.model.OrganizationIdentifier;
 import fi.otavanopisto.kuntaapi.server.rest.model.LocalizedValue;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.ptv.client.ApiResponse;
@@ -31,18 +34,16 @@ public class PtvServiceProvider implements ServiceProvider {
   private PtvApi ptvApi;
   
   @Inject
-  private OrganizationController organizationController;
+  private IdController idController;
 
   @Override
-  public List<Service> listOrganizationServices(Locale locale, String organizationId) {
-    OrganizationIdentifier organizationIdentifier = organizationController.findOrganizationIdentifierBySourceAndUuid(PtvConsts.SOURCE, organizationId);
-    if (organizationIdentifier == null) {
-      logger.warning(String.format("Could not find ptv organization for organizationId %s", organizationId));
-      return Collections.emptyList();
-    }
+  public List<Service> listOrganizationServices(Locale locale, OrganizationId organizationId, ServiceClassId serviceClassId) {
+    // TODO: Filter by service class id
+    
+    OrganizationId ptvOrganizationId = idController.translateOrganizationId(organizationId, PtvConsts.SOURCE);
     
     ApiResponse<VmOpenApiOrganization> organizationResponse = ptvApi.getOrganizationApi()
-        .apiOrganizationByIdGet(organizationIdentifier.getSourceId());
+        .apiOrganizationByIdGet(ptvOrganizationId.getId());
     
     if (!organizationResponse.isOk()) {
       logger.severe(String.format("finding organization failed for organizationId %s", organizationId));
@@ -66,26 +67,32 @@ public class PtvServiceProvider implements ServiceProvider {
     for (String ptvServiceId : ptvServiceIds) {
       ApiResponse<IVmOpenApiService> serviceResponse = ptvApi.getServiceApi().apiServiceByIdGet(ptvServiceId);
       if (serviceResponse.isOk()) {
-        ptvServices.add(serviceResponse.getResponse());
+        IVmOpenApiService ptvService = serviceResponse.getResponse();
+        ptvServices.add(ptvService);
       } else {
         logger.severe(String.format("Failed to find service %s", ptvServiceId));
       }
     }
     
-    return transform(locale, ptvServices);
+    return transform(ptvServices);
   }
 
-  private List<Service> transform(Locale locale, List<IVmOpenApiService> ptvServices) {
+  private List<Service> transform(List<IVmOpenApiService> ptvServices) {
     List<Service> result = new ArrayList<>(ptvServices.size());
     
     // Name types: Name, AlternateName
     // Description types: ShortDescription, ChargeDescription, ServiceUserInstruction, Description
     
     for (IVmOpenApiService ptvService : ptvServices) {
-      Service service = new Service();
-      // TODO: Incorrect id
+      ServiceId ptvId = new ServiceId(PtvConsts.SOURCE, ptvService.getId());
+      ServiceId kuntaApiId = idController.translateServiceId(ptvId, KuntaApiConsts.SOURCE);
+      if (kuntaApiId == null) {
+        logger.severe(String.format("Could not translate %s into Kunta API id", ptvId.getId()));
+        continue;  
+      }
       
-      service.setId(ptvService.getId());
+      Service service = new Service();
+      service.setId(kuntaApiId.getId());
       service.setName(getLocalizedValue("Name", ptvService.getServiceNames()));
       service.setDescription(getLocalizedValue("ShortDescription", ptvService.getServiceDescriptions()));
       result.add(service);

@@ -17,7 +17,7 @@ paths:
       operationId: createService
       summary: Create a service
       description: |
-        Creates new municipal service.
+        Creates new service for the organization
       parameters:
         - name: organizationId
           in: path
@@ -64,12 +64,18 @@ paths:
       operationId: listServices
       summary: List services
       description: |
-        The services endpoint returns list of municipal services.
+        Lists organization's services
       parameters:
         - name: organizationId
           in: path
           description: Organization id
           required: true
+          type: string
+          format: uuid
+        - name: serviceClassId
+          in: query
+          description: Filter services by service class id
+          required: false
           type: string
           format: uuid
       tags:

@@ -15,21 +15,21 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "uuid", "source", "sourceId" }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "type", "source", "sourceId", "kuntaApiId" }) })
 @Cacheable(true)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class OrganizationIdentifier {
+public class Identifier {
 
   public Long getId() {
     return id;
   }
 
-  public String getUuid() {
-    return uuid;
+  public String getKuntaApiId() {
+    return kuntaApiId;
   }
-
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
+  
+  public void setKuntaApiId(String kuntaApiId) {
+    this.kuntaApiId = kuntaApiId;
   }
 
   public String getSource() {
@@ -47,9 +47,13 @@ public class OrganizationIdentifier {
   public void setSourceId(String sourceId) {
     this.sourceId = sourceId;
   }
-
-  public void setId(Long id) {
-    this.id = id;
+  
+  public String getType() {
+    return type;
+  }
+  
+  public void setType(String type) {
+    this.type = type;
   }
 
   @Id
@@ -59,7 +63,12 @@ public class OrganizationIdentifier {
   @Column(nullable = false)
   @NotNull
   @NotEmpty
-  private String uuid;
+  private String kuntaApiId;
+
+  @Column(nullable = false)
+  @NotNull
+  @NotEmpty
+  private String type;
 
   @Column(nullable = false)
   @NotNull

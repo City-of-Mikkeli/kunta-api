@@ -13,6 +13,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
@@ -61,13 +63,16 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
 
   @Override
-  public Response listServices(String organizationId) {
+  public Response listServices(String organizationIdParam, String serviceClassIdParam) {
+    OrganizationId organizationId  = new OrganizationId(organizationIdParam);
+    ServiceClassId serviceClassId = new ServiceClassId(serviceClassIdParam);
+    
     // TODO: Merge services
     
     Locale locale = request.getLocale();
     List<Service> services = new ArrayList<>();
     for (ServiceProvider serviceProvider : getServiceProviders()) {
-      services.addAll(serviceProvider.listOrganizationServices(locale, organizationId));
+      services.addAll(serviceProvider.listOrganizationServices(locale, organizationId, serviceClassId));
     }
     
     return Response.ok(services)
@@ -90,7 +95,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
   
   @Override
-  public Response listServiceClasses(String organizationId) {
+  public Response listServiceClasses(String organizationIdParam) {
+    OrganizationId organizationId  = new OrganizationId(organizationIdParam);
+
     // TODO: Merge provider results
     
     List<ServiceClass> result = new ArrayList<>();

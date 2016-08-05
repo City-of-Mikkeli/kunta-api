@@ -7,6 +7,6 @@ import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 
 public interface ServiceProvider {
   
-  public List<Service> listOrganizationServices(Locale locale, String organizationId);
+  public List<Service> listOrganizationServices(Locale locale, OrganizationId organizationId, ServiceClassId serviceClassId);
   
 }
