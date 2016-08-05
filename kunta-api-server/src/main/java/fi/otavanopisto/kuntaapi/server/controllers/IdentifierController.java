@@ -1,5 +1,6 @@
 package fi.otavanopisto.kuntaapi.server.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.Dependent;
@@ -51,6 +52,10 @@ public class IdentifierController {
 
   public Identifier findIdentifierByTypeSourceAndKuntaApiId(IdType type, String source, String kuntaApiId) {
     return findIdentifierByTypeSourceAndKuntaApiId(type.toString(), source, kuntaApiId);
+  }
+
+  public List<Identifier> listIdentifiersByTypeAndSource(IdType type, String source, Integer firstResult, Integer maxResults) {
+    return identifierDAO.listByTypeAndSource(type.toString(), source, firstResult, maxResults);
   }
 
 

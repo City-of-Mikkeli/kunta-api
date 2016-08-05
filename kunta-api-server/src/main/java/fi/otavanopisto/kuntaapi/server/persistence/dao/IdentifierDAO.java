@@ -1,7 +1,10 @@
 package fi.otavanopisto.kuntaapi.server.persistence.dao;
 
+import java.util.List;
+
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -59,6 +62,32 @@ public class IdentifierDAO extends AbstractDAO<Identifier> {
     );
     
     return getSingleResult(entityManager.createQuery(criteria));
+  }
+
+  public List<Identifier> listByTypeAndSource(String type, String source, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Identifier> criteria = criteriaBuilder.createQuery(Identifier.class);
+    Root<Identifier> root = criteria.from(Identifier.class);
+    criteria.select(root);
+    criteria.where(
+      criteriaBuilder.and(
+        criteriaBuilder.equal(root.get(Identifier_.type), type),
+        criteriaBuilder.equal(root.get(Identifier_.source), source)     
+      )
+    );
+    
+    TypedQuery<Identifier> query = entityManager.createQuery(criteria);
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+    
+    return query.getResultList();
   }
   
 }

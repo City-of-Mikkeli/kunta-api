@@ -85,8 +85,9 @@ public class PtvServiceClassProvider implements ServiceClassProvider {
     for (VmOpenApiFintoItem ptvServiceClass : ptvServiceClasses) {
       ServiceClassId ptvId = new ServiceClassId(PtvConsts.IDENTIFIFER_NAME, ptvServiceClass.getId());
       ServiceClassId kuntaApiId = idController.translateServiceClassId(ptvId, KuntaApiConsts.IDENTIFIER_NAME);
+      
       if (kuntaApiId == null) {
-        logger.severe(String.format("Could not translate %s into Kunta API id", ptvServiceClass.getId()));
+        logger.severe(String.format("Could not translate %s into Kunta API id (uri: %s)", ptvServiceClass.getId(), ptvServiceClass.getUri()));
         continue;  
       }
       
