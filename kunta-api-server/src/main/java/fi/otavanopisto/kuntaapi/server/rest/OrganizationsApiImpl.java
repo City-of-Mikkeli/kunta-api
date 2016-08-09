@@ -6,10 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.ejb.Stateful;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -21,7 +22,8 @@ import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 
-@Path("/services")
+@RequestScoped
+@Stateful
 public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Inject
