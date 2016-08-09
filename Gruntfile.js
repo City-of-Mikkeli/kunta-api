@@ -94,9 +94,8 @@ module.exports = function(grunt) {
           -o kunta-api-spec/languages/jaxrs-spec/'
       },
       'generate-ptv-java-client': {
-//      -i http://ptvenv.cloudapp.net:1494/swagger/v1/swagger.json \
         command : 'java -jar kunta-api-spec/swagger-codegen-cli.jar generate \
-          -i ptv-swagger.json \
+          -i http://ptvenv.cloudapp.net:1494/swagger/v1/swagger.json \
           -l java \
           --api-package fi.otavanopisto.ptv.client\
           --model-package fi.otavanopisto.ptv.client.model \
