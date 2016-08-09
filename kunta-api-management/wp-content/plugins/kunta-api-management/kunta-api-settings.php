@@ -23,10 +23,16 @@
   	echo "<input id='apibaseurl' name='kunta_api_management[apibaseurl]' size='40' type='text' value='{$options['apibaseurl']}' />";
   }
   
+  function kunta_api_management_organizationid() {
+  	$options = get_option('kunta_api_management');
+  	echo "<input id='organizationid' name='kunta_api_management[organizationid]' size='40' type='text' value='{$options['organizationid']}' />";
+  }
+  
   function kunta_api_management_register_settings() { 
   	register_setting( 'kunta_api_management', 'kunta_api_management', 'kunta_api_management_validate');
   	add_settings_section('kunta_api_management', 'Settings', 'kunta_api_management_section_text', 'kunta_api_management');
   	add_settings_field('apibaseurl', 'API Base URL', 'kunta_api_management_apibaseurl', 'kunta_api_management', 'kunta_api_management');
+  	add_settings_field('organizationid', 'Organization Id', 'kunta_api_management_organizationid', 'kunta_api_management', 'kunta_api_management');
   }
   
   function kunta_api_management_settings_page() {
