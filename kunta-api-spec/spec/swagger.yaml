@@ -580,9 +580,13 @@ definitions:
         format: uuid
         description: Unique identifier representing a specific service.
       description:
-        $ref: '#/definitions/LocalizedValue'
+        type: array
+        items:
+          $ref: '#/definitions/LocalizedValue'
       name:
-        $ref: '#/definitions/LocalizedValue'
+        type: array
+        items:
+          $ref: '#/definitions/LocalizedValue'
       source_ids:  
         type: array
         description: Name of the service.
@@ -642,9 +646,13 @@ definitions:
         type: string
         format: uuid
       description:
-        $ref: '#/definitions/LocalizedValue'
+        type: array
+        items:
+          $ref: '#/definitions/LocalizedValue'
       name:
-        $ref: '#/definitions/LocalizedValue'
+        type: array
+        items:
+          $ref: '#/definitions/LocalizedValue'
       webPages:
         type: array
         items:
@@ -670,7 +678,7 @@ definitions:
       urls:
         type: array
         items:
-          $ref: '#/definitions/LanguageItem'
+          $ref: '#/definitions/LocalizedValue'
       attachments:
         type: array
         items:
@@ -701,11 +709,6 @@ definitions:
         type: string
         description: name of the service source
   LocalizedValue:
-    type: object
-    additionalProperties: {
-      type: string
-    }
-  LanguageItem:
     type: object
     properties:
       language:

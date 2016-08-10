@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
@@ -31,9 +28,6 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Inject
   private Instance<ServiceClassProvider> serviceClassProvider;
-  
-  @Context
-  private HttpServletRequest request;
   
   @Override
   public Response createService(String organizationId, Service body) {
@@ -72,10 +66,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     
     // TODO: Merge services
     
-    Locale locale = request.getLocale();
     List<Service> services = new ArrayList<>();
     for (ServiceProvider serviceProvider : getServiceProviders()) {
-      services.addAll(serviceProvider.listOrganizationServices(locale, organizationId, serviceClassId));
+      services.addAll(serviceProvider.listOrganizationServices(organizationId, serviceClassId));
     }
     
     return Response.ok(services)

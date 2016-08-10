@@ -3,7 +3,6 @@ package fi.otavanopisto.kuntaapi.server.integrations.ptv;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -20,6 +19,7 @@ import fi.otavanopisto.kuntaapi.server.rest.model.LocalizedValue;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.ptv.client.ApiResponse;
 import fi.otavanopisto.ptv.client.model.IVmOpenApiService;
+import fi.otavanopisto.ptv.client.model.VmOpenApiFintoItem;
 import fi.otavanopisto.ptv.client.model.VmOpenApiLocalizedListItem;
 import fi.otavanopisto.ptv.client.model.VmOpenApiOrganization;
 import fi.otavanopisto.ptv.client.model.VmOpenApiOrganizationService;
@@ -37,8 +37,15 @@ public class PtvServiceProvider implements ServiceProvider {
   private IdController idController;
 
   @Override
-  public List<Service> listOrganizationServices(Locale locale, OrganizationId organizationId, ServiceClassId serviceClassId) {
-    // TODO: Filter by service class id
+  public List<Service> listOrganizationServices(OrganizationId organizationId, ServiceClassId serviceClassId) {
+    ServiceClassId ptvServiceClassId = null;
+    if (serviceClassId != null) {
+      ptvServiceClassId = idController.translateServiceClassId(serviceClassId, PtvConsts.IDENTIFIFER_NAME);
+      if (ptvServiceClassId == null) {
+        logger.severe(String.format("Failed to translate serviceClassId %s into PTV serviceClassId", serviceClassId.toString()));
+        return Collections.emptyList();
+      }
+    }
     
     OrganizationId ptvOrganizationId = idController.translateOrganizationId(organizationId, PtvConsts.IDENTIFIFER_NAME);
     
@@ -68,13 +75,30 @@ public class PtvServiceProvider implements ServiceProvider {
       ApiResponse<IVmOpenApiService> serviceResponse = ptvApi.getServiceApi().apiServiceByIdGet(ptvServiceId);
       if (serviceResponse.isOk()) {
         IVmOpenApiService ptvService = serviceResponse.getResponse();
-        ptvServices.add(ptvService);
+        if ((ptvServiceClassId == null) || hasServiceClass(ptvService, ptvServiceClassId)) {
+          ptvServices.add(ptvService);
+        }
       } else {
         logger.severe(String.format("Failed to find service %s", ptvServiceId));
       }
     }
     
     return transform(ptvServices);
+  }
+  
+  private boolean hasServiceClass(IVmOpenApiService ptvService, ServiceClassId ptvServiceClassId) {
+    List<VmOpenApiFintoItem> serviceClasseses = ptvService.getServiceClasses();
+    if (serviceClasseses == null) {
+      return false;
+    }
+    
+    for (VmOpenApiFintoItem serviceClasses : serviceClasseses) {
+      if (ptvServiceClassId.getId().equals(serviceClasses.getId())) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   private List<Service> transform(List<IVmOpenApiService> ptvServices) {
@@ -93,17 +117,17 @@ public class PtvServiceProvider implements ServiceProvider {
       
       Service service = new Service();
       service.setId(kuntaApiId.getId());
-      service.setName(getLocalizedValue("Name", ptvService.getServiceNames()));
-      service.setDescription(getLocalizedValue("ShortDescription", ptvService.getServiceDescriptions()));
+      service.setName(getLocalizedValues("Name", ptvService.getServiceNames()));
+      service.setDescription(getLocalizedValues("ShortDescription", ptvService.getServiceDescriptions()));
       result.add(service);
     }
     
     return result;
   }
   
-  private LocalizedValue getLocalizedValue(String type, List<VmOpenApiLocalizedListItem> items) {
+  private List<LocalizedValue> getLocalizedValues(String type, List<VmOpenApiLocalizedListItem> items) {
     if (items != null && !items.isEmpty()) {
-      LocalizedValue result = new LocalizedValue();
+      List<LocalizedValue> result = new ArrayList<>();
       List<VmOpenApiLocalizedListItem> typeItems = new ArrayList<>();
       
       for (VmOpenApiLocalizedListItem item : items) {
@@ -114,7 +138,10 @@ public class PtvServiceProvider implements ServiceProvider {
       
       if (!typeItems.isEmpty()) {
         for (VmOpenApiLocalizedListItem item : typeItems) {
-          result.put(item.getLanguage(), item.getValue());
+          LocalizedValue localizedValue = new LocalizedValue();
+          localizedValue.setLanguage(item.getLanguage());
+          localizedValue.setValue(item.getValue());
+          result.add(localizedValue);
         }
       
         return result;
