@@ -70,7 +70,7 @@ public class PtvServiceClassWarmup {
           }          
         }
       } else {
-        logger.severe(String.format("Failed to load service %d from PTV", serviceIdentifier.getSourceId())); 
+        logger.severe(String.format("Failed to load service %s from PTV", serviceIdentifier.getSourceId())); 
       }
     }
     
