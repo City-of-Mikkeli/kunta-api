@@ -8,7 +8,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     clean: {
       'clean-javascript': ['kunta-api-spec/languages/javascript'],
-      'clean-php': ['kunta-api-spec/languages/php'],
       'clean-jaxrs': ['kunta-api-spec/languages/jaxrs-spec'],
       'clean-jaxrs-generated-cruft': ['kunta-api-spec/languages/jaxrs-spec/src/main/java/fi/otavanopisto/kuntaapi/server/RestApplication.java'],
       'clean-ptv-java-client': ['ptv-rest-client'],
@@ -79,7 +78,17 @@ module.exports = function(grunt) {
         command : 'java -jar kunta-api-spec/swagger-codegen-cli.jar generate \
           -i kunta-api-spec/spec/swagger.yaml \
           -l php \
-          -o kunta-api-spec/languages/php/'
+          --template-dir kunta-api-spec/templates/php \
+          -o kunta-api-spec/languages/php/ \
+          --additional-properties packagePath=kunta-api-php-client,composerVendorName=otavanopisto,composerProjectName=kunta-api-php-client,artifactVersion=0.0.1-alpha1,invokerPackage=KuntaAPI,apiPackage=KuntaAPI\\\\Api,modelPackage=KuntaAPI\\\\Model'
+      },
+      'publish-php-client': {
+        command : 'sh git_push.sh',
+        options: {
+          execOptions: {
+            cwd: 'kunta-api-spec/languages/php/kunta-api-php-client/'
+          }
+        }
       },
       'generate-jaxrs-spec': {
         command : 'java -jar kunta-api-spec/swagger-codegen-cli.jar generate \
@@ -148,7 +157,7 @@ module.exports = function(grunt) {
   
   grunt.registerTask('download-dependencies', 'if:require-swagger-codegen');
   grunt.registerTask('create-javascript-client', ['clean:clean-javascript', 'shell:generate-javascript-client']);
-  grunt.registerTask('create-php-client', ['clean:clean-php', 'shell:generate-php-client']);
+  grunt.registerTask('create-php-client', ['shell:generate-php-client', 'shell:publish-php-client']);
   grunt.registerTask('create-jaxrs-spec', ['clean:clean-jaxrs', 'shell:generate-jaxrs-spec', 'clean:clean-jaxrs-generated-cruft', 'copy:copy-jaxrs-extras', 'shell:install-jaxrs-spec']);
   grunt.registerTask('publish-javascript-client', ['create-javascript-client', 'publish:publish-javascript-client']);
   grunt.registerTask('generate-ptv-java-client', ['clean:clean-ptv-java-client', 'shell:generate-ptv-java-client', 'clean:clean-ptv-java-client-cruft', 'copy:copy-ptv-rest-client-extras', 'shell:install-ptv-java-client']);
