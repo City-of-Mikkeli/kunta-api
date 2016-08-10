@@ -1,0 +1,15 @@
+{
+  "name": "otavanopisto/kunta-api-management-wordpress-plugin",
+  "description": "Kunta API Management plugin for Wordpress",
+  "keywords": ["wordpress", "plugin", "kunta-api"],
+  "license": "AGPL-3.0",
+  "type": "wordpress-plugin",
+  
+  "require": {
+    "otavanopisto/kunta-api-php-client": "*@dev"
+  },
+  "repositories": [{
+    "type": "git",
+    "url": "https://github.com/otavanopisto/kunta-api-php-client.git"
+  }]
+}
