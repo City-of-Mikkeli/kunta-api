@@ -8,13 +8,19 @@
 */
 
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
-require_once 'kunta-api-settings.php';
 
-register_activation_hook( __FILE__, 'kunta_api_management_activate' );
+require_once 'kunta-api-settings.php';
+require_once 'kunta-api-updater.php';
+
+function kunta_api_management_page_categories() {
+  register_taxonomy_for_object_type( 'category', 'page' );
+}
 
 function kunta_api_management_activate() {
 };
 
 load_plugin_textdomain('kunta_api_management', WP_PLUGIN_URL . '/kunta_api_management/langs/', 'kunta_api_management/langs/');
+register_activation_hook( __FILE__, 'kunta_api_management_activate' );
+add_action( 'init', 'kunta_api_management_page_categories' );
 
 ?>
