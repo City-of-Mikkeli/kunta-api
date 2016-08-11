@@ -17,6 +17,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.LocalizedValue;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceDescription;
 import fi.otavanopisto.ptv.client.ApiResponse;
 import fi.otavanopisto.ptv.client.model.IVmOpenApiService;
 import fi.otavanopisto.ptv.client.model.VmOpenApiFintoItem;
@@ -35,6 +36,26 @@ public class PtvServiceProvider implements ServiceProvider {
   
   @Inject
   private IdController idController;
+
+  @Override
+  public Service findOrganizationService(OrganizationId organizationId, ServiceId serviceId) {
+    ServiceId ptvServiceId = idController.translateServiceId(serviceId, PtvConsts.IDENTIFIFER_NAME);
+    if (ptvServiceId == null) {
+      logger.severe(String.format("Failed to translate serviceId %s into PTV serviceId", serviceId.toString()));
+      return null;
+    }
+    
+    ApiResponse<IVmOpenApiService> response = ptvApi.getServiceApi().apiServiceByIdGet(ptvServiceId.getId());
+    if (!response.isOk()) {
+      logger.severe(String.format("Failed to find service for id %s", ptvServiceId));
+      return null;
+    }
+    
+    IVmOpenApiService service = response.getResponse();
+    // TODO: Check that service belongs to correct organization
+    
+    return transform(service);
+  }
 
   @Override
   public List<Service> listOrganizationServices(OrganizationId organizationId, ServiceClassId serviceClassId) {
@@ -104,39 +125,43 @@ public class PtvServiceProvider implements ServiceProvider {
   private List<Service> transform(List<IVmOpenApiService> ptvServices) {
     List<Service> result = new ArrayList<>(ptvServices.size());
     
-    // Name types: Name, AlternateName
-    // Description types: ShortDescription, ChargeDescription, ServiceUserInstruction, Description
-    
     for (IVmOpenApiService ptvService : ptvServices) {
-      ServiceId ptvId = new ServiceId(PtvConsts.IDENTIFIFER_NAME, ptvService.getId());
-      ServiceId kuntaApiId = idController.translateServiceId(ptvId, KuntaApiConsts.IDENTIFIER_NAME);
-      if (kuntaApiId == null) {
-        logger.severe(String.format("Could not translate %s into Kunta API id", ptvId.getId()));
-        continue;  
+      Service service = transform(ptvService);
+      if (service != null) {
+        result.add(service);
       }
-      
-      Service service = new Service();
-      service.setId(kuntaApiId.getId());
-      service.setName(getLocalizedValues("Name", ptvService.getServiceNames()));
-      service.setDescription(getLocalizedValues("ShortDescription", ptvService.getServiceDescriptions()));
-      List<String> classIds = new ArrayList<>(ptvService.getServiceClasses().size());
-      
-      for (VmOpenApiFintoItem serviceClass : ptvService.getServiceClasses()) {
-        ServiceClassId classPtvId = new ServiceClassId(PtvConsts.IDENTIFIFER_NAME, serviceClass.getId());
-        ServiceClassId classKuntaApiId = idController.translateServiceClassId(classPtvId, KuntaApiConsts.IDENTIFIER_NAME);
-        if (classKuntaApiId != null) {
-          classIds.add(classKuntaApiId.getId());
-        } else {
-          logger.severe(String.format("Could not translate %s into Kunta API id", classPtvId.getId()));
-        }
-      }
-      
-      service.setClassIds(classIds);
-      
-      result.add(service);
     }
     
     return result;
+  }
+  
+  private Service transform(IVmOpenApiService ptvService) {
+    ServiceId ptvId = new ServiceId(PtvConsts.IDENTIFIFER_NAME, ptvService.getId());
+    ServiceId kuntaApiId = idController.translateServiceId(ptvId, KuntaApiConsts.IDENTIFIER_NAME);
+    if (kuntaApiId == null) {
+      logger.severe(String.format("Could not translate %s into Kunta API id", ptvId.getId()));
+      return null;
+    }
+    
+    Service service = new Service();
+    service.setId(kuntaApiId.getId());
+    service.setName(getLocalizedValues("Name", ptvService.getServiceNames()));
+    service.setDescriptions(getServiceDescriptions(ptvService.getServiceDescriptions()));
+    List<String> classIds = new ArrayList<>(ptvService.getServiceClasses().size());
+    
+    for (VmOpenApiFintoItem serviceClass : ptvService.getServiceClasses()) {
+      ServiceClassId classPtvId = new ServiceClassId(PtvConsts.IDENTIFIFER_NAME, serviceClass.getId());
+      ServiceClassId classKuntaApiId = idController.translateServiceClassId(classPtvId, KuntaApiConsts.IDENTIFIER_NAME);
+      if (classKuntaApiId != null) {
+        classIds.add(classKuntaApiId.getId());
+      } else {
+        logger.severe(String.format("Could not translate %s into Kunta API id", classPtvId.getId()));
+      }
+    }
+    
+    service.setClassIds(classIds);
+    
+    return service;
   }
   
   private List<LocalizedValue> getLocalizedValues(String type, List<VmOpenApiLocalizedListItem> items) {
@@ -164,5 +189,22 @@ public class PtvServiceProvider implements ServiceProvider {
     
     return null;
   }
-  
+
+  private List<ServiceDescription> getServiceDescriptions(List<VmOpenApiLocalizedListItem> ptvDescriptions) {
+    if (ptvDescriptions != null && !ptvDescriptions.isEmpty()) {
+      List<ServiceDescription> result = new ArrayList<>();
+      
+      for (VmOpenApiLocalizedListItem ptvDescription : ptvDescriptions) {
+        ServiceDescription serviceDescription = new ServiceDescription();
+        serviceDescription.setType(ptvDescription.getType());
+        serviceDescription.setLanguage(ptvDescription.getLanguage());
+        serviceDescription.setValue(ptvDescription.getValue());
+        result.add(serviceDescription);
+      }
+    
+      return result;
+    }
+    
+    return Collections.emptyList();
+  }
 }

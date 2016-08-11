@@ -10,11 +10,13 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
@@ -35,28 +37,23 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
 
   @Override
-  public Response deleteService(String organizationId, String serviceId) {
-    return createNotImplemented("Not implemented");
-  }
-
-  @Override
-  public Response deleteServiceData(String organizationId, String serviceId, String dataId) {
-    return createNotImplemented("Not implemented");
-  }
-
-  @Override
-  public Response findService(String organizationId, String serviceId) {
-    return createNotImplemented("Not implemented");
-  }
-
-  @Override
-  public Response findServiceData(String organizationId, String serviceId, String dataId) {
-    return createNotImplemented("Not implemented");
-  }
-
-  @Override
-  public Response listServiceDatas(String organizationId, String serviceId, String sourceId) {
-    return createNotImplemented("Not implemented");
+  public Response findService(String organizationIdParam, String serviceIdParam) {
+    OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
+    
+    // TODO: Merge services
+    
+    for (ServiceProvider serviceProvider : getServiceProviders()) {
+      Service service = serviceProvider.findOrganizationService(organizationId, serviceId);
+      if (service != null) {
+        return Response.ok(service)
+          .build();
+      }
+    }
+    
+    return Response
+        .status(Status.NOT_FOUND)
+        .build();
   }
 
   @Override
@@ -81,10 +78,10 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
 
   @Override
-  public Response updateServiceData(String organizationId, String serviceId, String dataId) {
+  public Response deleteService(String organizationId, String serviceId) {
     return createNotImplemented("Not implemented");
   }
-
+  
   @Override
   public Response listServiceElectornicChannels(String organizationId, String serviceId) {
     return createNotImplemented("Not implemented");
