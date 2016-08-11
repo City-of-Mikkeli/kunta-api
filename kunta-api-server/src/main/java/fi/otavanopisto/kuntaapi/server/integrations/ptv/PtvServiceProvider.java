@@ -119,6 +119,20 @@ public class PtvServiceProvider implements ServiceProvider {
       service.setId(kuntaApiId.getId());
       service.setName(getLocalizedValues("Name", ptvService.getServiceNames()));
       service.setDescription(getLocalizedValues("ShortDescription", ptvService.getServiceDescriptions()));
+      List<String> classIds = new ArrayList<>(ptvService.getServiceClasses().size());
+      
+      for (VmOpenApiFintoItem serviceClass : ptvService.getServiceClasses()) {
+        ServiceClassId classPtvId = new ServiceClassId(PtvConsts.IDENTIFIFER_NAME, serviceClass.getId());
+        ServiceClassId classKuntaApiId = idController.translateServiceClassId(classPtvId, KuntaApiConsts.IDENTIFIER_NAME);
+        if (classKuntaApiId != null) {
+          classIds.add(classKuntaApiId.getId());
+        } else {
+          logger.severe(String.format("Could not translate %s into Kunta API id", classPtvId.getId()));
+        }
+      }
+      
+      service.setClassIds(classIds);
+      
       result.add(service);
     }
     

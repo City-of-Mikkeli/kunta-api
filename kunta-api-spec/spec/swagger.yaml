@@ -592,6 +592,11 @@ definitions:
         description: Name of the service.
         items:
           type: string
+      class_ids:  
+        type: array
+        description: List of service classes
+        items:
+          type: string
       electronic_channel_ids:
         type: array
         items:
