@@ -132,7 +132,7 @@
   		  $user_id = 1;
   		  $name = kunta_api_localized_string($service->getName());
   		  $class_ids = $service->getClassIds();
-		  $content = '<article data-type="kunta-api-embedded-service" data-service-id="' . $id .'">' . __( 'Loading please wait...', 'kunta_api_management' ) . '</article>';
+		  $content = '<div data-type="kunta-api-embedded-service" data-service-id="' . $id .'">&nbsp;</div>';
           $status = "publish"; 
 		  
 		  if (!empty($name)) {

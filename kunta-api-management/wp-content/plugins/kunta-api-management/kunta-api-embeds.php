@@ -42,7 +42,7 @@
   function kunta_api_setup_embeds($content) {
   	$dom = HtmlDomParser::str_get_html($content);
   	
-  	foreach ($dom->find('article[data-type="kunta-api-embedded-service"]') as $article) {
+  	foreach ($dom->find('*[data-type="kunta-api-embedded-service"]') as $article) {
   	  $serviceId = $article->{'data-service-id'};
   	  $article->innertext = kunta_api_load_embeded_content($serviceId);
   	  $article->class = 'mceNonEditable';
