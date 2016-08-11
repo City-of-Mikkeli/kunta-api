@@ -11,6 +11,7 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 require_once 'kunta-api-settings.php';
 require_once 'kunta-api-updater.php';
+require_once 'kunta-api-embeds.php';
 
 function kunta_api_management_page_categories() {
   register_taxonomy_for_object_type( 'category', 'page' );
