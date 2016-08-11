@@ -65,7 +65,7 @@ public class PtvIdProvider implements IdProvider {
         }
       break;
       case KuntaApiConsts.IDENTIFIER_NAME:
-        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.ORGANIZATION, PtvConsts.IDENTIFIFER_NAME, serviceId.getId());
+        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE, PtvConsts.IDENTIFIFER_NAME, serviceId.getId());
         if (identifier != null) {
           return new ServiceId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
         }
@@ -87,7 +87,7 @@ public class PtvIdProvider implements IdProvider {
         }
       break;
       case KuntaApiConsts.IDENTIFIER_NAME:
-        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.ORGANIZATION, PtvConsts.IDENTIFIFER_NAME, serviceClassId.getId());
+        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE_CLASS, PtvConsts.IDENTIFIFER_NAME, serviceClassId.getId());
         if (identifier != null) {
           return new ServiceClassId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
         }
