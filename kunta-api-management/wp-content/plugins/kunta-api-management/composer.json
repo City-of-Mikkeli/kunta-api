@@ -6,7 +6,8 @@
   "type": "wordpress-plugin",
   
   "require": {
-    "otavanopisto/kunta-api-php-client": "*@dev"
+    "otavanopisto/kunta-api-php-client": "*@dev",
+    "sunra/php-simple-html-dom-parser": "1.5.1"
   },
   "repositories": [{
     "type": "git",
