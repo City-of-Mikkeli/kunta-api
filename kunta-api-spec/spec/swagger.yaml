@@ -57,7 +57,7 @@ paths:
           schema:
             $ref: '#/definitions/InternalServerError'
         501:
-          description: Returned when selected service source does support modification of data
+          description: Returned when selected service does support modification of data
           schema:
             $ref: '#/definitions/NotImplemented'
     get:
@@ -226,7 +226,7 @@ paths:
           schema:
             $ref: '#/definitions/InternalServerError'
         501:
-          description: Returned when selected service source does support modification of data
+          description: Returned when endpoint does support modification of data
           schema:
             $ref: '#/definitions/NotImplemented'            
     delete:
@@ -252,203 +252,6 @@ paths:
       responses:
         204:
           description: Empty response indicating a succesfull removal
-        400:
-          description: Invalid request was sent to the server
-          schema:
-            $ref: '#/definitions/BadRequest'
-        403:
-          description: Attempted to make a call with unauthorized client
-          schema:
-            $ref: '#/definitions/Forbidden'
-        404:
-          description: Not found
-          schema:
-            $ref: '#/definitions/NotFound'
-        500:
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/InternalServerError'
-  /organizations/{organizationId}/services/{serviceId}/datas:
-    get:
-      operationId: listServiceDatas
-      summary: List service datas
-      description: |
-        Returns list of data fields assigned to the specified service
-      parameters:
-        - name: organizationId
-          in: path
-          description: Organization id
-          required: true
-          type: string
-          format: uuid
-        - name: serviceId
-          in: path
-          description: Service id
-          required: true
-          type: string
-        - name: sourceId
-          in: query
-          description: |
-            Service source id. When specified datas of only specified source are listed. Default is to list datas of all sources.
-          required: false
-          type: string
-          format: uuid
-      tags:
-        - Services
-        - Service Data
-      responses:
-        200:
-          description: List of data fields
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/ServiceData'
-        400:
-          description: Invalid request was sent to the server
-          schema:
-            $ref: '#/definitions/BadRequest'
-        403:
-          description: Attempted to make a call with unauthorized client
-          schema:
-            $ref: '#/definitions/Forbidden'
-        404:
-          description: Not found
-          schema:
-            $ref: '#/definitions/NotFound'
-        500:
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/InternalServerError'
-  /organizations/{organizationId}/services/{serviceId}/datas/{dataId}:
-    get:
-      operationId: findServiceData
-      summary: Find single service data field by id
-      description: |
-        Returns a single service data field by id
-      parameters:
-        - name: organizationId
-          in: path
-          description: Organization id
-          required: true
-          type: string
-          format: uuid
-        - name: serviceId
-          in: path
-          description: Service id
-          required: true
-          type: string
-          format: uuid
-        - name: dataId
-          in: path
-          description: |
-            Service data field id.
-          required: true
-          type: string
-          format: uuid
-      tags:
-        - Services
-        - Service Data
-      responses:
-        200:
-          description: List of data fields
-          schema:
-            $ref: '#/definitions/ServiceData'
-        400:
-          description: Invalid request was sent to the server
-          schema:
-            $ref: '#/definitions/BadRequest'
-        403:
-          description: Attempted to make a call with unauthorized client
-          schema:
-            $ref: '#/definitions/Forbidden'
-        404:
-          description: Not found
-          schema:
-            $ref: '#/definitions/NotFound'
-        500:
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/InternalServerError'
-    put:
-      operationId: updateServiceData
-      summary: Update single service data field by id
-      description: |
-        Update a single service data field by id
-      parameters:
-        - name: organizationId
-          in: path
-          description: Organization id
-          required: true
-          type: string
-          format: uuid
-        - name: serviceId
-          in: path
-          description: Service id
-          required: true
-          type: string
-          format: uuid
-        - name: dataId
-          in: path
-          description: |
-            Service data field id.
-          required: true
-          type: string
-          format: uuid
-      tags:
-        - Services
-        - Service Data
-      responses:
-        200:
-          description: Updated data field
-          schema:
-            $ref: '#/definitions/ServiceData'
-        400:
-          description: Invalid request was sent to the server
-          schema:
-            $ref: '#/definitions/BadRequest'
-        403:
-          description: Attempted to make a call with unauthorized client
-          schema:
-            $ref: '#/definitions/Forbidden'
-        404:
-          description: Not found
-          schema:
-            $ref: '#/definitions/NotFound'
-        500:
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/InternalServerError'
-    delete:
-      operationId: deleteServiceData
-      summary: Delete single service data field by id
-      description: |
-        Delete a single service data field by id
-      parameters:
-        - name: organizationId
-          in: path
-          description: Organization id
-          required: true
-          type: string
-          format: uuid
-        - name: serviceId
-          in: path
-          description: Service id
-          required: true
-          type: string
-          format: uuid
-        - name: dataId
-          in: path
-          description: |
-            Service data field id.
-          required: true
-          type: string
-          format: uuid
-      tags:
-        - Services
-        - Service Data
-      responses:
-        204:
-          description: Empty result indicating successful deletion.
         400:
           description: Invalid request was sent to the server
           schema:
@@ -579,10 +382,10 @@ definitions:
         type: string
         format: uuid
         description: Unique identifier representing a specific service.
-      description:
+      descriptions:
         type: array
         items:
-          $ref: '#/definitions/LocalizedValue'
+          $ref: '#/definitions/ServiceDescription'
       name:
         type: array
         items:
@@ -622,6 +425,19 @@ definitions:
         items:
           type: string
           format: uuid
+  LocalizedValue: 
+    type: object
+    properties: &LocalizedValue
+      language:
+        type: string
+      value:
+        type: string
+  ServiceDescription:
+    type: object
+    properties: 
+      <<: *LocalizedValue
+      type:
+        type: string
   ServiceClass:
     type: object
     properties:
@@ -688,21 +504,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Attachment'
-  ServiceData:
-    type: object
-    properties:
-      id:
-        type: string
-        description: Unique identifier representing a specific service.
-      name:
-        type: string
-        description: Name of the service.
-      source_id:
-        type: string
-        description: Identifier of data's source
-      value:
-        type: string
-        description: Value
   ServiceSource:
     type: object
     description: Specifies a single source for the service
@@ -713,13 +514,6 @@ definitions:
       name:
         type: string
         description: name of the service source
-  LocalizedValue:
-    type: object
-    properties:
-      language:
-        type: string
-      value:
-        type: string
   Support:
     properties:
       email:
