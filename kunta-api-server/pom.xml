@@ -74,7 +74,7 @@
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <archive>
             <manifestEntries>
-              <Dependencies>org.apache.httpcomponents</Dependencies>
+              <Dependencies>org.apache.httpcomponents, org.infinispan, org.apache.commons.io</Dependencies>
             </manifestEntries>
           </archive>
         </configuration>
@@ -209,6 +209,18 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-commons</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
