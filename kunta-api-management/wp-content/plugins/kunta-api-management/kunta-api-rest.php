@@ -1,18 +1,20 @@
 <?php
   defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
   
-  function kunta_api_get_service_id($object, $field_name, $request) {
-  	return get_post_meta( $object[ 'id' ], 'kunta-api-service-id', true);
+  function kunta_api_get_data($object, $field_name, $request) {
+  	return array(
+  	  "service-id" => get_post_meta( $object[ 'id' ], 'kunta-api-service-id', true)
+  	);
   }
   
   add_action('rest_api_init', function () {
-  	register_rest_field('page', 'kunta-api-service-id', array(
-  	  'get_callback'    => 'kunta_api_get_service_id',
+  	register_rest_field('page', 'kunta-api-data', array(
+  	  'get_callback'    => 'kunta_api_get_data',
   	  'update_callback' => null,
   	  'schema'          => array(
-  	  	 "title" => "Kunta API service id",
+  	  	 "title" => "Kunta API Data",
   	  	 "properties" => array(
-  	  	 	"kunta-api-service-id" => array (
+  	  	 	"service-id" => array (
   	  	 	  "type" => "string"
   	  	 	)
   	  	 )
