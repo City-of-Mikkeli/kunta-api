@@ -132,8 +132,8 @@
   		  $user_id = 1;
   		  $name = kunta_api_localized_string($service->getName());
   		  $class_ids = $service->getClassIds();
-		  $content = '<div data-type="kunta-api-embedded-service" data-service-id="' . $id .'">&nbsp;</div>';
-          $status = "publish"; 
+		    $content = '<div data-type="kunta-api-embedded-service" data-service-id="' . $id .'"></div>';
+        $status = "publish"; 
 		  
 		  if (!empty($name)) {
 		  	$post_id = kunta_api_find_page_id_by_service_id($id);
@@ -160,10 +160,10 @@
   	  }
   	}
   }
-  
+  /**
   kunta_api_update_service_classes();
   foreach (kunta_api_list_service_class_ids() as $service_class_id) {
   	kunta_api_update_services($service_class_id);
   }
-  
+  **/
 ?>

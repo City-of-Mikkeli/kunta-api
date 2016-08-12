@@ -8,7 +8,6 @@
   }
   
   function kunta_api_tinymce_setup_plugins($plugin_array) {
-  	$plugin_array['kunta-api-embeds'] = plugin_dir_url( __FILE__ ) . 'tinymce/kunta-api-embeds/kunta-api-embeds.js';
   	$plugin_array['noneditable'] = plugin_dir_url( __FILE__ ) . 'tinymce/noneditable/plugin.min.js';
   	return $plugin_array;
   }
