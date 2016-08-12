@@ -39,6 +39,10 @@ public class PtvOrganizationWarmup {
 
   @PostConstruct
   public void init() {
+    if (!PtvConsts.SYNCHRONIZE) {
+      return;
+    }
+    
     page = 0;
     pageCount = 0;
     startTimer(TIMER_INITIAL);

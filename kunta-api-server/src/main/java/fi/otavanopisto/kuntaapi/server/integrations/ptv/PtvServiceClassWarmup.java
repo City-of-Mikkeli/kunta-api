@@ -24,8 +24,8 @@ import fi.otavanopisto.ptv.client.model.VmOpenApiFintoItem;
 @Singleton
 public class PtvServiceClassWarmup {
   
-  private static final int TIMER_INITIAL = 1000;
-  private static final int TIMER_INTERVAL = 1000;
+  private static final int TIMER_INITIAL = 60000;
+  private static final int TIMER_INTERVAL = 60000;
   private static final int MAX_RESULTS = 750;
   
   @Inject
@@ -42,7 +42,11 @@ public class PtvServiceClassWarmup {
 
   @PostConstruct
   public void init() {
-    firstResult = 350;
+    if (!PtvConsts.SYNCHRONIZE) {
+      return;
+    }
+    
+    firstResult = 0;
     startTimer(TIMER_INITIAL);
   }
   
