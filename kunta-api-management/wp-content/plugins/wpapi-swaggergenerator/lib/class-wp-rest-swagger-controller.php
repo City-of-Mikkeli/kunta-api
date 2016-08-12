@@ -133,9 +133,10 @@ class WP_REST_Swagger_Controller extends WP_REST_Controller {
 		$restServer = rest_get_server();
 		
 		foreach($restServer->get_routes() as $endpointName => $endpoint){
+			
 			// don't include self - that's a bit meta
 			if($endpointName=='/'.$this->namespace.'/swagger') continue; 
-
+			
 			$routeopt = $restServer->get_route_options( $endpointName );
 			if(!empty($routeopt['schema'][1])){
 				$schema = call_user_func(array(
@@ -149,6 +150,8 @@ class WP_REST_Swagger_Controller extends WP_REST_Controller {
 				//will not work - move to the next one.
 				continue;
 			}
+			
+			
 			
 			$defaultidParams = array();
 			//Replace endpoints var and add to the parameters required
@@ -257,7 +260,7 @@ class WP_REST_Swagger_Controller extends WP_REST_Controller {
 				}
 			}
 		}
-		
+
 		$response = rest_ensure_response( $swagger );
 		
 		return apply_filters( 'rest_prepare_meta_value', $response, $request );
@@ -283,11 +286,11 @@ class WP_REST_Swagger_Controller extends WP_REST_Controller {
 			if($prop['type']=='date-time'){
 				$prop['type']='string';
 				$prop['format']='date-time';
-			}else			
-			if(!empty($prop['context'])){
-				$prop['enum']=$prop['context'];
-				
 			}
+//			else if(!empty($prop['context']) && $prop['format']!='date-time'){
+//				//$prop['enum']=$prop['context'];
+//				
+//			}
 			if(isset($prop['required']))unset($prop['required']);
 			if(isset($prop['readonly']))unset($prop['readonly']);
 			if(isset($prop['context']))unset($prop['context']);
