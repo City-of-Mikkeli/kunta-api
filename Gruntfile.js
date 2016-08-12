@@ -29,6 +29,25 @@ module.exports = function(grunt) {
         'ptv-rest-client/src/main/java/io',
         'ptv-rest-client/src/main/java/fi/otavanopisto/ptv/auth',
         'ptv-rest-client/src/main/java/fi/otavanopisto/ptv/*.java'
+      ],
+      'clean-mwp-java-client': ['mwp-client'],
+      'clean-mwp-java-client-cruft': [
+        'mwp-rest-client/docs', 
+        'mwp-rest-client/gradle', 
+        'mwp-rest-client/build.gradle',
+        'mwp-rest-client/build.sbt',
+        'mwp-rest-client/git_push.sh',
+        'mwp-rest-client/gradle.properties',
+        'mwp-rest-client/gradlew',
+        'mwp-rest-client/gradlew.bat',
+        'mwp-rest-client/LICENSE',
+        'mwp-rest-client/README.md',
+        'mwp-rest-client/settings.gradle',
+        'mwp-rest-client/src/test',
+        'mwp-rest-client/src/main/AndroidManifest.xml',
+        'mwp-rest-client/src/main/java/io',
+        'mwp-rest-client/src/main/java/fi/otavanopisto/mwp/auth',
+        'mwp-rest-client/src/main/java/fi/otavanopisto/mwp/*.java'
       ]
     },
     copy: {
@@ -43,12 +62,18 @@ module.exports = function(grunt) {
         dest: 'ptv-rest-client',
         cwd: 'ptv-rest-client-extras',
         expand: true
+      },
+      'copy-mwp-rest-client-extras': {
+        src: '**',
+        dest: 'mwp-rest-client',
+        cwd: 'mwp-rest-client-extras',
+        expand: true
       }
     },
     curl: {
       'download-swagger-codegen':  {
-        src: 'http://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.2.0/swagger-codegen-cli-2.2.0.jar',
-        dest: 'kunta-api-spec/swagger-codegen-cli.jar'
+        src: 'http://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.2.1/swagger-codegen-cli-2.2.1.jar',
+        dest: 'swagger-codegen-cli.jar'
       }
     },
     if: {
@@ -56,7 +81,7 @@ module.exports = function(grunt) {
         options: {
           test: function(){
             try {
-              fs.accessSync('kunta-api-spec/swagger-codegen-cli.jar');
+              fs.accessSync('swagger-codegen-cli.jar');
               return true;
             } catch (e) {
               return false;
@@ -68,7 +93,7 @@ module.exports = function(grunt) {
     },
     shell: {
       'generate-javascript-client': {
-        command : 'java -jar kunta-api-spec/swagger-codegen-cli.jar generate \
+        command : 'java -jar swagger-codegen-cli.jar generate \
           -i kunta-api-spec/spec/swagger.yaml \
           -l javascript \
           --template-dir kunta-api-spec/templates/javascript \
@@ -76,7 +101,7 @@ module.exports = function(grunt) {
           --additional-properties usePromises=true,projectName=kunta-api-client'
       },
       'generate-php-client': {
-        command : 'java -jar kunta-api-spec/swagger-codegen-cli.jar generate \
+        command : 'java -jar swagger-codegen-cli.jar generate \
           -i kunta-api-spec/spec/swagger.yaml \
           -l php \
           --template-dir kunta-api-spec/templates/php \
@@ -92,7 +117,7 @@ module.exports = function(grunt) {
         }
       },
       'generate-jaxrs-spec': {
-        command : 'java -jar kunta-api-spec/swagger-codegen-cli.jar generate \
+        command : 'java -jar swagger-codegen-cli.jar generate \
           -i kunta-api-spec/spec/swagger.yaml \
           -l jaxrs-spec \
           --api-package fi.otavanopisto.kuntaapi.server.rest \
@@ -104,7 +129,7 @@ module.exports = function(grunt) {
           -o kunta-api-spec/languages/jaxrs-spec/'
       },
       'generate-ptv-java-client': {
-        command : 'java -jar kunta-api-spec/swagger-codegen-cli.jar generate \
+        command : 'java -jar swagger-codegen-cli.jar generate \
           -i http://ptvenv.cloudapp.net:1494/swagger/v1/swagger.json \
           -l java \
           --api-package fi.otavanopisto.ptv.client\
@@ -115,6 +140,19 @@ module.exports = function(grunt) {
           --library jersey2 \
           --additional-properties dateLibrary=java8 \
           -o ptv-rest-client/'
+      },
+      'generate-mwp-java-client': {
+        command : 'java -jar swagger-codegen-cli.jar generate \
+          -i http://manage.kunta-api.dev/wp-json/apigenerate/swagger \
+          -l java \
+          --api-package fi.otavanopisto.mwp.client\
+          --model-package fi.otavanopisto.mwp.client.model \
+          --group-id fi.otavanopisto.mwp.rest-client \
+          --artifact-id mwp-rest-client\
+          --template-dir mwp-java-templates \
+          --library jersey2 \
+          --additional-properties dateLibrary=java8-localdatetime \
+          -o mwp-rest-client/'
       },
       'install-jaxrs-spec': {
         command : 'mvn install',
@@ -129,6 +167,14 @@ module.exports = function(grunt) {
         options: {
           execOptions: {
             cwd: 'ptv-rest-client'
+          }
+        }
+      },
+      'install-mwp-java-client': {
+        command : 'mvn install',
+        options: {
+          execOptions: {
+            cwd: 'mwp-rest-client'
           }
         }
       },
@@ -170,8 +216,10 @@ module.exports = function(grunt) {
   grunt.registerTask('install-php-client', ['clean:clean-management-composer-files', 'shell:update-management-composer-files']);
   grunt.registerTask('create-jaxrs-spec', ['clean:clean-jaxrs', 'shell:generate-jaxrs-spec', 'clean:clean-jaxrs-generated-cruft', 'copy:copy-jaxrs-extras', 'shell:install-jaxrs-spec']);
   grunt.registerTask('publish-javascript-client', ['create-javascript-client', 'publish:publish-javascript-client']);
-  grunt.registerTask('generate-ptv-java-client', ['clean:clean-ptv-java-client', 'shell:generate-ptv-java-client', 'clean:clean-ptv-java-client-cruft', 'copy:copy-ptv-rest-client-extras', 'shell:install-ptv-java-client']);
   grunt.registerTask('install-javascript-client-to-www', ['shell:pack-javascript-client', 'shell:install-javascript-client-www']);
+  
+  grunt.registerTask('generate-ptv-java-client', ['download-dependencies', 'clean:clean-ptv-java-client', 'shell:generate-ptv-java-client', 'clean:clean-ptv-java-client-cruft', 'copy:copy-ptv-rest-client-extras', 'shell:install-ptv-java-client']);
+  grunt.registerTask('generate-mwp-java-client', ['download-dependencies', 'clean:clean-mwp-java-client', 'shell:generate-mwp-java-client', 'clean:clean-mwp-java-client-cruft', 'copy:copy-mwp-rest-client-extras', 'shell:install-mwp-java-client']);
   
   grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-javascript-client-to-www', 'install-php-client']);
 };
