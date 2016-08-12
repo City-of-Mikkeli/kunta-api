@@ -46,9 +46,11 @@
     <!-- Wildfly -->
     
     <wildfly-spec-api.version>10.0.0.Final</wildfly-spec-api.version>
+    <jackson-datatype-jsr310.version>2.5.4</jackson-datatype-jsr310.version>
     
     <kunta-api-spec.version>0.0.1-SNAPSHOT</kunta-api-spec.version>
     <ptv-rest-client.version>1.0.0</ptv-rest-client.version>
+    <mwp-rest-client.version>1.0.0</mwp-rest-client.version>
   </properties>
   
   <dependencyManagement>
@@ -74,7 +76,7 @@
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <archive>
             <manifestEntries>
-              <Dependencies>org.apache.httpcomponents, org.infinispan, org.apache.commons.io</Dependencies>
+              <Dependencies>org.apache.httpcomponents, org.infinispan, org.apache.commons.io, com.fasterxml.jackson.core.jackson-annotations, com.fasterxml.jackson.core.jackson-databind</Dependencies>
             </manifestEntries>
           </archive>
         </configuration>
@@ -133,7 +135,35 @@
       <artifactId>resteasy-jackson2-provider</artifactId>
       <scope>provided</scope>
     </dependency>
-
+    
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>${jackson-datatype-jsr310.version}</version>
+      <exclusions> 
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
     <dependency>
       <groupId>fi.otavanopisto.kunta-api</groupId>
       <artifactId>kunta-api-spec</artifactId>
@@ -144,6 +174,24 @@
       <groupId>fi.otavanopisto.ptv.rest-client</groupId>
       <artifactId>rest-client</artifactId>
       <version>${ptv-rest-client.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.datatype</groupId>
+          <artifactId>jackson-datatype-jsr310</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <dependency>
+      <groupId>fi.otavanopisto.mwp.rest-client</groupId>
+      <artifactId>mwp-rest-client</artifactId>
+      <version>${mwp-rest-client.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.datatype</groupId>
+          <artifactId>jackson-datatype-jsr310</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
