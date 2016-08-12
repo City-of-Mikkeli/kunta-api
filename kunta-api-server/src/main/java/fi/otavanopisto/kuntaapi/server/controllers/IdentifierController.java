@@ -26,6 +26,10 @@ public class IdentifierController {
     return createIdentifier(type.toString(), source, sourceId);
   }
   
+  public Identifier createIdentifier(IdType type, String kuntaApiId, String source, String sourceId) {
+    return createIdentifier(type.toString(), kuntaApiId, source, sourceId);
+  }
+  
   public Identifier createIdentifier(String type, String kuntaApiId, String source, String sourceId) {
     return identifierDAO.create(type, kuntaApiId, source, sourceId);
   }
