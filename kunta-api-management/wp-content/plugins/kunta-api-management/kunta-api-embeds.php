@@ -7,8 +7,10 @@
   use Sunra\PhpSimple\HtmlDomParser;
   
   if (is_admin()) {
-  	add_filter('content_edit_pre', 'kunta_api_setup_embeds');
+  	add_filter('content_edit_pre', 'kunta_api_content_edit_pre');
   }
+  
+  add_filter('the_content', 'kunta_api_content_filter');
   
   function kunta_api_get_description($descriptions, $language, $type) {
   	foreach ($descriptions as $description) {
@@ -43,7 +45,7 @@
   	return null;
   }
   
-  function kunta_api_setup_embeds($content) {
+  function kunta_api_content_edit_pre($content) {
   	$dom = HtmlDomParser::str_get_html($content);
   	
   	foreach ($dom->find('*[data-type="kunta-api-embedded-service"]') as $article) {
@@ -51,6 +53,29 @@
   	  $article->class = 'mceNonEditable';
 
   	  $content = kunta_api_load_embeded_content($serviceId);;
+  	  
+  	  if (!empty($content)) {
+  	    $article->innertext = $content;
+  	  } else {
+  	  	if (empty($article->innertext)) {
+  	  	  $article->innertext = __( 'Failed to load embedded content', 'kunta_api_management');
+  	  	}
+  	  }
+  	}
+
+  	return $dom;
+  }
+  
+  function kunta_api_content_filter($content) {
+  	$dom = HtmlDomParser::str_get_html($content);
+  	
+  	foreach ($dom->find('*[data-type="kunta-api-embedded-service"]') as $article) {
+  	  $serviceId = $article->{'data-service-id'};
+  	  $article->class = 'embedded';
+  	  $article->{'data-service-id'} = null;
+  	  $article->{'data-type'} = null;
+  	  	
+  	  $content = kunta_api_load_embeded_content($serviceId);
   	  
   	  if (!empty($content)) {
   	    $article->innertext = $content;
