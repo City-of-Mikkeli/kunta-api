@@ -15,7 +15,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "type", "source", "sourceId", "kuntaApiId" }) })
+@Table(uniqueConstraints = { 
+  @UniqueConstraint(columnNames = { "type", "source", "sourceId" }),
+  @UniqueConstraint(columnNames = { "type", "source", "kuntaApiId" })
+})
 @Cacheable(true)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class Identifier {
