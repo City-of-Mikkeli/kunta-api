@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.kuntaapi.server.integrations.IdController;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
@@ -74,7 +76,7 @@ public class PtvServiceProvider implements ServiceProvider {
         .apiOrganizationByIdGet(ptvOrganizationId.getId());
     
     if (!organizationResponse.isOk()) {
-      logger.severe(String.format("finding organization failed for organizationId %s", organizationId));
+      logger.severe(String.format("finding organization failed for organizationId %s ([%d] %s)", organizationId, organizationResponse.getStatus(), organizationResponse.getMessage()));
       return Collections.emptyList();
     }
     
@@ -177,8 +179,13 @@ public class PtvServiceProvider implements ServiceProvider {
       
       if (!typeItems.isEmpty()) {
         for (VmOpenApiLocalizedListItem item : typeItems) {
+          String language = item.getLanguage();
+          if (StringUtils.isBlank(language)) {
+            language = PtvConsts.DEFAULT_LANGUAGE;
+          }
+          
           LocalizedValue localizedValue = new LocalizedValue();
-          localizedValue.setLanguage(item.getLanguage());
+          localizedValue.setLanguage(language);
           localizedValue.setValue(item.getValue());
           result.add(localizedValue);
         }
@@ -207,4 +214,35 @@ public class PtvServiceProvider implements ServiceProvider {
     
     return Collections.emptyList();
   }
+  
+  /**
+    find organization by name:
+
+    int calls = 1;
+    long startTime = System.currentTimeMillis();
+    
+    ApiResponse<VmOpenApiGuidPage> apiOrganizationGet = ptvApi.getOrganizationApi().apiOrganizationGet(null, 0);
+    VmOpenApiGuidPage page = apiOrganizationGet.getResponse();
+   
+    for (String guid : page.getGuidList()) {
+      calls++;
+      
+      ApiResponse<VmOpenApiOrganization> organizationResponse = ptvApi.getOrganizationApi().apiOrganizationByIdGet(guid);
+      if (!organizationResponse.isOk()) {
+        System.out.println(String.format("Organization %s reported [%d] %s", guid, organizationResponse.getStatus(), organizationResponse.getMessage()));
+      } else {
+        VmOpenApiOrganization organization = organizationResponse.getResponse();
+        System.out.println(String.format("Organization %s = %s", guid, organization.getBusinessName()));
+        
+        if ("Mikkelin kaupunki".equals(organization.getBusinessName())) {
+          System.out.println("Calls:" + calls);
+          System.out.println("Time Ellapsed:" + (System.currentTimeMillis() - startTime));
+          
+          return createBadRequest("Haa");
+        }
+      }
+    }
+    
+   * 
+   */
 }
