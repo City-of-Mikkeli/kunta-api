@@ -1,12 +1,14 @@
 package fi.otavanopisto.kuntaapi.server.integrations.mwp;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -137,11 +139,6 @@ public class MwpClient extends fi.otavanopisto.mwp.client.ApiClient {
       }
     };
     
-    System.out.println(
-      typeReference.getType().toString()
-    );
-    
-    
     switch (statusCode) {
       case 200:
         ObjectMapper objectMapper = new ObjectMapper();
@@ -149,19 +146,27 @@ public class MwpClient extends fi.otavanopisto.mwp.client.ApiClient {
         HttpEntity entity = httpResponse.getEntity();
         try {
           String httpResponseContent = IOUtils.toString(entity.getContent());
-          ApiResponse<T> response = new ApiResponse<T>(statusCode, message, (T) objectMapper.readValue(httpResponseContent, typeReference));
+          T reponseObject = objectMapper.readValue(httpResponseContent, typeReference);
+          if (reponseObject instanceof List) {
+            if (((List<?>) reponseObject).isEmpty()) {
+              reponseObject = (T) Collections.emptyList();
+            }
+          }
           
+          ApiResponse<T> response = new ApiResponse<T>(statusCode, message, reponseObject);
           cache.cacheResponse(url, httpResponseContent);
           return response;
         } finally {
           EntityUtils.consume(entity);
         }
       case 204:
-        if (resultClass.isArray()) {
-          return new ApiResponse<T>(statusCode, message, (T) Array.newInstance(resultClass.getComponentType(), 0));
-        } else {
-          return new ApiResponse<T>(statusCode, message, null);
+        if (resultClass.isAssignableFrom(List.class)) {
+          return new ApiResponse<T>(statusCode, message, (T) Collections.emptyList());
+        } else if (resultClass.isAssignableFrom(Set.class)) {
+          return new ApiResponse<T>(statusCode, message, (T) Collections.emptySet());
         }
+
+        return new ApiResponse<T>(statusCode, message, null);
       default:
         return new ApiResponse<T>(statusCode, message, null);
     }

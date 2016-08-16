@@ -12,10 +12,13 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceEnricher;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
@@ -29,6 +32,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   private Instance<ServiceProvider> serviceProviders;
 
   @Inject
+  private Instance<ServiceEnricher> serviceEnrichers;
+
+  @Inject
   private Instance<ServiceClassProvider> serviceClassProvider;
   
   @Override
@@ -37,29 +43,42 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
 
   @Override
-  public Response findService(String organizationIdParam, String serviceIdParam) {
+  public Response findService(String organizationIdParam, String serviceIdParam, Boolean enriched) {
     OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
     ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
-    
-    // TODO: Merge services
+    Service service = null;
     
     for (ServiceProvider serviceProvider : getServiceProviders()) {
-      Service service = serviceProvider.findOrganizationService(organizationId, serviceId);
+      service = serviceProvider.findOrganizationService(organizationId, serviceId);
       if (service != null) {
-        return Response.ok(service)
-          .build();
+        continue;
+      }
+    }
+
+    if (Boolean.TRUE.equals(enriched)) {
+      for (ServiceEnricher serviceEnricher : getServiceEnrichers()) {
+        List<Service> enrichedService = serviceEnricher.enrich(Collections.singletonList(service));
+        if (enrichedService != null && !enrichedService.isEmpty()) {
+          service = enrichedService.get(0);
+        }
       }
     }
     
-    return Response
-        .status(Status.NOT_FOUND)
+    if (service != null) {
+      return Response.ok(service)
         .build();
+    } else {
+      return Response
+          .status(Status.NOT_FOUND)
+          .build();
+    }
+    
   }
 
   @Override
   public Response listServices(String organizationIdParam, String serviceClassIdParam) {
     OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
-    ServiceClassId serviceClassId = new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, serviceClassIdParam);
+    ServiceClassId serviceClassId = StringUtils.isBlank(serviceClassIdParam) ? null : new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, serviceClassIdParam);
     
     // TODO: Merge services
     
@@ -108,6 +127,19 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     List<ServiceProvider> result = new ArrayList<>();
     
     Iterator<ServiceProvider> iterator = serviceProviders.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+
+  private List<ServiceEnricher> getServiceEnrichers() {
+    // TODO: Prioritize
+    
+    List<ServiceEnricher> result = new ArrayList<>();
+    
+    Iterator<ServiceEnricher> iterator = serviceEnrichers.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     }

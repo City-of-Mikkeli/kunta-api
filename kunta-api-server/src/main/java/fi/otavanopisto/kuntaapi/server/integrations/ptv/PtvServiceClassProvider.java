@@ -43,7 +43,7 @@ public class PtvServiceClassProvider implements ServiceClassProvider {
         .apiOrganizationByIdGet(ptvOrganizationId.getId());
     
     if (!organizationResponse.isOk()) {
-      logger.severe(String.format("finding organization failed for organizationId %s", organizationId));
+      logger.severe(String.format("finding organization failed for organizationId %s ([%d] %s)", organizationId, organizationResponse.getStatus(), organizationResponse.getMessage()));
       return Collections.emptyList();
     }
     
@@ -51,7 +51,7 @@ public class PtvServiceClassProvider implements ServiceClassProvider {
         .getServices();
 
     if (!organizationResponse.isOk()) {
-      logger.severe(String.format("Failed to list organization services for organizationId %s", organizationId));
+      logger.severe(String.format("Failed to list organization services for organizationId %s ([%d] %s)", organizationId, organizationResponse.getStatus(), organizationResponse.getMessage()));
       return Collections.emptyList();
     }
 
@@ -85,7 +85,7 @@ public class PtvServiceClassProvider implements ServiceClassProvider {
     for (VmOpenApiFintoItem ptvServiceClass : ptvServiceClasses) {
       ServiceClassId ptvId = new ServiceClassId(PtvConsts.IDENTIFIFER_NAME, ptvServiceClass.getId());
       ServiceClassId kuntaApiId = idController.translateServiceClassId(ptvId, KuntaApiConsts.IDENTIFIER_NAME);
-      
+
       if (kuntaApiId == null) {
         logger.severe(String.format("Could not translate %s into Kunta API id (uri: %s)", ptvServiceClass.getId(), ptvServiceClass.getUri()));
         continue;  
