@@ -1,4 +1,4 @@
-package fi.otavanopisto.kuntaapi.server.integrations.ptv;
+package fi.otavanopisto.kuntaapi.server.integrations.ptv.schedulers;
 
 import java.util.logging.Logger;
 
@@ -14,13 +14,15 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
+import fi.otavanopisto.kuntaapi.server.integrations.ptv.PtvApi;
+import fi.otavanopisto.kuntaapi.server.integrations.ptv.PtvConsts;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 import fi.otavanopisto.ptv.client.ApiResponse;
 import fi.otavanopisto.ptv.client.model.VmOpenApiGuidPage;
 
 @Startup
 @Singleton
-public class PtvOrganizationWarmup {
+public class PtvOrganizationScheduler {
   
   private static final int TIMER_INITIAL = 60000;
   private static final int TIMER_INTERVAL = 60000;
@@ -39,7 +41,7 @@ public class PtvOrganizationWarmup {
 
   @PostConstruct
   public void init() {
-    if (!PtvConsts.SYNCHRONIZE) {
+    if (!PtvConsts.SYNCHRONIZE_ORGANIZATIONS) {
       return;
     }
     
@@ -64,6 +66,7 @@ public class PtvOrganizationWarmup {
     } else {
       logger.info(String.format("Updating organizations page %d", page + 1));
     }
+    
     ApiResponse<VmOpenApiGuidPage> response = ptvApi.getOrganizationApi().apiOrganizationGet(null, page);
     if (response.isOk()) {
       VmOpenApiGuidPage pageData = response.getResponse();

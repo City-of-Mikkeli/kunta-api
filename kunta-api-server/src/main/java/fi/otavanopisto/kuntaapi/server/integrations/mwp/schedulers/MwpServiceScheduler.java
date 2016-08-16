@@ -1,4 +1,4 @@
-package fi.otavanopisto.kuntaapi.server.integrations.mwp;
+package fi.otavanopisto.kuntaapi.server.integrations.mwp.schedulers;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -15,17 +15,19 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
+import fi.otavanopisto.kuntaapi.server.integrations.mwp.MwpApi;
+import fi.otavanopisto.kuntaapi.server.integrations.mwp.MwpConsts;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 import fi.otavanopisto.mwp.client.ApiResponse;
 import fi.otavanopisto.mwp.client.model.Page;
 
 @Startup
 @Singleton
-public class MwpServiceWarmup {
+public class MwpServiceScheduler {
   
-  private static final int TIMER_INITIAL = 60000;
+  private static final int TIMER_INITIAL = 120000;
   private static final int TIMER_INTERVAL = 60000;
-  private static final int RESULTS_PER_PAGE = 10;
+  private static final int RESULTS_PER_PAGE = 100;
   
   @Inject
   private Logger logger;
@@ -42,7 +44,10 @@ public class MwpServiceWarmup {
   @PostConstruct
   public void init() {
     if (!MwpConsts.SYNCHRONIZE) {
+      logger.info("MWP synchronization disabled");
       return;
+    } else {
+      logger.info("Started MWP synchronization timer");
     }
     
     page = 0;
@@ -68,6 +73,15 @@ public class MwpServiceWarmup {
         
         Identifier identifier = identifierController.findIdentifierByTypeSourceAndId(IdType.SERVICE, MwpConsts.IDENTIFIFER_NAME, pageId);
         if (identifier == null) {
+          System.out.println(
+            String.format(
+              "Could not find service identifier for (%s / %s) attaching to %s", 
+              pageId, 
+              MwpConsts.IDENTIFIFER_NAME, 
+              kuntaApiId
+            )  
+          );
+          
           identifierController.createIdentifier(IdType.SERVICE, kuntaApiId, MwpConsts.IDENTIFIFER_NAME, pageId);
           discoverCount++;
         }
