@@ -2,6 +2,8 @@
 set -euo pipefail
 
 #if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${SONARQUBE_TOKEN}" ]; then
+    export MAVEN_OPTS="-Xmx1G -Xms128m"
+
     echo 'Internal pull request: trigger QA and analysis'
 
     mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy sonar:sonar \
