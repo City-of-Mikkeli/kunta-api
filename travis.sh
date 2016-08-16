@@ -5,9 +5,8 @@ set -euo pipefail
     export MAVEN_OPTS="-Xmx1G -Xms128m"
     export MAVEN_OPTIONS=""
 
-    echo 'Internal pull request: trigger QA and analysis'
-
-    mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy sonar:sonar \
+    echo 'Trigger QA and analysis'
+    mvn clean verify sonar:sonar \
         $MAVEN_OPTIONS \
         -Dsource.skip=true \
         -Pdeploy-sonarsource \
