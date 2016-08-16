@@ -4,7 +4,7 @@ var fs = require('fs');
 
 module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
-  
+
   grunt.initConfig({
     clean: {
       'clean-javascript': ['kunta-api-spec/languages/javascript'],
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
         'ptv-rest-client/src/main/java/fi/otavanopisto/ptv/auth',
         'ptv-rest-client/src/main/java/fi/otavanopisto/ptv/*.java'
       ],
-      'clean-mwp-java-client': ['mwp-client'],
+      'clean-mwp-java-client': ['mwp-rest-client'],
       'clean-mwp-java-client-cruft': [
         'mwp-rest-client/docs', 
         'mwp-rest-client/gradle', 
@@ -144,13 +144,15 @@ module.exports = function(grunt) {
           -o ptv-rest-client/'
       },
       'generate-mwp-java-client': {
-        command : 'java -jar swagger-codegen-cli.jar generate \
+        command : 'mv mwp-rest-client/pom.xml mwp-rest-client/pom.xml.before && \
+          java -jar swagger-codegen-cli.jar generate \
           -i http://manage.kunta-api.dev/wp-json/apigenerate/swagger \
           -l java \
           --api-package fi.otavanopisto.mwp.client\
           --model-package fi.otavanopisto.mwp.client.model \
-          --group-id fi.otavanopisto.mwp.rest-client \
+          --group-id fi.otavanopisto.mwp.mwp-rest-client \
           --artifact-id mwp-rest-client\
+          --artifact-version `mvn -f mwp-rest-client/pom.xml.before -q -Dexec.executable=\'echo\' -Dexec.args=\'${project.version}\' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec` \
           --template-dir mwp-java-templates \
           --library jersey2 \
           --additional-properties dateLibrary=java8-localdatetime \
@@ -182,6 +184,14 @@ module.exports = function(grunt) {
       },
       'install-mwp-java-client': {
         command : 'mvn install',
+        options: {
+          execOptions: {
+            cwd: 'mwp-rest-client'
+          }
+        }
+      },
+      'release-mwp-java-client': {
+        command : 'mvn -B release:clean release:prepare release:perform',
         options: {
           execOptions: {
             cwd: 'mwp-rest-client'
@@ -223,6 +233,11 @@ module.exports = function(grunt) {
         options: {
           'repository': 'git@github.com:otavanopisto/ptv-rest-client.git'  
         }
+      },
+      'checkout-mwp-java-client': {
+        options: {
+          'repository': 'git@github.com:otavanopisto/mwp-rest-client.git'  
+        }
       }
     }
   });
@@ -236,7 +251,7 @@ module.exports = function(grunt) {
   grunt.registerTask('install-javascript-client-to-www', ['shell:pack-javascript-client', 'shell:install-javascript-client-www']);
   
   grunt.registerTask('generate-ptv-java-client', ['download-dependencies', 'clean:clean-ptv-java-client', 'gitclone:checkout-ptv-java-client', 'shell:generate-ptv-java-client', 'clean:clean-ptv-java-client-cruft', 'copy:copy-ptv-rest-client-extras', 'shell:install-ptv-java-client', 'shell:release-ptv-java-client', 'clean:clean-ptv-java-client']);
-  grunt.registerTask('generate-mwp-java-client', ['download-dependencies', 'clean:clean-mwp-java-client', 'shell:generate-mwp-java-client', 'clean:clean-mwp-java-client-cruft', 'copy:copy-mwp-rest-client-extras', 'shell:install-mwp-java-client']);
+  grunt.registerTask('generate-mwp-java-client', ['download-dependencies', 'clean:clean-mwp-java-client', 'gitclone:checkout-mwp-java-client', 'shell:generate-mwp-java-client', 'clean:clean-mwp-java-client-cruft', 'copy:copy-mwp-rest-client-extras', 'shell:install-mwp-java-client', 'shell:release-mwp-java-client', 'clean:clean-mwp-java-client']);
   
   grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-javascript-client-to-www', 'install-php-client']);
 };
