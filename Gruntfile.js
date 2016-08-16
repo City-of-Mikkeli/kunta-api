@@ -129,13 +129,15 @@ module.exports = function(grunt) {
           -o kunta-api-spec/languages/jaxrs-spec/'
       },
       'generate-ptv-java-client': {
-        command : 'java -jar swagger-codegen-cli.jar generate \
+        command : 'mv ptv-rest-client/pom.xml ptv-rest-client/pom.xml.before && \
+          java -jar swagger-codegen-cli.jar generate \
           -i http://ptvenv.cloudapp.net:1494/swagger/v1/swagger.json \
           -l java \
           --api-package fi.otavanopisto.ptv.client\
           --model-package fi.otavanopisto.ptv.client.model \
           --group-id fi.otavanopisto.ptv.rest-client \
-          --artifact-id rest-client\
+          --artifact-id ptv-rest-client\
+          --artifact-version `mvn -f ptv-rest-client/pom.xml.before -q -Dexec.executable=\'echo\' -Dexec.args=\'${project.version}\' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec` \
           --template-dir ptv-java-templates \
           --library jersey2 \
           --additional-properties dateLibrary=java8 \
@@ -164,6 +166,14 @@ module.exports = function(grunt) {
       },
       'install-ptv-java-client': {
         command : 'mvn install',
+        options: {
+          execOptions: {
+            cwd: 'ptv-rest-client'
+          }
+        }
+      },
+      'release-ptv-java-client': {
+        command : 'mvn -B release:clean release:prepare release:perform',
         options: {
           execOptions: {
             cwd: 'ptv-rest-client'
@@ -207,6 +217,13 @@ module.exports = function(grunt) {
       'publish-javascript-client': {
         src: ['kunta-api-spec/languages/javascript']
       }
+    },
+    gitclone: {
+      'checkout-ptv-java-client': {
+        options: {
+          'repository': 'git@github.com:otavanopisto/ptv-rest-client.git'  
+        }
+      }
     }
   });
   
@@ -218,7 +235,7 @@ module.exports = function(grunt) {
   grunt.registerTask('publish-javascript-client', ['create-javascript-client', 'publish:publish-javascript-client']);
   grunt.registerTask('install-javascript-client-to-www', ['shell:pack-javascript-client', 'shell:install-javascript-client-www']);
   
-  grunt.registerTask('generate-ptv-java-client', ['download-dependencies', 'clean:clean-ptv-java-client', 'shell:generate-ptv-java-client', 'clean:clean-ptv-java-client-cruft', 'copy:copy-ptv-rest-client-extras', 'shell:install-ptv-java-client']);
+  grunt.registerTask('generate-ptv-java-client', ['download-dependencies', 'clean:clean-ptv-java-client', 'gitclone:checkout-ptv-java-client', 'shell:generate-ptv-java-client', 'clean:clean-ptv-java-client-cruft', 'copy:copy-ptv-rest-client-extras', 'shell:install-ptv-java-client', 'shell:release-ptv-java-client', 'clean:clean-ptv-java-client']);
   grunt.registerTask('generate-mwp-java-client', ['download-dependencies', 'clean:clean-mwp-java-client', 'shell:generate-mwp-java-client', 'clean:clean-mwp-java-client-cruft', 'copy:copy-mwp-rest-client-extras', 'shell:install-mwp-java-client']);
   
   grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-javascript-client-to-www', 'install-php-client']);
