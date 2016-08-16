@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${SONARQUBE_TOKEN}" ]; then
+#if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${SONARQUBE_TOKEN}" ]; then
     echo 'Internal pull request: trigger QA and analysis'
 
     mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy sonar:sonar \
@@ -16,4 +16,4 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${
         -Dsonar.host.url=$SONAR_HOST_URL \
         -Dsonar.login=$SONAR_TOKEN
         
-fi
+#fi
