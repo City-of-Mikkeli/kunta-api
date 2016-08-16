@@ -161,6 +161,11 @@ paths:
           required: true
           type: string
           format: uuid
+        - name: enriched
+          in: query
+          description: whether return enriched content or just the master data
+          required: false
+          type: boolean
       tags:
         - Services
       responses:
