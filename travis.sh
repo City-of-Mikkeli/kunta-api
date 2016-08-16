@@ -3,6 +3,7 @@ set -euo pipefail
 
 #if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${SONARQUBE_TOKEN}" ]; then
     export MAVEN_OPTS="-Xmx1G -Xms128m"
+    export MAVEN_OPTIONS=""
 
     echo 'Internal pull request: trigger QA and analysis'
 
