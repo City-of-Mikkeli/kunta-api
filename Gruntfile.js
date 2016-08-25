@@ -131,7 +131,7 @@ module.exports = function(grunt) {
       'generate-ptv-java-client': {
         command : 'mv ptv-rest-client/pom.xml ptv-rest-client/pom.xml.before && \
           java -jar swagger-codegen-cli.jar generate \
-          -i http://ptvenv.cloudapp.net:1494/swagger/v1/swagger.json \
+          -i https://api.palvelutietovaranto.suomi.fi/swagger/v1/swagger.json \
           -l java \
           --api-package fi.otavanopisto.ptv.client\
           --model-package fi.otavanopisto.ptv.client.model \
