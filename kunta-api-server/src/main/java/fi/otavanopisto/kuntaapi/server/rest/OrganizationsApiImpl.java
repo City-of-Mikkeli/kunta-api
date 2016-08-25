@@ -16,18 +16,23 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
+import fi.otavanopisto.kuntaapi.server.integrations.OrganizationProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceEnricher;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
+import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 
 @RequestScoped
 @Stateful
 public class OrganizationsApiImpl extends OrganizationsApi {
-  
+
+  @Inject
+  private Instance<OrganizationProvider> organizationProviders;
+
   @Inject
   private Instance<ServiceProvider> serviceProviders;
 
@@ -38,12 +43,23 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   private Instance<ServiceClassProvider> serviceClassProvider;
   
   @Override
+  public Response listOrganizations(String businessName, String businessCode) {
+    List<Organization> organizations = new ArrayList<>();
+    for (OrganizationProvider organizationProvider : getOrganizationProviders()) {
+      organizations.addAll(organizationProvider.listOrganizations(businessName, businessCode));
+    }
+    
+    return Response.ok(organizations)
+      .build();
+  }
+  
+  @Override
   public Response createService(String organizationId, Service body) {
     return createNotImplemented("Not implemented");
   }
 
   @Override
-  public Response findService(String organizationIdParam, String serviceIdParam, Boolean enriched) {
+  public Response findService(String organizationIdParam, String serviceIdParam, Boolean onlySource) {
     OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
     ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
     Service service = null;
@@ -55,7 +71,7 @@ public class OrganizationsApiImpl extends OrganizationsApi {
       }
     }
 
-    if (Boolean.TRUE.equals(enriched)) {
+    if (!Boolean.TRUE.equals(onlySource)) {
       for (ServiceEnricher serviceEnricher : getServiceEnrichers()) {
         List<Service> enrichedService = serviceEnricher.enrich(Collections.singletonList(service));
         if (enrichedService != null && !enrichedService.isEmpty()) {
@@ -120,6 +136,21 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     return Response.ok(result)
       .build();
   }
+  
+  private List<OrganizationProvider> getOrganizationProviders() {
+    // TODO: Prioritize providers
+    
+    List<OrganizationProvider> result = new ArrayList<>();
+    
+    Iterator<OrganizationProvider> iterator = organizationProviders.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+  
+  
   
   private List<ServiceProvider> getServiceProviders() {
     // TODO: Prioritize providers

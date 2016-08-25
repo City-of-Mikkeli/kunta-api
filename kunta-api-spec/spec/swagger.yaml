@@ -12,6 +12,41 @@ consumes:
 produces:
   - application/json;charset=utf-8
 paths:
+  /organizations:
+    get:
+      operationId: listOrganizations
+      summary: List organizations
+      description: List organizations
+      parameters:
+        - name: businessName
+          in: query
+          description: Filter by organization's business name
+          type: string
+        - name: businessCode
+          in: query
+          description: Filter by organization's business code
+          type: string
+      tags:
+        - Organizations
+      responses:
+        200:
+          description: An array of organizations
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Organization'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
   /organizations/{organizationId}/services:
     post:
       operationId: createService
@@ -161,9 +196,9 @@ paths:
           required: true
           type: string
           format: uuid
-        - name: enriched
+        - name: onlySource
           in: query
-          description: whether return enriched content or just the master data
+          description: whether return enriched content or just the source data
           required: false
           type: boolean
       tags:
@@ -380,6 +415,19 @@ paths:
           schema:
             $ref: '#/definitions/InternalServerError'
 definitions:
+  Organization:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Unique identifier a organization.
+      businessName:
+        type: string
+        description: Primary name of organization
+      businessCode:
+        type: string
+        description: Business code code of organization
   Service:
     type: object
     properties:
