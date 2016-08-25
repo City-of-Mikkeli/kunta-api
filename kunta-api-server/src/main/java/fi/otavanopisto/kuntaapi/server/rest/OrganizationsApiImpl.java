@@ -37,7 +37,7 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
 
   @Override
-  public Response findService(String organizationIdParam, String serviceIdParam) {
+  public Response findService(String organizationIdParam, String serviceIdParam, Boolean enriched) {
     OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
     ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
     
