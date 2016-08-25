@@ -1,6 +1,7 @@
 /node_modules/
 /.DS_Store
 /.project
+/.sonar
 /ptv-rest-client/
 /mwp-rest-client/
 /swagger-codegen-cli.jar
