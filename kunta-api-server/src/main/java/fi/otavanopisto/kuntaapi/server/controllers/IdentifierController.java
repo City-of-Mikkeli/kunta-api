@@ -22,6 +22,14 @@ public class IdentifierController {
     return createIdentifier(type, kuntaApiId, source, sourceId);
   }
 
+  /**
+   * Creates new identifier.
+   * 
+   * @param type type of identifier
+   * @param source source of identifier
+   * @param sourceId id in source system
+   * @return created identifier
+   */
   public Identifier createIdentifier(IdType type, String source, String sourceId) {
     return createIdentifier(type.toString(), source, sourceId);
   }
