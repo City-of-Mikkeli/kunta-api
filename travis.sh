@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${SONAR_TOKEN}" ]; then
 
