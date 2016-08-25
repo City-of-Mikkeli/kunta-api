@@ -1,7 +1,6 @@
-language: java
+language: c
 sudo: false
 install: true
-jdk: oraclejdk8
 script: . travis.sh
 
 notifications:
