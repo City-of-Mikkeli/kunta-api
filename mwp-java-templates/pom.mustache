@@ -122,6 +122,10 @@
           <useReleaseProfile>false</useReleaseProfile>
           <tagNameFormat>@{project.version}</tagNameFormat>
           <autoVersionSubmodules>true</autoVersionSubmodules>
+          <checkModificationExcludes>
+            <checkModificationExclude>pom.xml</checkModificationExclude>
+            <checkModificationExclude>src/**</checkModificationExclude>
+          </checkModificationExcludes>
         </configuration>
       </plugin>
       <plugin>
