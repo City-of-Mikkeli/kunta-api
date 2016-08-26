@@ -1,10 +1,11 @@
 /*global module:false*/
 
 var fs = require('fs');
+var config = require('./grunt-config.json');
 
 module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
-
+  
   grunt.initConfig({
     clean: {
       'clean-javascript': ['kunta-api-spec/languages/javascript'],
@@ -239,6 +240,60 @@ module.exports = function(grunt) {
           'repository': 'git@github.com:otavanopisto/mwp-rest-client.git'  
         }
       }
+    },
+    mysqlrunfile: {
+      options: {
+        connection: {
+          host: config.mysql.host,
+          user: config.mysql.user,
+          password: config.mysql.password,
+          multipleStatements: true
+        }
+      },
+      wordpressdb: {
+        src: ['wordpress-config/init-database.sql']
+      }
+    },
+    'wp-cli': {
+      'download': {
+        'path': config.wordpress.path,
+        'command': 'core',
+        'subcommand': 'download',
+        'options': {'locale': 'fi'}
+      },
+      'config': {
+        'path': config.wordpress.path,
+        'command': 'core',
+        'subcommand': 'config',
+        'options': {
+          'dbname': config.wordpress.database.name,
+          'dbuser': config.wordpress.database.user,
+          'dbpass': config.wordpress.database.password,
+          'locale': 'fi'
+        }
+      },
+      'install': {
+        'path': config.wordpress.path,
+        'command': 'core',
+        'subcommand': 'install',
+        'options': {
+          'url': config.wordpress.site.url,
+          'title': config.wordpress.site.title,
+          'admin_user': config.wordpress.site.adminUser,
+          'admin_password': config.wordpress.site.adminPassword,
+          'admin_email': config.wordpress.site.adminEmail,
+          'skip-email': true
+        }
+      },
+      'plugins': {
+        'path': config.wordpress.path,
+        'command': 'plugin',
+        'subcommand': 'install',
+        'arguments': 'qtranslate-x rest-api https://github.com/starfishmod/WPAPI-SwaggerGenerator/archive/master.zip',
+        'options': {
+          'activate': true
+        }
+      }
     }
   });
   
@@ -252,6 +307,8 @@ module.exports = function(grunt) {
   
   grunt.registerTask('generate-ptv-java-client', ['download-dependencies', 'clean:clean-ptv-java-client', 'gitclone:checkout-ptv-java-client', 'shell:generate-ptv-java-client', 'clean:clean-ptv-java-client-cruft', 'copy:copy-ptv-rest-client-extras', 'shell:install-ptv-java-client', 'shell:release-ptv-java-client', 'clean:clean-ptv-java-client']);
   grunt.registerTask('generate-mwp-java-client', ['download-dependencies', 'clean:clean-mwp-java-client', 'gitclone:checkout-mwp-java-client', 'shell:generate-mwp-java-client', 'clean:clean-mwp-java-client-cruft', 'copy:copy-mwp-rest-client-extras', 'shell:install-mwp-java-client', 'shell:release-mwp-java-client', 'clean:clean-mwp-java-client']);
-  
+
+  grunt.registerTask('install-management-wordpress', ['mysqlrunfile:wordpressdb', 'wp-cli:download', 'wp-cli:config', "wp-cli:install", "wp-cli:plugins"]);
+
   grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-javascript-client-to-www', 'install-php-client']);
 };

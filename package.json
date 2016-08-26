@@ -11,8 +11,10 @@
     "grunt-curl": "^2.2.0",
     "grunt-git": "^1.0.0",
     "grunt-if": "^0.1.5",
+    "grunt-mysql-runfile": "^0.2.1",
     "grunt-publish": "^1.0.0",
     "grunt-shell": "^1.3.0",
-    "load-grunt-tasks": "^3.5.0"
+    "load-grunt-tasks": "^3.5.0",
+    "grunt-wp-cli": "0.0.1"
   }
 }
