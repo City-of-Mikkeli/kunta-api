@@ -233,7 +233,7 @@ module.exports = function(grunt) {
         }
       },
       'wordpress-management-plugin': {
-        'command': 'ln -Fs ../../../wordpress-plugins/kunta-api-management kunta-api-management/wp-content/plugins',
+        'command': 'ln -Fs ../../../wordpress-plugins/kunta-api-management kunta-api-management/wp-content/plugins'
       }
     },
     'publish': {
@@ -341,7 +341,7 @@ module.exports = function(grunt) {
     'http': {
       'visit-wordpress-admin': {
         options: {
-          url: 'http://' + config.wordpress.site.url + '/wp-admin',
+          url: 'http://' + config.wordpress.site.url + '/wp-admin'
         }
       }
     }
