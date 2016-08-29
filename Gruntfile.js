@@ -231,6 +231,9 @@ module.exports = function(grunt) {
             cwd: 'kunta-api-management/wp-content'
           }
         }
+      },
+      'wordpress-management-plugin': {
+        'command': 'ln -Fs ../../../wordpress-plugins/kunta-api-management kunta-api-management/wp-content/plugins',
       }
     },
     'publish': {
@@ -334,6 +337,13 @@ module.exports = function(grunt) {
         'command': 'core',
         'subcommand': 'language update'
       }
+    },
+    'http': {
+      'visit-wordpress-admin': {
+        options: {
+          url: 'http://' + config.wordpress.site.url + '/wp-admin',
+        }
+      }
     }
   });
   
@@ -349,7 +359,7 @@ module.exports = function(grunt) {
   grunt.registerTask('generate-mwp-java-client', ['download-dependencies', 'clean:clean-mwp-java-client', 'gitclone:checkout-mwp-java-client', 'shell:generate-mwp-java-client', 'clean:clean-mwp-java-client-cruft', 'copy:copy-mwp-rest-client-extras', 'shell:install-mwp-java-client', 'shell:release-mwp-java-client', 'clean:clean-mwp-java-client']);
 
   grunt.registerTask('uninstall-management-wordpress', ['mustache_render:wordpressdb-drop', 'mysqlrunfile:wordpressdb-drop', 'clean:remove-wordpress' ]);
-  grunt.registerTask('install-management-wordpress', ['mustache_render:wordpressdb', 'mysqlrunfile:wordpressdb', 'wp-cli:download', 'wp-cli:config', "wp-cli:install", "shell:wordpress-languages-writable", "wp-cli:plugins", "wp-cli:update-languages"]);
+  grunt.registerTask('install-management-wordpress', ['mustache_render:wordpressdb', 'mysqlrunfile:wordpressdb', 'wp-cli:download', 'wp-cli:config', "wp-cli:install", "shell:wordpress-languages-writable", "wp-cli:plugins", "shell:wordpress-management-plugin", "http:visit-wordpress-admin", "wp-cli:update-languages"]);
 
   grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-javascript-client-to-www', 'install-php-client']);
 };
