@@ -49,7 +49,8 @@ module.exports = function(grunt) {
         'mwp-rest-client/src/main/java/io',
         'mwp-rest-client/src/main/java/fi/otavanopisto/mwp/auth',
         'mwp-rest-client/src/main/java/fi/otavanopisto/mwp/*.java'
-      ]
+      ],
+      'remove-wordpress': [ config.wordpress.path ]
     },
     'copy': {
       'copy-jaxrs-extras': {
@@ -250,7 +251,7 @@ module.exports = function(grunt) {
       }
     },
     'mustache_render': {
-      wordpressdb: {
+      'wordpressdb': {
         files : [{
           data: {
             'DATABASE': config.wordpress.database.name,
@@ -262,6 +263,15 @@ module.exports = function(grunt) {
           dest: 'wordpress-config/init-database.sql'
         }]
       },
+      'wordpressdb-drop': {
+        files : [{
+          data: {
+            'DATABASE': config.wordpress.database.name
+          },
+          template: 'wordpress-config/drop-database.sql.mustache',
+          dest: 'wordpress-config/drop-database.sql'
+        }]
+      }
     },
     'mysqlrunfile': {
       options: {
@@ -272,8 +282,11 @@ module.exports = function(grunt) {
           multipleStatements: true
         }
       },
-      wordpressdb: {
+      'wordpressdb': {
         src: ['wordpress-config/init-database.sql']
+      },
+      'wordpressdb-drop': {
+        src: ['wordpress-config/drop-database.sql']
       }
     },
     'wp-cli': {
@@ -315,6 +328,11 @@ module.exports = function(grunt) {
         'options': {
           'activate': true
         }
+      },
+      'update-languages': {
+        'path': config.wordpress.path,
+        'command': 'core',
+        'subcommand': 'language update'
       }
     }
   });
@@ -330,7 +348,8 @@ module.exports = function(grunt) {
   grunt.registerTask('generate-ptv-java-client', ['download-dependencies', 'clean:clean-ptv-java-client', 'gitclone:checkout-ptv-java-client', 'shell:generate-ptv-java-client', 'clean:clean-ptv-java-client-cruft', 'copy:copy-ptv-rest-client-extras', 'shell:install-ptv-java-client', 'shell:release-ptv-java-client', 'clean:clean-ptv-java-client']);
   grunt.registerTask('generate-mwp-java-client', ['download-dependencies', 'clean:clean-mwp-java-client', 'gitclone:checkout-mwp-java-client', 'shell:generate-mwp-java-client', 'clean:clean-mwp-java-client-cruft', 'copy:copy-mwp-rest-client-extras', 'shell:install-mwp-java-client', 'shell:release-mwp-java-client', 'clean:clean-mwp-java-client']);
 
-  grunt.registerTask('install-management-wordpress', ['mustache_render:wordpressdb', 'mysqlrunfile:wordpressdb', 'wp-cli:download', 'wp-cli:config', "wp-cli:install", "shell:wordpress-languages-writable", "wp-cli:plugins"]);
+  grunt.registerTask('uninstall-management-wordpress', ['mustache_render:wordpressdb-drop', 'mysqlrunfile:wordpressdb-drop', 'clean:remove-wordpress' ]);
+  grunt.registerTask('install-management-wordpress', ['mustache_render:wordpressdb', 'mysqlrunfile:wordpressdb', 'wp-cli:download', 'wp-cli:config', "wp-cli:install", "shell:wordpress-languages-writable", "wp-cli:plugins", "wp-cli:update-languages"]);
 
   grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-javascript-client-to-www', 'install-php-client']);
 };
