@@ -1,0 +1,22 @@
+{
+  "mysql": {
+    "user": "USER",
+    "password": "PASS",
+    "host": "HOST"
+  },
+  "wordpress": {
+    "path": "PATH",
+    "database": {
+      "name": "DBNAME",
+      "user": "DBUSER",
+      "password": "DBPASS"
+    },
+    "site": {
+      "url": "URL",
+      "title": "TITLE",
+      "adminUser": "ADMINUSER",
+      "adminPassword": "ADMINPASSWORD",
+      "adminEmail": "ADMINEMAIL"
+    }
+  }
+}

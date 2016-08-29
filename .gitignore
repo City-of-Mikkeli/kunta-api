@@ -6,3 +6,5 @@
 /mwp-rest-client/
 /swagger-codegen-cli.jar
 /travis-simulate.sh
+/grunt-config.json
+/kunta-api-management/
