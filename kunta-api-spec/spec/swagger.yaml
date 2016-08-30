@@ -374,7 +374,224 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/events:
+    get:
+      operationId: listOrganizationEvents
+      summary: Lists organizations events
+      description: |
+        Lists organizations events
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Events
+      responses:
+        200:
+          description: Returns a list of events
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Event'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/events/{eventId}:
+    get:
+      operationId: findOrganizationEvent
+      summary: Returns organizations event by id
+      description: |
+        Returns organizations event by id
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: eventId
+          in: path
+          description: Event id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Events
+      responses:
+        200:
+          description: Returns a single event
+          schema:
+            $ref: '#/definitions/Event'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/events/{eventId}/images:
+    get:
+      operationId: listOrganizationEventImages
+      summary: Returns list of event images
+      description: |
+        Returns list of event images
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: eventId
+          in: path
+          description: Event id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Events
+      responses:
+        200:
+          description: Returns a list of event images
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Attachment'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/events/{eventId}/images/{imageId}:
+    get:
+      operationId: findOrganizationEventImage
+      summary: Returns an event image
+      description: |
+        Returns an event image 
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: eventId
+          in: path
+          description: Event id
+          required: true
+          type: string
+          format: uuid
+        - name: imageId
+          in: path
+          description: Event image id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Events
+      responses:
+        200:
+          description: Returns an event image
+          schema:
+            $ref: '#/definitions/Attachment'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/events/{eventId}/images/{imageId}/data:
+    get:
+      operationId: getOrganizationEventImageData
+      summary: Returns an event image data
+      description: |
+        Returns an event image data
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: eventId
+          in: path
+          description: Event id
+          required: true
+          type: string
+          format: uuid
+        - name: imageId
+          in: path
+          description: Event image id
+          required: true
+          type: string
+          format: uuid
+        - name: size
+          in: query
+          description: Maximum width or height of image
+          required: false
+          type: integer
+          format: int32
+      tags:
+        - Events
+      responses:
+        200:
+          description: Returns an event image data
+          schema:
+            type: string
+            format: binary
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
 definitions:
+  Attachment:
+    properties:
+      id:
+        type: string
+        format: uuid
+      contentType:
+        type: string
+      size:
+        type: integer
+        format: int64  
   Service:
     type: object
     properties:
@@ -503,7 +720,7 @@ definitions:
       attachments:
         type: array
         items:
-          $ref: '#/definitions/Attachment'
+          $ref: '#/definitions/ServiceChannelAttachment'
   ServiceSource:
     type: object
     description: Specifies a single source for the service
@@ -528,7 +745,7 @@ definitions:
         type: array
         items:
           type: string
-  Attachment:
+  ServiceChannelAttachment:
     properties:
       type:
         type: string
@@ -580,6 +797,32 @@ definitions:
         type: string
       closes:
         type: string
+  Event:
+    properties:
+      id:
+        type: string
+        format: uuid
+      originalUrl:
+        type: string
+        format: url
+      name:
+        type: string
+      description:
+        type: string
+      start:
+        type: string
+        format: date-time
+      end:
+        type: string
+        format: date-time
+      city:
+        type: string
+      place:
+        type: string
+      address:
+        type: string
+      zip:
+        type: string    
   InternalServerError:
     type: object
     properties:
