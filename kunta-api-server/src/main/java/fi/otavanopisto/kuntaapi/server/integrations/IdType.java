@@ -6,6 +6,10 @@ public enum IdType {
   
   SERVICE,
   
-  SERVICE_CLASS
+  SERVICE_CLASS,
+  
+  EVENT,
+  
+  ATTACHMENT
   
 }
