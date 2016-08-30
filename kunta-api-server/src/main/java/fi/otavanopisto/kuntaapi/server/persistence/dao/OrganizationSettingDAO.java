@@ -6,7 +6,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 import fi.otavanopisto.kuntaapi.server.persistence.model.OrganizationSetting;
 import fi.otavanopisto.kuntaapi.server.persistence.model.OrganizationSetting_;
 
@@ -25,16 +24,16 @@ public class OrganizationSettingDAO extends AbstractDAO<OrganizationSetting> {
    * 
    * @param key key of setting. Must by unique among the organization
    * @param value setting value. Not nullable.
-   * @param organizationIdentifier identifier entity of organization
+   * @param organizationKuntaApiId Kunta API id of organization
    * 
    * @return created OrganizationSetting entity
    */
-  public OrganizationSetting create(String key, String value, Identifier organizationIdentifier) {
+  public OrganizationSetting create(String key, String value, String organizationKuntaApiId) {
     OrganizationSetting organizationSetting = new OrganizationSetting();
     
     organizationSetting.setKey(key);
     organizationSetting.setValue(value);
-    organizationSetting.setOrganizationIdentifier(organizationIdentifier);
+    organizationSetting.setOrganizationKuntaApiId(organizationKuntaApiId);
     
     return persist(organizationSetting);
   }
@@ -43,10 +42,10 @@ public class OrganizationSettingDAO extends AbstractDAO<OrganizationSetting> {
    * Finds organization setting by key and organizationIdentifier
    * 
    * @param key setting key
-   * @param organizationIdentifier identifier entity of organization
+   * @param organizationKuntaApiId Kunta API id of organization
    * @return found setting or null if non found
    */
-  public OrganizationSetting findByKeyAndOrganizationIdentifier(String key, Identifier organizationIdentifier) {
+  public OrganizationSetting findByKeyAndOrganizationKuntaApiId(String key, String organizationKuntaApiId) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -56,7 +55,7 @@ public class OrganizationSettingDAO extends AbstractDAO<OrganizationSetting> {
     criteria.where(
       criteriaBuilder.and(
         criteriaBuilder.equal(root.get(OrganizationSetting_.key), key),
-        criteriaBuilder.equal(root.get(OrganizationSetting_.organizationIdentifier), organizationIdentifier)
+        criteriaBuilder.equal(root.get(OrganizationSetting_.organizationKuntaApiId), organizationKuntaApiId)
       )
     );
     

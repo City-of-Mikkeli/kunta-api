@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -23,7 +22,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 @Entity
 @Cacheable(true)
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "organizationIdentifier_id", "settingKey" }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "organizationKuntaApiId", "settingKey" }) })
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class OrganizationSetting {
 
@@ -42,8 +41,10 @@ public class OrganizationSetting {
   @Lob
   private String value;
   
-  @ManyToOne (optional = false)
-  private Identifier organizationIdentifier;
+  @Column(nullable = false)
+  @NotNull
+  @NotEmpty
+  private String organizationKuntaApiId;
   
   public Long getId() {
     return id;
@@ -65,11 +66,11 @@ public class OrganizationSetting {
     this.value = value;
   }
   
-  public Identifier getOrganizationIdentifier() {
-    return organizationIdentifier;
+  public String getOrganizationKuntaApiId() {
+    return organizationKuntaApiId;
   }
   
-  public void setOrganizationIdentifier(Identifier organizationIdentifier) {
-    this.organizationIdentifier = organizationIdentifier;
+  public void setOrganizationKuntaApiId(String organizationKuntaApiId) {
+    this.organizationKuntaApiId = organizationKuntaApiId;
   }
 }
