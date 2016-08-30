@@ -11,7 +11,7 @@ module.exports = function(grunt) {
       'clean-javascript': ['kunta-api-spec/languages/javascript'],
       'clean-jaxrs': ['kunta-api-spec/languages/jaxrs-spec'],
       'clean-jaxrs-generated-cruft': ['kunta-api-spec/languages/jaxrs-spec/src/main/java/fi/otavanopisto/kuntaapi/server/RestApplication.java'],
-      'clean-management-composer-files': ['kunta-api-management/wp-content/plugins/kunta-api-management/vendor'],
+      'clean-management-composer-files': ['wordpress-plugins/kunta-api-management/vendor'],
       'clean-mwp-java-client': ['mwp-rest-client'],
       'clean-mwp-java-client-cruft': [
         'mwp-rest-client/docs', 
@@ -164,7 +164,7 @@ module.exports = function(grunt) {
         command: 'composer clear-cache && composer update',
         options: {
           execOptions: {
-            cwd: 'kunta-api-management/wp-content/plugins/kunta-api-management'
+            cwd: 'wordpress-plugins/kunta-api-management'
           }
         }
       },
