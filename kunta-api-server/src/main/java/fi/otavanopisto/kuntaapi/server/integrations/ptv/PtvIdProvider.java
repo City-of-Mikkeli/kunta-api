@@ -4,6 +4,8 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
+import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
+import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.IdProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
@@ -12,12 +14,20 @@ import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 
+/**
+ * Id provider for palvelu tieto varanto
+ * 
+ * @author Otavan Opisto
+ */
 @Dependent
 public class PtvIdProvider implements IdProvider {
   
   @Inject
   private IdentifierController identifierController;
 
+  private PtvIdProvider() {
+  }
+  
   @Override
   public boolean canTranslate(String source, String target) {
     if (PtvConsts.IDENTIFIFER_NAME.equals(source) && KuntaApiConsts.IDENTIFIER_NAME.equals(target)) {
@@ -35,19 +45,16 @@ public class PtvIdProvider implements IdProvider {
   public OrganizationId translate(OrganizationId organizationId, String target) {
     Identifier identifier;
     
-    switch (organizationId.getSource()) {
-      case PtvConsts.IDENTIFIFER_NAME:
-        identifier = identifierController.findIdentifierById(organizationId);
-        if (identifier != null) {
-          return new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
-        }
-      break;
-      case KuntaApiConsts.IDENTIFIER_NAME:
-        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.ORGANIZATION, PtvConsts.IDENTIFIFER_NAME, organizationId.getId());
-        if (identifier != null) {
-          return new OrganizationId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
-        }
-      break;
+    if (PtvConsts.IDENTIFIFER_NAME.equals(organizationId.getSource())) {
+      identifier = identifierController.findIdentifierById(organizationId);
+      if (identifier != null) {
+        return new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
+      }
+    } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(organizationId.getSource())) {
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.ORGANIZATION, PtvConsts.IDENTIFIFER_NAME, organizationId.getId());
+      if (identifier != null) {
+        return new OrganizationId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
+      }
     }
     
     return null;
@@ -57,19 +64,16 @@ public class PtvIdProvider implements IdProvider {
   public ServiceId translate(ServiceId serviceId, String target) {
     Identifier identifier;
     
-    switch (serviceId.getSource()) {
-      case PtvConsts.IDENTIFIFER_NAME:
-        identifier = identifierController.findIdentifierById(serviceId);
-        if (identifier != null) {
-          return new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
-        }
-      break;
-      case KuntaApiConsts.IDENTIFIER_NAME:
-        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE, PtvConsts.IDENTIFIFER_NAME, serviceId.getId());
-        if (identifier != null) {
-          return new ServiceId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
-        }
-      break;
+    if (PtvConsts.IDENTIFIFER_NAME.equals(serviceId.getSource())) {
+      identifier = identifierController.findIdentifierById(serviceId);
+      if (identifier != null) {
+        return new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
+      } 
+    } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(serviceId.getSource())) {
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE, PtvConsts.IDENTIFIFER_NAME, serviceId.getId());
+      if (identifier != null) {
+        return new ServiceId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
+      }
     }
     
     return null;
@@ -79,21 +83,28 @@ public class PtvIdProvider implements IdProvider {
   public ServiceClassId translate(ServiceClassId serviceClassId, String target) {
     Identifier identifier;
     
-    switch (serviceClassId.getSource()) {
-      case PtvConsts.IDENTIFIFER_NAME:
-        identifier = identifierController.findIdentifierById(serviceClassId);
-        if (identifier != null) {
-          return new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
-        }
-      break;
-      case KuntaApiConsts.IDENTIFIER_NAME:
-        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE_CLASS, PtvConsts.IDENTIFIFER_NAME, serviceClassId.getId());
-        if (identifier != null) {
-          return new ServiceClassId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
-        }
-      break;
+    if (PtvConsts.IDENTIFIFER_NAME.equals(serviceClassId.getSource())) {
+      identifier = identifierController.findIdentifierById(serviceClassId);
+      if (identifier != null) {
+        return new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
+      }
+    } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(serviceClassId.getSource())) {
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE_CLASS, PtvConsts.IDENTIFIFER_NAME, serviceClassId.getId());
+      if (identifier != null) {
+        return new ServiceClassId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
+      }
     }
     
+    return null;
+  }
+
+  @Override
+  public EventId translate(EventId eventId, String target) {
+    return null;
+  }
+
+  @Override
+  public AttachmentId translate(AttachmentId attachmentId, String target) {
     return null;
   }
 
