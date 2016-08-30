@@ -12,17 +12,25 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
+import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 
+/**
+ * REST Service implementation
+ * 
+ * @author Antti Leppä
+ */
 @RequestScoped
 @Stateful
+@SuppressWarnings ("squid:S3306")
 public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Inject
@@ -30,14 +38,17 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Inject
   private Instance<ServiceClassProvider> serviceClassProvider;
+
+  @Inject
+  private Instance<EventProvider> eventProviders;
   
   @Override
   public Response createService(String organizationId, Service body) {
     return createNotImplemented("Not implemented");
   }
-
+  
   @Override
-  public Response findService(String organizationIdParam, String serviceIdParam, Boolean enriched) {
+  public Response findService(String organizationIdParam, String serviceIdParam) {
     OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
     ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
     
@@ -101,6 +112,41 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     return Response.ok(result)
       .build();
   }
+
+  @Override
+  public Response findOrganizationEvent(String organizationId, String eventId) {
+    return createNotImplemented("Not implemented");
+  }
+
+  @Override
+  public Response findOrganizationEventImage(String organizationId, String eventId, String imageId) {
+    return createNotImplemented("Not implemented");
+  }
+
+  @Override
+  public Response getOrganizationEventImageData(String organizationId, String eventId, String imageId, Integer size) {
+    return createNotImplemented("Not implemented");
+  }
+
+  @Override
+  public Response listOrganizationEventImages(String organizationId, String eventId) {
+    return createNotImplemented("Not implemented");
+  }
+
+  @Override
+  public Response listOrganizationEvents(String organizationIdParam) {
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    
+    List<Event> result = new ArrayList<>();
+   
+    // TODO: Sort events 
+    for (EventProvider eventProvider : getEventProviders()) {
+      result.addAll(eventProvider.listOrganizationEvents(organizationId));
+    }
+    
+    return Response.ok(result)
+      .build();
+  }
   
   private List<ServiceProvider> getServiceProviders() {
     // TODO: Prioritize providers
@@ -121,6 +167,19 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     List<ServiceClassProvider> result = new ArrayList<>();
     
     Iterator<ServiceClassProvider> iterator = serviceClassProvider.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+  
+  private List<EventProvider> getEventProviders() {
+    // TODO: Prioritize providers
+    
+    List<EventProvider> result = new ArrayList<>();
+    
+    Iterator<EventProvider> iterator = eventProviders.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     }
