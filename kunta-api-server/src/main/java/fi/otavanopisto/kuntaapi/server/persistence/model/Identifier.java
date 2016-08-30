@@ -14,12 +14,41 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 
+/**
+ * JPA entity representing mapping for external source id to Kunta API Id
+ * 
+ * @author Otavan Opisto
+ */
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "type", "source", "sourceId", "kuntaApiId" }) })
 @Cacheable(true)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class Identifier {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @Column(nullable = false)
+  @NotNull
+  @NotEmpty
+  private String kuntaApiId;
+
+  @Column(nullable = false)
+  @NotNull
+  @NotEmpty
+  private String type;
+
+  @Column(nullable = false)
+  @NotNull
+  @NotEmpty
+  private String source;
+
+  @Column(nullable = false)
+  @NotNull
+  @NotEmpty
+  private String sourceId;
+  
   public Long getId() {
     return id;
   }
@@ -55,28 +84,4 @@ public class Identifier {
   public void setType(String type) {
     this.type = type;
   }
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  @Column(nullable = false)
-  @NotNull
-  @NotEmpty
-  private String kuntaApiId;
-
-  @Column(nullable = false)
-  @NotNull
-  @NotEmpty
-  private String type;
-
-  @Column(nullable = false)
-  @NotNull
-  @NotEmpty
-  private String source;
-
-  @Column(nullable = false)
-  @NotNull
-  @NotEmpty
-  private String sourceId;
 }
