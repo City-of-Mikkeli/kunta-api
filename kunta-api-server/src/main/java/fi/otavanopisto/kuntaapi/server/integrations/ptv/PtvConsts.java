@@ -1,7 +1,7 @@
 package fi.otavanopisto.kuntaapi.server.integrations.ptv;
 
 /**
- * Constants for palvelu tieto väylä
+ * Constants for palvelutietoväylä
  * 
  * @author Antti Leppä
  */

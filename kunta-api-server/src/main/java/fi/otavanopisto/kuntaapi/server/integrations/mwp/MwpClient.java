@@ -26,6 +26,8 @@ import fi.otavanopisto.mwp.client.ResultType;
 @Dependent
 public class MwpClient extends fi.otavanopisto.mwp.client.ApiClient {
 
+  private static final String INVALID_URI_SYNTAX = "Invalid uri syntax";
+
   private static final String BASE_PATH = "http://manage.kunta-api.dev/wp-json";
 
   @Inject
@@ -46,8 +48,8 @@ public class MwpClient extends fi.otavanopisto.mwp.client.ApiClient {
     try {
       uriBuilder = new URIBuilder(String.format("%s%s", BASE_PATH, path));
     } catch (URISyntaxException e) {
-      logger.log(Level.SEVERE, "Invalid uri syntax", e);
-      return new ApiResponse<>(500, "Invalid uri syntax", null);
+      logger.log(Level.SEVERE, INVALID_URI_SYNTAX, e);
+      return new ApiResponse<>(500, INVALID_URI_SYNTAX, null);
     }
     
     if (queryParams != null) {
@@ -60,8 +62,8 @@ public class MwpClient extends fi.otavanopisto.mwp.client.ApiClient {
     try {
       uri = uriBuilder.build();
     } catch (URISyntaxException e) {
-      logger.log(Level.SEVERE, "Invalid uri syntax", e);
-      return new ApiResponse<>(500, "Invalid uri syntax", null);
+      logger.log(Level.SEVERE, INVALID_URI_SYNTAX, e);
+      return new ApiResponse<>(500, INVALID_URI_SYNTAX, null);
     }
     
     Response<T> response = httpCache.get(MwpConsts.CACHE_NAME, uri, new GenericHttpClient.ResultType<T>() {});

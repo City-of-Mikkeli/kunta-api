@@ -18,8 +18,15 @@ import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpClient.Response;
 import fi.otavanopisto.ptv.client.ApiResponse;
 import fi.otavanopisto.ptv.client.ResultType;
 
+/**
+ * API Client for palvelutietoväylä
+ * 
+ * @author Antti Leppä
+ */
 @Dependent
 public class PtvClient extends fi.otavanopisto.ptv.client.ApiClient {
+
+  private static final String INVALID_URI_SYNTAX = "Invalid uri syntax";
 
   private static final String BASE_PATH = "http://ptvenv.cloudapp.net:1494";
 
@@ -32,14 +39,17 @@ public class PtvClient extends fi.otavanopisto.ptv.client.ApiClient {
   @Inject
   private GenericHttpCache httpCache;
   
+  private PtvClient() {
+  }
+  
   @Override
   public <T> ApiResponse<T> doGETRequest(String path, ResultType<T> resultType, Map<String, Object> queryParams, Map<String, Object> postParams) {
     URIBuilder uriBuilder;
     try {
       uriBuilder = new URIBuilder(String.format("%s%s", BASE_PATH, path));
     } catch (URISyntaxException e) {
-      logger.log(Level.SEVERE, "Invalid uri syntax", e);
-      return new ApiResponse<>(500, "Invalid uri syntax", null);
+      logger.log(Level.SEVERE, INVALID_URI_SYNTAX, e);
+      return new ApiResponse<>(500, INVALID_URI_SYNTAX, null);
     }
     
     if (queryParams != null) {
@@ -52,8 +62,8 @@ public class PtvClient extends fi.otavanopisto.ptv.client.ApiClient {
     try {
       uri = uriBuilder.build();
     } catch (URISyntaxException e) {
-      logger.log(Level.SEVERE, "Invalid uri syntax", e);
-      return new ApiResponse<>(500, "Invalid uri syntax", null);
+      logger.log(Level.SEVERE, INVALID_URI_SYNTAX, e);
+      return new ApiResponse<>(500, INVALID_URI_SYNTAX, null);
     }
     
     Response<T> response = httpCache.get(PtvConsts.CACHE_NAME, uri, new GenericHttpClient.ResultType<T>() {});
