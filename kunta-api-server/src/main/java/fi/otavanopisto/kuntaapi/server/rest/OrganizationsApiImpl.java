@@ -12,6 +12,9 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
+import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
+import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
@@ -19,6 +22,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
+import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
@@ -114,23 +118,70 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
 
   @Override
-  public Response findOrganizationEvent(String organizationId, String eventId) {
-    return createNotImplemented("Not implemented");
+  public Response findOrganizationEvent(String organizationIdParam, String eventIdParam) {
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    
+    for (EventProvider eventProvider : getEventProviders()) {
+      Event event = eventProvider.findOrganizationEvent(organizationId, eventId);
+      if (event != null) {
+        return Response.ok(event)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
   }
 
   @Override
-  public Response findOrganizationEventImage(String organizationId, String eventId, String imageId) {
-    return createNotImplemented("Not implemented");
+  public Response findOrganizationEventImage(String organizationIdParam, String eventIdParam, String imageIdParam) {
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    AttachmentId attachmentId = new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, imageIdParam);
+    
+    for (EventProvider eventProvider : getEventProviders()) {
+      Attachment attachment = eventProvider.findEventImage(organizationId, eventId, attachmentId);
+      if (attachment != null) {
+        return Response.ok(attachment)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
   }
 
   @Override
-  public Response getOrganizationEventImageData(String organizationId, String eventId, String imageId, Integer size) {
-    return createNotImplemented("Not implemented");
+  public Response getOrganizationEventImageData(String organizationIdParam, String eventIdParam, String imageIdParam, Integer size) {
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    AttachmentId attachmentId = new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, imageIdParam);
+    
+    for (EventProvider eventProvider : getEventProviders()) {
+      AttachmentData attachmentData = eventProvider.getEventImageData(organizationId, eventId, attachmentId);
+      if (attachmentData != null) {
+        return Response.ok(attachmentData.getData(), attachmentData.getType())
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
   }
 
   @Override
-  public Response listOrganizationEventImages(String organizationId, String eventId) {
-    return createNotImplemented("Not implemented");
+  public Response listOrganizationEventImages(String organizationIdParam, String eventIdParam) {
+    List<Attachment> result = new ArrayList<>();
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    
+    for (EventProvider eventProvider : getEventProviders()) {
+      result.addAll(eventProvider.listEventImages(organizationId, eventId));
+    }
+    
+    return Response.ok(result)
+      .build();
   }
 
   @Override
