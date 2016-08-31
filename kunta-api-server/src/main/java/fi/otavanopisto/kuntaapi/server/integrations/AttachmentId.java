@@ -1,7 +1,10 @@
 package fi.otavanopisto.kuntaapi.server.integrations;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
- * Class represeting attachment id
+ * Class representing attachment id
  * 
  * @author Antti Leppä
  */
@@ -38,4 +41,21 @@ public class AttachmentId extends Id {
     return IdType.ATTACHMENT;
   }
   
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof AttachmentId) {
+      AttachmentId another = (AttachmentId) obj;
+      return StringUtils.equals(this.getSource(), another.getSource()) &&  StringUtils.equals(this.getId(), another.getId());
+    }
+
+    return false;
+  }
+  
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(125, 137)
+      .append(getSource())
+      .append(getId())
+      .hashCode();
+  }
 }
