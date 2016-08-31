@@ -25,6 +25,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -221,6 +222,13 @@ public class GenericHttpClient {
     private int status;
     private String message;
     private T responseEntity;
+    
+    /**
+     * Zero-argument constructor for Response
+     */
+    public Response() {
+      // Zero-argument constructor is empty
+    }
 
     /**
      * Constructor for class
@@ -239,14 +247,27 @@ public class GenericHttpClient {
       return responseEntity;
     }
     
+    public void setResponseEntity(T responseEntity) {
+      this.responseEntity = responseEntity;
+    }
+    
     public int getStatus() {
       return status;
+    }
+    
+    public void setStatus(int status) {
+      this.status = status;
     }
     
     public String getMessage() {
       return message;
     }
 
+    public void setMessage(String message) {
+      this.message = message;
+    }
+    
+    @JsonIgnore    
     public boolean isOk() {
       return status >= 200 && status <= 299;
     }

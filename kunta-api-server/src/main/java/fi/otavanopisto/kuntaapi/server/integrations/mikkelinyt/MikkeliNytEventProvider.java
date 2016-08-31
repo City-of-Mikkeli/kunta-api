@@ -1,9 +1,9 @@
 package fi.otavanopisto.kuntaapi.server.integrations.mikkelinyt;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -11,22 +11,20 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
@@ -38,6 +36,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
+import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpCache;
 import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpClient;
 import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpClient.Response;
 import fi.otavanopisto.kuntaapi.server.integrations.IdController;
@@ -72,6 +71,9 @@ public class MikkeliNytEventProvider implements EventProvider {
   
   @Inject
   private GenericHttpClient httpClient;
+  
+  @Inject
+  private GenericHttpCache httpCache;
   
   @Inject
   private SystemSettingController systemSettingController;
@@ -198,7 +200,7 @@ public class MikkeliNytEventProvider implements EventProvider {
       BufferedImage scaledImage = imageScaler.scaleMaxSize(bufferedImage, size);
       byte[] scaledImageData = imageWriter.writeBufferedImageAsPng(scaledImage);
       if (scaledImageData != null) {
-        return new AttachmentData("image/png", new ByteArrayInputStream(scaledImageData));
+        return new AttachmentData("image/png", scaledImageData);
       }
     }
     
@@ -207,30 +209,17 @@ public class MikkeliNytEventProvider implements EventProvider {
   
   private Attachment loadEventImageAttachment(OrganizationId organizationId, AttachmentId imageId) {
     AttachmentData attachmentData = getImageData(organizationId, imageId);
-    try {
-      long size = getImageSize(attachmentData);
-      Attachment attachment = new Attachment();
-      attachment.setContentType(attachmentData.getType());
-      attachment.setId(imageId.getId());
-      attachment.setSize(size);
-      return attachment;
-    } finally {
-      try {
-        attachmentData.getData().close();
-      } catch (IOException e) {
-        logger.log(Level.SEVERE, "Failed to close image data stream", e);
-      }
-    }
+    
+    long size = getImageSize(attachmentData);
+    Attachment attachment = new Attachment();
+    attachment.setContentType(attachmentData.getType());
+    attachment.setId(imageId.getId());
+    attachment.setSize(size);
+    return attachment;
   }
   
   private long getImageSize(AttachmentData attachmentData) {
-    try {
-      return IOUtils.toByteArray(attachmentData.getData()).length;
-    } catch (IOException e) {
-      logger.log(Level.WARNING, "Could not determine image size", e);
-    }
-    
-    return 0l;
+    return attachmentData.getData().length;
   }
   
   private fi.otavanopisto.mikkelinyt.model.Event findEvent(OrganizationId kuntaApiOrganizationId, EventId kuntaApiEventId) {
@@ -254,16 +243,32 @@ public class MikkeliNytEventProvider implements EventProvider {
     String location = organizationSettingController.getSettingValue(organizationId, MikkeliNytConsts.ORGANIZATION_SETTING_LOCATION);
     String baseUrl = organizationSettingController.getSettingValue(organizationId, MikkeliNytConsts.ORGANIZATION_SETTING_BASEURL);
     
-    Map<String, Object> queryParams = new HashMap<>();
-    queryParams.put("apiKey", apiKey);
-    
-    if (StringUtils.isNotBlank(location)) {
-       queryParams.put("location", location);
-    } else {
-      logger.warning("location not specified. Returning unfiltered event list");
+    URI uri;
+    try {
+      URIBuilder uriBuilder = new URIBuilder(String.format("%s%s", baseUrl, "/json.php"));
+
+      uriBuilder.addParameter("apiKey", apiKey);
+      if (StringUtils.isNotBlank(location)) {
+        uriBuilder.addParameter("location", location);
+      } else {
+        logger.warning("location not specified. Returning unfiltered event list");
+      }
+     
+      uri = uriBuilder.build();
+    } catch (URISyntaxException e) {
+      logger.log(Level.SEVERE, "Invalid uri", e);
+      return new Response<>(500, "Internal Server Error", null);
     }
     
-    return httpClient.doGETRequest(baseUrl, "/json.php", new GenericHttpClient.ResultType<fi.otavanopisto.mikkelinyt.model.EventsResponse>() {}, queryParams);
+    
+    Response<EventsResponse> cachedResponse = httpCache.get(MikkeliNytConsts.CACHE_NAME, uri, new GenericHttpClient.ResultType<Response<fi.otavanopisto.mikkelinyt.model.EventsResponse>>() {});
+    if (cachedResponse != null) {
+      return cachedResponse;
+    }
+    
+    Response<EventsResponse> response = httpClient.doGETRequest(uri, new GenericHttpClient.ResultType<fi.otavanopisto.mikkelinyt.model.EventsResponse>() {});
+    httpCache.put(MikkeliNytConsts.CACHE_NAME, uri, response);
+    return response;
   }
 
   private AttachmentData getImageData(OrganizationId organizationId, AttachmentId imageId) {
@@ -290,21 +295,37 @@ public class MikkeliNytEventProvider implements EventProvider {
   }
   
   private Response<AttachmentData> getImageData(String imageUrl) {
+    URI uri;
+    
+    try {
+      uri = new URIBuilder(imageUrl).build();
+    } catch (URISyntaxException e) {
+      logger.log(Level.SEVERE, String.format("Invalid uri %s", imageUrl), e);
+      return new Response<>(500, "Internal Server Error", null);
+    }
+    
+    Response<AttachmentData> cachedResponse = httpCache.get(MikkeliNytConsts.CACHE_NAME, uri, new GenericHttpClient.ResultType<Response<AttachmentData>>() {});
+    if (cachedResponse != null) {
+      return cachedResponse;
+    }
+    
     try {
       CloseableHttpClient imageClient = HttpClients.createDefault();
       try {
-        HttpGet httpGet = new HttpGet(imageUrl);
+        HttpGet httpGet = new HttpGet(uri);
         
-        CloseableHttpResponse response = imageClient.execute(httpGet);
+        CloseableHttpResponse httpResponse = imageClient.execute(httpGet);
         try {
-          StatusLine statusLine = response.getStatusLine();
+          StatusLine statusLine = httpResponse.getStatusLine();
           int statusCode = statusLine.getStatusCode();
           String message = statusLine.getReasonPhrase();
-          InputStream data = IOUtils.toBufferedInputStream(response.getEntity().getContent());
-          String type = response.getEntity().getContentType().getValue();
-          return new Response<>(statusCode, message, new AttachmentData(type, data));
+          byte[] data = IOUtils.toByteArray(httpResponse.getEntity().getContent());
+          String type = httpResponse.getEntity().getContentType().getValue();
+          Response<AttachmentData> attachmentResponse = new Response<>(statusCode, message, new AttachmentData(type, data));
+          httpCache.put(MikkeliNytConsts.CACHE_NAME, uri, attachmentResponse); 
+          return attachmentResponse;
         } finally {
-          response.close();
+          httpResponse.close();
         }
       } finally {
         imageClient.close();

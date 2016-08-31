@@ -66,7 +66,7 @@ public class PtvClient extends fi.otavanopisto.ptv.client.ApiClient {
       return new ApiResponse<>(500, INVALID_URI_SYNTAX, null);
     }
     
-    Response<T> response = httpCache.get(PtvConsts.CACHE_NAME, uri, new GenericHttpClient.ResultType<T>() {});
+    Response<T> response = httpCache.get(PtvConsts.CACHE_NAME, uri, new GenericHttpClient.ResultType<Response<T>>() {});
     if (response == null) {
       response = httpClient.doGETRequest(uri, new GenericHttpClient.ResultType<T>() {});
       httpCache.put(PtvConsts.CACHE_NAME, uri, response);

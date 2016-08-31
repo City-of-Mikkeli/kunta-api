@@ -1,6 +1,7 @@
 package fi.otavanopisto.kuntaapi.server.images;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -34,6 +35,22 @@ public class ImageReader {
   public BufferedImage readBufferedImage(InputStream data) {
     try {
       return ImageIO.read(data);
+    } catch (IOException e) {
+      logger.log(Level.WARNING, "Could not read image", e);
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Reads image from byte array into BufferedImage
+   * 
+   * @param data image data
+   * @return BufferedImage or null if image could not be read
+   */
+  public BufferedImage readBufferedImage(byte[] data) {
+    try (ByteArrayInputStream inputStream = new ByteArrayInputStream(data)) {
+      return readBufferedImage(inputStream); 
     } catch (IOException e) {
       logger.log(Level.WARNING, "Could not read image", e);
     }

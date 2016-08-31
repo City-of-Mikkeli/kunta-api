@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.Resource;
-import javax.ejb.Stateless;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
@@ -23,8 +23,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpClient.ResultType
  * 
  * @author Antti Leppä
  */
-@Stateless
-@SuppressWarnings ("squid:S3306")
+@Dependent
 public class GenericHttpCache {
   
   @Resource (lookup = "java:jboss/infinispan/container/kunta-api")
@@ -32,6 +31,9 @@ public class GenericHttpCache {
   
   @Inject
   private Logger logger;
+  
+  private GenericHttpCache() {
+  }
   
   /**
    * Returns cached HTTP response by URI
@@ -41,7 +43,7 @@ public class GenericHttpCache {
    * @param type result type
    * @return cached api reposponse or null if non found
    */
-  public <T> Response<T> get(String cacheName, URI uri, ResultType<T> type) {
+  public <T> T get(String cacheName, URI uri, ResultType<T> type) {
     return get(cacheName, uri.toString(), type);
   }
 
@@ -53,7 +55,7 @@ public class GenericHttpCache {
    * @param type result type
    * @return cached api reposponse or null if non found
    */
-  public <T> Response<T> get(String cacheName, String url, ResultType<T> type) {
+  public <T> T get(String cacheName, String url, ResultType<T> type) {
     Cache<String, String> cache = cacheManager.getCache(cacheName);
     if (cache.containsKey(url)) {
       ObjectMapper objectMapper = new ObjectMapper();

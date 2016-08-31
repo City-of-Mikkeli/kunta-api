@@ -1,9 +1,14 @@
 package fi.otavanopisto.kuntaapi.server.rest;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -36,6 +41,9 @@ import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 @Stateful
 @SuppressWarnings ("squid:S3306")
 public class OrganizationsApiImpl extends OrganizationsApi {
+  
+  @Inject
+  private Logger logger;
   
   @Inject
   private Instance<ServiceProvider> serviceProviders;
@@ -161,8 +169,15 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     for (EventProvider eventProvider : getEventProviders()) {
       AttachmentData attachmentData = eventProvider.getEventImageData(organizationId, eventId, attachmentId, size);
       if (attachmentData != null) {
-        return Response.ok(attachmentData.getData(), attachmentData.getType())
-          .build();
+        try (InputStream stream = new ByteArrayInputStream(attachmentData.getData())) {
+          return Response.ok(stream, attachmentData.getType())
+              .build();
+        } catch (IOException e) {
+          logger.log(Level.SEVERE, "Failed to stream image to client", e);
+          return Response.status(Status.INTERNAL_SERVER_ERROR)
+            .entity("Internal Server Error")
+            .build();
+        }
       }
     }
     

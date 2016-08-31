@@ -12,6 +12,7 @@ public class MikkeliNytConsts {
   public static final String ORGANIZATION_SETTING_LOCATION = "mikkelinyt.location";
   public static final String ORGANIZATION_SETTING_BASEURL = "mikkelinyt.baseurl";
   public static final String ORGANIZATION_SETTING_IMAGEBASEURL = "mikkelinyt.imagebaseurl";
+  public static final String CACHE_NAME = "mikkelinyt";
   
   private MikkeliNytConsts() {
   }

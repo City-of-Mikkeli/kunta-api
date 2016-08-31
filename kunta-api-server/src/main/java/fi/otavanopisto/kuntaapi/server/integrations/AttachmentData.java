@@ -1,16 +1,15 @@
 package fi.otavanopisto.kuntaapi.server.integrations;
 
-import java.io.InputStream;
-
 /**
  * Attachment data
  * 
- * @author Otavan Opisto
+ * @author Antti Leppä
+ * @author Heikki Kurhinen
  */
 public class AttachmentData {
 
   private String type;
-  private InputStream data;
+  private byte[] data;
 
   /**
    * Attachment constructor
@@ -25,13 +24,13 @@ public class AttachmentData {
    * @param type attachment content type
    * @param data attachment data as input stream
    */
-  public AttachmentData(String type, InputStream data) {
+  public AttachmentData(String type, byte[] data) {
     super();
     this.type = type;
     this.data = data;
   }
 
-  public InputStream getData() {
+  public byte[] getData() {
     return data;
   }
 
