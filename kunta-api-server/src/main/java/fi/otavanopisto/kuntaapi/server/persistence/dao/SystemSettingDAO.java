@@ -68,9 +68,4 @@ public class SystemSettingDAO extends AbstractDAO<SystemSetting> {
     return persist(setting);
   }
   
-  @Override
-  public void delete(SystemSetting setting) {
-    super.delete(setting);
-  }
-  
 }

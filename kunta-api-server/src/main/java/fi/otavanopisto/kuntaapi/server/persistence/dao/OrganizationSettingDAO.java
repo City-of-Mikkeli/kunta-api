@@ -72,9 +72,4 @@ public class OrganizationSettingDAO extends AbstractDAO<OrganizationSetting> {
     return persist(setting);
   }
   
-  @Override
-  public void delete(OrganizationSetting setting) {
-    super.delete(setting);
-  }
-  
 }
