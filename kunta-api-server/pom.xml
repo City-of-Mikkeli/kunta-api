@@ -58,8 +58,7 @@
     
     <!-- Wildfly -->
     
-    <wildfly-spec-api.version>10.0.0.Final</wildfly-spec-api.version>
-    <jackson-datatype-jsr310.version>2.5.4</jackson-datatype-jsr310.version>
+    <wildfly-spec-api.version>10.1.0.Final</wildfly-spec-api.version>
     
     <kunta-api-spec.version>0.0.1-SNAPSHOT</kunta-api-spec.version>
     <ptv-rest-client.version>0.0.5</ptv-rest-client.version>
@@ -91,7 +90,7 @@
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <archive>
             <manifestEntries>
-              <Dependencies>org.apache.httpcomponents, org.infinispan, org.apache.commons.io, com.fasterxml.jackson.core.jackson-annotations, com.fasterxml.jackson.core.jackson-databind</Dependencies>
+              <Dependencies>org.apache.httpcomponents, org.infinispan, org.apache.commons.io, com.fasterxml.jackson.core.jackson-annotations, com.fasterxml.jackson.core.jackson-databind, com.fasterxml.jackson.datatype.jackson-datatype-jsr310</Dependencies>
             </manifestEntries>
           </archive>
         </configuration>
@@ -172,17 +171,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>${jackson-datatype-jsr310.version}</version>
-      <exclusions> 
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-        </exclusion>
-      </exclusions>
+      <scope>provided</scope>
     </dependency>
     
     <dependency>
