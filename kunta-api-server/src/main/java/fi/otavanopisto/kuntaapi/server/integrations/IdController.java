@@ -16,12 +16,12 @@ import org.apache.commons.lang3.StringUtils;
 @Dependent
 public class IdController {
   
+  @Inject
+  private Instance<IdProvider> idProviders;
+  
   private IdController() {
   }
   
-  @Inject
-  private Instance<IdProvider> idProviders;
-
   /**
    * Translates organization id into into target id
    * 

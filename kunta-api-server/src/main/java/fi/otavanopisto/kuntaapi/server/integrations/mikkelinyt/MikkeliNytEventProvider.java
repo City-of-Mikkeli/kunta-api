@@ -336,16 +336,16 @@ public class MikkeliNytEventProvider implements EventProvider {
     return result;
   }
   
-  private static String stripHtml(String html) {
+  private String stripHtml(String html) {
     return StringUtils.trim(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(html.replaceAll("\\<.*?>"," "))));
   }
   
-  private static OffsetDateTime parseOffsetDateTime(String text) {
+  private OffsetDateTime parseOffsetDateTime(String text) {
     LocalDateTime localDateTime = parseLocalDateTime(text);
     return localDateTime.atZone(ZoneId.systemDefault()).toOffsetDateTime();
   }
   
-  private static LocalDateTime parseLocalDateTime(String text) {
+  private LocalDateTime parseLocalDateTime(String text) {
     
     DateTimeFormatter formatter = new DateTimeFormatterBuilder()
       .parseCaseInsensitive()
