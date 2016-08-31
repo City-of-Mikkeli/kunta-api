@@ -1,6 +1,5 @@
 package fi.otavanopisto.kuntaapi.server.persistence.dao;
 
-import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -8,55 +7,93 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;;
+import javax.persistence.Query;
 
-public abstract class AbstractDAO<T> implements Serializable {
-
-  private static final long serialVersionUID = 534435878681262724L;
+/**
+ * Abstract base class for all DAO classes
+ * 
+ * @author Antti Leppä
+ *
+ * @param <T> entity type
+ */
+public abstract class AbstractDAO<T> {
 
   @PersistenceContext
   private EntityManager entityManager;
   
+  /**
+   * Returns entity by id
+   * 
+   * @param id entity id
+   * @return entity or null if non found
+   */
   @SuppressWarnings("unchecked")
   public T findById(Long id) {
-    EntityManager entityManager = getEntityManager();
-    return (T) entityManager.find(getGenericTypeClass(), id);
+    return (T) getEntityManager().find(getGenericTypeClass(), id);
   }
 
+  /**
+   * Lists all entities from database
+   * 
+   * @return all entities from database
+   */
   @SuppressWarnings("unchecked")
   public List<T> listAll() {
-    EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
-    Query query = entityManager.createQuery("select o from " + genericTypeClass.getName() + " o");
+    Query query = getEntityManager().createQuery("select o from " + genericTypeClass.getName() + " o");
     return query.getResultList();
   }
 
+  /**
+   * Lists all entities from database limited by firstResult and maxResults parameters
+   * 
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return all entities from database limited by firstResult and maxResults parameters
+   */
   @SuppressWarnings("unchecked")
   public List<T> listAll(int firstResult, int maxResults) {
-    EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
-    Query query = entityManager.createQuery("select o from " + genericTypeClass.getName() + " o");
+    Query query = getEntityManager().createQuery("select o from " + genericTypeClass.getName() + " o");
     query.setFirstResult(firstResult);
     query.setMaxResults(maxResults);
     return query.getResultList();
   }
 
+  /**
+   * Returns count of all entities
+   * 
+   * @return entity count
+   */
   public Long count() {
-    EntityManager entityManager = getEntityManager();
     Class<?> genericTypeClass = getGenericTypeClass();
-    Query query = entityManager.createQuery("select count(o) from " + genericTypeClass.getName() + " o");
+    Query query = getEntityManager().createQuery("select count(o) from " + genericTypeClass.getName() + " o");
     return (Long) query.getSingleResult();
   }
 
-  protected void delete(T e) {
+  /**
+   * Deletes entity
+   * 
+   * @param e entity
+   */
+  public void delete(T e) {
     getEntityManager().remove(e);
     flush();
   }
 
+  /**
+   * Flushes persistence context state
+   */
   public void flush() {
     getEntityManager().flush();
   }
 
+  /**
+   * Persists an entity
+   * 
+   * @param object entity to be persisted
+   * @return persisted entity
+   */
   protected T persist(T object) {
     getEntityManager().persist(object);
     return object;
@@ -66,7 +103,7 @@ public abstract class AbstractDAO<T> implements Serializable {
     @SuppressWarnings("unchecked")
     List<T> list = query.getResultList();
 
-    if (list.size() == 0)
+    if (list.isEmpty())
       return null;
 
     if (list.size() == 1)
@@ -85,10 +122,8 @@ public abstract class AbstractDAO<T> implements Serializable {
     if (genericSuperclass instanceof ParameterizedType) {
       return getFirstTypeArgument((ParameterizedType) genericSuperclass);
     } else {
-      if (genericSuperclass instanceof Class<?>) {
-        if (AbstractDAO.class.isAssignableFrom((Class<?>) genericSuperclass)) {
-          return getFirstTypeArgument((ParameterizedType) ((Class<?>) genericSuperclass).getGenericSuperclass());
-        }
+      if ((genericSuperclass instanceof Class<?>) && (AbstractDAO.class.isAssignableFrom((Class<?>) genericSuperclass))) {
+        return getFirstTypeArgument((ParameterizedType) ((Class<?>) genericSuperclass).getGenericSuperclass());
       }
     }
 

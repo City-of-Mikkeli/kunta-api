@@ -17,8 +17,6 @@ import fi.otavanopisto.kuntaapi.server.persistence.model.SystemSetting_;
 @Dependent
 public class SystemSettingDAO extends AbstractDAO<SystemSetting> {
 
-  private static final long serialVersionUID = 8710294058847591299L;
-
   /**
    * Creates new system setting entity
    * 

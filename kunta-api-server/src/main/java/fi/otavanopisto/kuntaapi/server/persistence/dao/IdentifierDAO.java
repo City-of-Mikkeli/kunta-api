@@ -20,8 +20,6 @@ import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier_;
 @Dependent
 public class IdentifierDAO extends AbstractDAO<Identifier> {
 
-  private static final long serialVersionUID = 8710294058847591299L;
-
   /**
    * Creates new Identifier entity
    * 

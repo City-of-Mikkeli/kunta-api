@@ -17,8 +17,6 @@ import fi.otavanopisto.kuntaapi.server.persistence.model.OrganizationSetting_;
 @Dependent
 public class OrganizationSettingDAO extends AbstractDAO<OrganizationSetting> {
 
-  private static final long serialVersionUID = 8710294058847591299L;
-
   /**
    * Creates new OrganizationSetting entity
    * 
