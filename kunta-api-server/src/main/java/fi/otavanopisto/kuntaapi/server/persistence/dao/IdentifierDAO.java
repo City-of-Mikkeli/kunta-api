@@ -12,11 +12,23 @@ import javax.persistence.criteria.Root;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier_;
 
+/**
+ * DAO class for Identififer entity
+ * 
+ * @author Otavan Opisto
+ */
 @Dependent
 public class IdentifierDAO extends AbstractDAO<Identifier> {
 
-  private static final long serialVersionUID = 8710294058847591299L;
-
+  /**
+   * Creates new Identifier entity
+   * 
+   * @param type identifier type
+   * @param kuntaApiId Kunta API id 
+   * @param source source
+   * @param sourceId id in source system
+   * @return created identifier
+   */
   public Identifier create(String type, String kuntaApiId, String source, String sourceId) {
     Identifier identifier = new Identifier();
     
@@ -28,6 +40,14 @@ public class IdentifierDAO extends AbstractDAO<Identifier> {
     return persist(identifier);
   }
 
+  /**
+   * Finds identifier by source, type and source id
+   * 
+   * @param type identifier type
+   * @param source source
+   * @param sourceId id in source system
+   * @return found identifier or null if non found
+   */
   public Identifier findByTypeSourceAndSourceId(String type, String source, String sourceId) {
     EntityManager entityManager = getEntityManager();
 
@@ -46,6 +66,14 @@ public class IdentifierDAO extends AbstractDAO<Identifier> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
+  /**
+   * Finds identifier by type, source and Kunta API id
+   * 
+   * @param type identifier type
+   * @param source source
+   * @param kuntaApiId Kunta API id 
+   * @return found identifier or null if non found
+   */
   public Identifier findByTypeSourceAndKuntaApiId(String type, String source, String kuntaApiId) {
     EntityManager entityManager = getEntityManager();
 
@@ -64,6 +92,15 @@ public class IdentifierDAO extends AbstractDAO<Identifier> {
     return getSingleResult(entityManager.createQuery(criteria));
   }
 
+  /**
+   * Lists identifiers by type and source
+   * 
+   * @param type identifier type
+   * @param source source
+   * @param firstResult first result. Null is interpret as 0
+   * @param maxResults maximum number of results. Specifying null returns all identifiers
+   * @return
+   */
   public List<Identifier> listByTypeAndSource(String type, String source, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
 

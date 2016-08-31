@@ -1,9 +1,14 @@
 package fi.otavanopisto.kuntaapi.server.rest;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
@@ -12,32 +17,50 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
+import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
+import fi.otavanopisto.kuntaapi.server.integrations.EventId;
+import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
+import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
+import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 
+/**
+ * REST Service implementation
+ * 
+ * @author Antti Leppä
+ */
 @RequestScoped
 @Stateful
+@SuppressWarnings ("squid:S3306")
 public class OrganizationsApiImpl extends OrganizationsApi {
+  
+  @Inject
+  private Logger logger;
   
   @Inject
   private Instance<ServiceProvider> serviceProviders;
 
   @Inject
   private Instance<ServiceClassProvider> serviceClassProvider;
+
+  @Inject
+  private Instance<EventProvider> eventProviders;
   
   @Override
   public Response createService(String organizationId, Service body) {
     return createNotImplemented("Not implemented");
   }
-
+  
   @Override
-  public Response findService(String organizationIdParam, String serviceIdParam, Boolean enriched) {
+  public Response findService(String organizationIdParam, String serviceIdParam) {
     OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
     ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
     
@@ -101,6 +124,95 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     return Response.ok(result)
       .build();
   }
+
+  @Override
+  public Response findOrganizationEvent(String organizationIdParam, String eventIdParam) {
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    
+    for (EventProvider eventProvider : getEventProviders()) {
+      Event event = eventProvider.findOrganizationEvent(organizationId, eventId);
+      if (event != null) {
+        return Response.ok(event)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response findOrganizationEventImage(String organizationIdParam, String eventIdParam, String imageIdParam) {
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    AttachmentId attachmentId = new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, imageIdParam);
+    
+    for (EventProvider eventProvider : getEventProviders()) {
+      Attachment attachment = eventProvider.findEventImage(organizationId, eventId, attachmentId);
+      if (attachment != null) {
+        return Response.ok(attachment)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response getOrganizationEventImageData(String organizationIdParam, String eventIdParam, String imageIdParam, Integer size) {
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    AttachmentId attachmentId = new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, imageIdParam);
+    
+    for (EventProvider eventProvider : getEventProviders()) {
+      AttachmentData attachmentData = eventProvider.getEventImageData(organizationId, eventId, attachmentId, size);
+      if (attachmentData != null) {
+        try (InputStream stream = new ByteArrayInputStream(attachmentData.getData())) {
+          return Response.ok(stream, attachmentData.getType())
+              .build();
+        } catch (IOException e) {
+          logger.log(Level.SEVERE, "Failed to stream image to client", e);
+          return Response.status(Status.INTERNAL_SERVER_ERROR)
+            .entity("Internal Server Error")
+            .build();
+        }
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response listOrganizationEventImages(String organizationIdParam, String eventIdParam) {
+    List<Attachment> result = new ArrayList<>();
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    
+    for (EventProvider eventProvider : getEventProviders()) {
+      result.addAll(eventProvider.listEventImages(organizationId, eventId));
+    }
+    
+    return Response.ok(result)
+      .build();
+  }
+
+  @Override
+  public Response listOrganizationEvents(String organizationIdParam) {
+    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    
+    List<Event> result = new ArrayList<>();
+   
+    // TODO: Sort events 
+    for (EventProvider eventProvider : getEventProviders()) {
+      result.addAll(eventProvider.listOrganizationEvents(organizationId));
+    }
+    
+    return Response.ok(result)
+      .build();
+  }
   
   private List<ServiceProvider> getServiceProviders() {
     // TODO: Prioritize providers
@@ -121,6 +233,19 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     List<ServiceClassProvider> result = new ArrayList<>();
     
     Iterator<ServiceClassProvider> iterator = serviceClassProvider.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+  
+  private List<EventProvider> getEventProviders() {
+    // TODO: Prioritize providers
+    
+    List<EventProvider> result = new ArrayList<>();
+    
+    Iterator<EventProvider> iterator = eventProviders.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     }

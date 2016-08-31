@@ -4,6 +4,8 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
+import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
+import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.IdProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
@@ -94,6 +96,16 @@ public class MwpIdProvider implements IdProvider {
       break;
     }
     
+    return null;
+  }
+
+  @Override
+  public EventId translate(EventId eventId, String target) {
+    return null;
+  }
+
+  @Override
+  public AttachmentId translate(AttachmentId attachmentId, String target) {
     return null;
   }
 

@@ -2,11 +2,24 @@ package fi.otavanopisto.kuntaapi.server.integrations;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Abstract class representing an id in the system
+ * 
+ * @author Antti Leppä
+ */
 public abstract class Id {
+
+  private String source;
+  private String id;
 
   protected Id() {
   }
   
+  /**
+   * Constructor that parses stringified id
+   * 
+   * @param id stringified id
+   */
   public Id(String id) {
     if (StringUtils.isNotBlank(id)) {
       String[] parts = StringUtils.split(id, ':');
@@ -17,6 +30,12 @@ public abstract class Id {
     }
   }
 
+  /**
+   * Constructor that accepts source and id parameters
+   * 
+   * @param source source
+   * @param id id
+   */
   public Id(String source, String id) {
     super();
     this.source = source;
@@ -33,10 +52,12 @@ public abstract class Id {
 
   public abstract IdType getType();
 
+  /**
+   * Stringifies id
+   */
+  @Override
   public String toString() {
     return String.format("%s:%s", source, id);
-  };
+  }
 
-  private String source;
-  private String id;
 }
