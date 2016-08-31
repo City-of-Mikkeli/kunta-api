@@ -24,6 +24,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpClient.ResultType
  * @author Antti Leppä
  */
 @Stateless
+@SuppressWarnings ("squid:S3306")
 public class GenericHttpCache {
   
   @Resource (lookup = "java:jboss/infinispan/container/kunta-api")
@@ -31,9 +32,6 @@ public class GenericHttpCache {
   
   @Inject
   private Logger logger;
-  
-  private GenericHttpCache() {
-  }
   
   /**
    * Returns cached HTTP response by URI
