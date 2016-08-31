@@ -159,7 +159,7 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     AttachmentId attachmentId = new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, imageIdParam);
     
     for (EventProvider eventProvider : getEventProviders()) {
-      AttachmentData attachmentData = eventProvider.getEventImageData(organizationId, eventId, attachmentId);
+      AttachmentData attachmentData = eventProvider.getEventImageData(organizationId, eventId, attachmentId, size);
       if (attachmentData != null) {
         return Response.ok(attachmentData.getData(), attachmentData.getType())
           .build();

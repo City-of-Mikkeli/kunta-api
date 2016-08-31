@@ -1,5 +1,7 @@
 package fi.otavanopisto.kuntaapi.server.integrations.mikkelinyt;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -29,6 +31,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
+import fi.otavanopisto.kuntaapi.server.images.ImageReader;
+import fi.otavanopisto.kuntaapi.server.images.ImageScaler;
+import fi.otavanopisto.kuntaapi.server.images.ImageWriter;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventId;
@@ -73,6 +78,15 @@ public class MikkeliNytEventProvider implements EventProvider {
   
   @Inject
   private OrganizationSettingController organizationSettingController;
+
+  @Inject
+  private ImageReader imageReader;
+
+  @Inject
+  private ImageWriter imageWriter;
+  
+  @Inject
+  private ImageScaler imageScaler;
   
   private String apiKey;
   
@@ -155,7 +169,7 @@ public class MikkeliNytEventProvider implements EventProvider {
   }
 
   @Override
-  public AttachmentData getEventImageData(OrganizationId organizationId, EventId eventId, AttachmentId attachmentId) {
+  public AttachmentData getEventImageData(OrganizationId organizationId, EventId eventId, AttachmentId attachmentId, Integer size) {
     if (StringUtils.isBlank(apiKey)) {
       logger.severe(API_KEY_NOT_CONFIGURED);
       return null;
@@ -166,10 +180,28 @@ public class MikkeliNytEventProvider implements EventProvider {
     if ((event != null) && StringUtils.isNotBlank(event.getImage())) {
       AttachmentId imageId = getImageAttachmentId(event.getImage());
       if (idController.idsEqual(attachmentId, imageId)) {
-        return getImageData(organizationId, imageId);
+        AttachmentData imageData = getImageData(organizationId, imageId);
+        if (size != null) {
+          return scaleEventImage(imageData, size);
+        } else {
+          return imageData;
+        }
       }
     }
 
+    return null;
+  }
+
+  private AttachmentData scaleEventImage(AttachmentData imageData, Integer size) {
+    BufferedImage bufferedImage = imageReader.readBufferedImage(imageData.getData());
+    if (bufferedImage != null) {
+      BufferedImage scaledImage = imageScaler.scaleMaxSize(bufferedImage, size);
+      byte[] scaledImageData = imageWriter.writeBufferedImageAsPng(scaledImage);
+      if (scaledImageData != null) {
+        return new AttachmentData("image/png", new ByteArrayInputStream(scaledImageData));
+      }
+    }
+    
     return null;
   }
   

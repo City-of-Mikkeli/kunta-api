@@ -54,8 +54,9 @@ public interface EventProvider {
    * @param organizationId organization id
    * @param eventId event id
    * @param attachmentId image id
+   * @param size max size of image. Specify null for untouched
    * @return event image data
    */
-  public AttachmentData getEventImageData(OrganizationId organizationId, EventId eventId, AttachmentId attachmentId);
+  public AttachmentData getEventImageData(OrganizationId organizationId, EventId eventId, AttachmentId attachmentId, Integer size);
   
 }
