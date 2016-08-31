@@ -532,6 +532,8 @@ paths:
             $ref: '#/definitions/InternalServerError'
   /organizations/{organizationId}/events/{eventId}/images/{imageId}/data:
     get:
+      produces:
+        - application/octet-stream
       operationId: getOrganizationEventImageData
       summary: Returns an event image data
       description: |
