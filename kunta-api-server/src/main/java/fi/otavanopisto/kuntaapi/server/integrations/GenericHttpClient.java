@@ -199,10 +199,11 @@ public class GenericHttpClient {
     }
     
     public TypeReference<T> getTypeReference() {
+      Type type = getType();
       return new TypeReference<T>() { 
         @Override
         public Type getType() {
-          return getType();
+          return type;
         }
       };
     }
