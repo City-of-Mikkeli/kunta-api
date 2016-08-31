@@ -121,6 +121,96 @@ public class IdController {
     
     return null;
   }
+
+  /**
+   * Translates both ids into Kunta Api ids and check whether they match
+   * 
+   * @param id1 id1
+   * @param id2 id2
+   * @return whether ids match
+   */
+  public boolean idsEqual(AttachmentId id1, AttachmentId id2) {
+    AttachmentId kuntaApiId1 = translateAttachmentId(id1, KuntaApiConsts.IDENTIFIER_NAME);
+    AttachmentId kuntaApiId2 = translateAttachmentId(id2, KuntaApiConsts.IDENTIFIER_NAME);
+    
+    if (kuntaApiId1 == null || kuntaApiId2 == null) {
+      return false;
+    }
+    
+    return kuntaApiId1.equals(kuntaApiId2);
+  }
+
+  /**
+   * Translates both ids into Kunta Api ids and check whether they match
+   * 
+   * @param id1 id1
+   * @param id2 id2
+   * @return whether ids match
+   */
+  public boolean idsEqual(EventId id1, EventId id2) {
+    EventId kuntaApiId1 = translateEventId(id1, KuntaApiConsts.IDENTIFIER_NAME);
+    EventId kuntaApiId2 = translateEventId(id2, KuntaApiConsts.IDENTIFIER_NAME);
+    
+    if (kuntaApiId1 == null || kuntaApiId2 == null) {
+      return false;
+    }
+    
+    return kuntaApiId1.equals(kuntaApiId2);
+  }
+
+  /**
+   * Translates both ids into Kunta Api ids and check whether they match
+   * 
+   * @param id1 id1
+   * @param id2 id2
+   * @return whether ids match
+   */
+  public boolean idsEqual(OrganizationId id1, OrganizationId id2) {
+    OrganizationId kuntaApiId1 = translateOrganizationId(id1, KuntaApiConsts.IDENTIFIER_NAME);
+    OrganizationId kuntaApiId2 = translateOrganizationId(id2, KuntaApiConsts.IDENTIFIER_NAME);
+    
+    if (kuntaApiId1 == null || kuntaApiId2 == null) {
+      return false;
+    }
+    
+    return kuntaApiId1.equals(kuntaApiId2);
+  }
+
+  /**
+   * Translates both ids into Kunta Api ids and check whether they match
+   * 
+   * @param id1 id1
+   * @param id2 id2
+   * @return whether ids match
+   */
+  public boolean idsEqual(ServiceClassId id1, ServiceClassId id2) {
+    ServiceClassId kuntaApiId1 = translateServiceClassId(id1, KuntaApiConsts.IDENTIFIER_NAME);
+    ServiceClassId kuntaApiId2 = translateServiceClassId(id2, KuntaApiConsts.IDENTIFIER_NAME);
+    
+    if (kuntaApiId1 == null || kuntaApiId2 == null) {
+      return false;
+    }
+    
+    return kuntaApiId1.equals(kuntaApiId2);
+  }
+
+  /**
+   * Translates both ids into Kunta Api ids and check whether they match
+   * 
+   * @param id1 id1
+   * @param id2 id2
+   * @return whether ids match
+   */
+  public boolean idsEqual(ServiceId id1, ServiceId id2) {
+    ServiceId kuntaApiId1 = translateServiceId(id1, KuntaApiConsts.IDENTIFIER_NAME);
+    ServiceId kuntaApiId2 = translateServiceId(id2, KuntaApiConsts.IDENTIFIER_NAME);
+    
+    if (kuntaApiId1 == null || kuntaApiId2 == null) {
+      return false;
+    }
+    
+    return kuntaApiId1.equals(kuntaApiId2);
+  }
   
   private IdProvider getIdProvider(String source, String target) {
     Iterator<IdProvider> iterator = idProviders.iterator();
