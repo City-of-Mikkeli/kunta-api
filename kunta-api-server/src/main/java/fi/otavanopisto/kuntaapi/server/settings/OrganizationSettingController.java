@@ -1,8 +1,13 @@
 package fi.otavanopisto.kuntaapi.server.settings;
 
+import java.util.logging.Logger;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.otavanopisto.kuntaapi.server.integrations.IdController;
+import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
+import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.persistence.dao.OrganizationSettingDAO;
 import fi.otavanopisto.kuntaapi.server.persistence.model.OrganizationSetting;
 
@@ -13,11 +18,34 @@ import fi.otavanopisto.kuntaapi.server.persistence.model.OrganizationSetting;
  */
 @Dependent
 public class OrganizationSettingController {
+  
+  @Inject
+  private Logger logger;
 
   @Inject
   private OrganizationSettingDAO organizationSettingDAO;
   
+  @Inject
+  private IdController idController;
+  
   private OrganizationSettingController() {
+  }
+  
+  /**
+   * Returns organization setting by key or null if setting is not defined
+   * 
+   * @param organizationId organization id
+   * @param key system setting key
+   * @return setting value
+   */
+  public String getSettingValue(OrganizationId organizationId, String key) {
+    OrganizationId kuntaApiId = idController.translateOrganizationId(organizationId, KuntaApiConsts.IDENTIFIER_NAME);
+    if (kuntaApiId != null) {
+      return getSettingValue(kuntaApiId.getId(), key);
+    } else {
+      logger.severe(String.format("Failed to translate %s into KuntaApiId id", organizationId.toString()));
+      return null;
+    }
   }
   
   /**
