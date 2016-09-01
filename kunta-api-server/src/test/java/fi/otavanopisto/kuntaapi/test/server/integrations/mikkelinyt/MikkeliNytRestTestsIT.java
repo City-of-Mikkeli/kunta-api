@@ -1,9 +1,7 @@
 package fi.otavanopisto.kuntaapi.test.server.integrations.mikkelinyt;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.collection.IsArrayContaining.hasItemInArray;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -162,7 +160,6 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
         .statusCode(200)
         .body("id.size()", is(1))
         .body("id[0]", is(kuntaApiAttachmentId))
-        .body("size", hasItemInArray(equalTo(ATTACHMENT_SIZE)))
         .body("contentType[0]", is(ATTACHMENT_TYPE));
     } finally {
       cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
