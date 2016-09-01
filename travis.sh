@@ -11,8 +11,10 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${
     -Dsonar.github.oauth=$GITHUB_TOKEN \
     -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
     -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST &&
-  mvn clean test verify jacoco:report coveralls:report -Pitests -DrepoToken=$COVERALLS_TOKEN
-        
+  pushd . &&
+  cd kunta-api-server &&
+  mvn clean test verify jacoco:report coveralls:report -Pitests -DrepoToken=$COVERALLS_TOKEN &&
+  popd
 fi
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $TRAVIS_BRANCH == "develop" ]; then
