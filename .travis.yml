@@ -7,7 +7,9 @@ cache:
   - $HOME/.sonar
   - $HOME/.m2
   - kunta-api-server/.cargo
-  
+addons:
+  hosts:
+    - api.kunta-api.test
 script: . travis.sh
 
 notifications:
