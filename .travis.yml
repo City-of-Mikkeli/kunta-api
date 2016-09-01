@@ -6,7 +6,8 @@ cache:
   directories:
   - $HOME/.sonar
   - $HOME/.m2
-
+  - kunta-api-server/.cargo
+  
 script: . travis.sh
 
 notifications:
