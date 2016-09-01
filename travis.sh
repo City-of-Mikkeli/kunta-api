@@ -2,7 +2,7 @@
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${SONAR_TOKEN}" ]; then
 
-  # It's a pull-request, run SonarQube analysis in the pull-request
+  # It's a pull-request, run SonarQube analysis in the pull-request and execute tests
 
   sh sonar-runner/bin/sonar-runner -Dsonar.host.url=$SONAR_HOST_URL \
     -Dsonar.analysis.mode=issues \
@@ -10,7 +10,8 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${
     -Dsonar.projectKey=$SONAR_PROJECT_KEY \
     -Dsonar.github.oauth=$GITHUB_TOKEN \
     -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
-    -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST
+    -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST &&
+  mvn clean verify -Prest
         
 fi
 
