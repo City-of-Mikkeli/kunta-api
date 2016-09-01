@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
@@ -114,13 +115,23 @@ public abstract class AbstractTest {
     }
   }
 
-  protected Connection getConnection() throws Exception {
+  protected Connection getConnection() {
     String username = System.getProperty("it.jdbc.username");
     String password = System.getProperty("it.jdbc.password");
     String url = System.getProperty("it.jdbc.url");
-    Class.forName(System.getProperty("it.jdbc.driver")).newInstance();
+    try {
+      Class.forName(System.getProperty("it.jdbc.driver")).newInstance();
+    } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+      fail(e.getMessage());
+    }
 
-    return DriverManager.getConnection(url, username, password);
+    try {
+      return DriverManager.getConnection(url, username, password);
+    } catch (SQLException e) {
+      fail(e.getMessage());
+    }
+    
+    return null;
   }
 
   protected static Matcher<Instant> sameInstant(final Instant instant) {
