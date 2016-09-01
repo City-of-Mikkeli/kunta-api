@@ -5,6 +5,7 @@ jdk: oraclejdk8
 cache:
   directories:
   - $HOME/.sonar
+  - $HOME/.m2
 
 script: . travis.sh
 
