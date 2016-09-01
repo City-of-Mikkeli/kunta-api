@@ -1,7 +1,9 @@
 package fi.otavanopisto.kuntaapi.test.server.integrations.mikkelinyt;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.collection.IsArrayContaining.hasItemInArray;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -34,6 +36,81 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
   public WireMockRule wireMockRule = new WireMockRule(getWireMockPort());
 
   @Test
+  public void testEvents() {
+    String kuntaApiOrganizationId = "ka-organization-id";
+    String baseUrl = getWireMockBasePath();
+    String imagesBasePath = "uploads/testevents";
+    String kuntaApiEventId = "ka-event-id";
+    String kuntaApiAttachmentId = "ka-attachment-id";
+
+    createSettings(kuntaApiOrganizationId, baseUrl, imagesBasePath);
+    
+    MikkeliNytMocker mocker = new MikkeliNytMocker();
+    mockEvent(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId, baseUrl, imagesBasePath);
+    mocker.startMock();
+    try {
+      given() 
+        .baseUri(getApiBasePath())
+        .contentType("application/json")
+        .get("/organizations/{ORGANIZATIONID}/events", kuntaApiOrganizationId)
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("id.size()", is(1))
+        .body("id[0]", is(kuntaApiEventId))
+        .body("originalUrl[0]", is(String.format("%s/event-url-address", baseUrl)))
+        .body("name[0]", is("Test Event"))
+        .body("description[0]", is("My test<br/>event"))
+        .body("start[0]", sameInstant(OffsetDateTime.of(2020, 5, 6, 17, 30, 0, 0, ZoneOffset.ofHours(3)).toInstant()))
+        .body("end[0]", sameInstant(OffsetDateTime.of(2020, 5, 6, 19, 00, 0, 0, ZoneOffset.ofHours(3)).toInstant()))
+        .body("city[0]", is(ORGANIZATION_SETTING_LOCATION))
+        .body("place[0]", is("Testing Ltd"))
+        .body("address[0]", is("Testroad 3"))
+        .body("zip[0]", is("12345"));
+    } finally {
+      cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
+      deleteSettings(kuntaApiOrganizationId);
+    }
+  }
+  
+  @Test
+  public void testEvent() {
+    String kuntaApiOrganizationId = "ka-organization-id";
+    String baseUrl = getWireMockBasePath();
+    String imagesBasePath = "uploads/testevents";
+    String kuntaApiEventId = "ka-event-id";
+    String kuntaApiAttachmentId = "ka-attachment-id";
+
+    createSettings(kuntaApiOrganizationId, baseUrl, imagesBasePath);
+    
+    MikkeliNytMocker mocker = new MikkeliNytMocker();
+    mockEvent(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId, baseUrl, imagesBasePath);
+    mocker.startMock();
+    try {
+      given() 
+        .baseUri(getApiBasePath())
+        .contentType("application/json")
+        .get("/organizations/{ORGANIZATIONID}/events/{EVENTID}", kuntaApiOrganizationId, kuntaApiEventId)
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("id", is(kuntaApiEventId))
+        .body("originalUrl", is(String.format("%s/event-url-address", baseUrl)))
+        .body("name", is("Test Event"))
+        .body("description", is("My test<br/>event"))
+        .body("start", sameInstant(OffsetDateTime.of(2020, 5, 6, 17, 30, 0, 0, ZoneOffset.ofHours(3)).toInstant()))
+        .body("end", sameInstant(OffsetDateTime.of(2020, 5, 6, 19, 00, 0, 0, ZoneOffset.ofHours(3)).toInstant()))
+        .body("city", is(ORGANIZATION_SETTING_LOCATION))
+        .body("place", is("Testing Ltd"))
+        .body("address", is("Testroad 3"))
+        .body("zip", is("12345"));
+    } finally {
+      cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
+      deleteSettings(kuntaApiOrganizationId);
+    }
+  }
+  
+  @Test
   public void testImage() {
     String kuntaApiOrganizationId = "ka-organization-id";
     String baseUrl = getWireMockBasePath();
@@ -55,14 +132,43 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
         .assertThat()
         .statusCode(200)
         .body("id", is(kuntaApiAttachmentId))
-        .body("size", is(ATTACHMENT_SIZE))
         .body("contentType", is(ATTACHMENT_TYPE));
     } finally {
       cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
       deleteSettings(kuntaApiOrganizationId);
     }
   }
-  
+
+  @Test
+  public void testImages() {
+    String kuntaApiOrganizationId = "ka-organization-id";
+    String baseUrl = getWireMockBasePath();
+    String imagesBasePath = "uploads/testevents";
+    String kuntaApiEventId = "ka-event-id";
+    String kuntaApiAttachmentId = "ka-attachment-id";
+
+    createSettings(kuntaApiOrganizationId, baseUrl, imagesBasePath);
+
+    MikkeliNytMocker mocker = new MikkeliNytMocker();
+    mockEvent(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId, baseUrl, imagesBasePath);
+    mocker.startMock();
+    try {
+      given() 
+        .baseUri(getApiBasePath())
+        .contentType("application/json")
+        .get("/organizations/{ORGANIZATIONID}/events/{EVENTID}/images", kuntaApiOrganizationId, kuntaApiEventId)
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("id.size()", is(1))
+        .body("id[0]", is(kuntaApiAttachmentId))
+        .body("size", hasItemInArray(equalTo(ATTACHMENT_SIZE)))
+        .body("contentType[0]", is(ATTACHMENT_TYPE));
+    } finally {
+      cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
+      deleteSettings(kuntaApiOrganizationId);
+    }
+  }
   @Test
   public void testImageData() throws Exception {
     String kuntaApiOrganizationId = "ka-organization-id";
@@ -94,7 +200,7 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
   private Event mockEvent(MikkeliNytMocker mocker, String kuntaApiOrganizationId, String kuntaApiEventId, String kuntaApiAttachmentId, String baseUrl, String imagesBasePath) {
     String eventId = "mn-event-id";
     String attachmentId = "mn-attachment-id.jpg";
-    String eventUrl = String.format("event-url-address", baseUrl);
+    String eventUrl = String.format("%s/event-url-address", baseUrl);
     String eventName = "Test Event";
     String eventDescription = "My test<br/>event";
     String eventCity = ORGANIZATION_SETTING_LOCATION;

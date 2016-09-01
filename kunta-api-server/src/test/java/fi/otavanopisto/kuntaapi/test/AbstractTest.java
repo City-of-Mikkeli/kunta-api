@@ -1,10 +1,17 @@
 package fi.otavanopisto.kuntaapi.test;
 
+import static org.junit.Assert.fail;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import static org.junit.Assert.fail;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 public abstract class AbstractTest {
   
@@ -115,5 +122,36 @@ public abstract class AbstractTest {
 
     return DriverManager.getConnection(url, username, password);
   }
-  
+
+  protected static Matcher<Instant> sameInstant(final Instant instant) {
+    return new BaseMatcher<Instant>(){
+
+      @Override
+      public void describeTo(Description description) {
+        description.appendText("same instant: ").appendValue(instant.toString());
+      }
+
+      @Override
+      public boolean matches(Object item) {
+        if (item == null && instant == null) {
+          return true;
+        }
+        
+        if (item instanceof String) {
+          item = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse((String) item));
+        }
+        
+        if (!(item instanceof Instant)) {
+          return false;
+        }
+        
+        if (item == null || instant == null) {
+          return false;
+        }
+        
+        return ((Instant) item).getEpochSecond() == instant.getEpochSecond();
+      }
+      
+    };
+  }
 }
