@@ -48,6 +48,10 @@ public abstract class AbstractTest {
     return executeInsert("insert into Identifier (kuntaApiId, source, sourceId, type) values (?, ?, ?, ?)", 
       kuntaApiId, source, sourceId, type);
   }
+
+  protected void deleteIndentifier(String key) {
+    executeDelete("delete from Identifier where kuntaApiId = ?", key);
+  }
   
   protected long executeInsert(String sql, Object... params) {
     try {
