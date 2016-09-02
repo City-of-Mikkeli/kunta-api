@@ -27,9 +27,10 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $TRAVIS_BRANCH == "develop" ]; the
     -Dsonar.analysis.mode=publish \
     -Dsonar.login=$SONAR_TOKEN \
     -Dsonar.projectKey=$SONAR_PROJECT_KEY
-        
+  pushd .
+  cd kunta-api-server
   set -e
   mvn clean verify jacoco:report coveralls:report -Pitests -DrepoToken=$COVERALLS_TOKEN
   set +e
-        
+  popd
 fi
