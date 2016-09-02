@@ -14,7 +14,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${
   pushd .
   cd kunta-api-server
   set -e
-  mvn clean test verify jacoco:report coveralls:report -Pitests -DrepoToken=$COVERALLS_TOKEN
+  mvn clean test verify -Pitests
   set +e
   popd
 fi
@@ -27,5 +27,9 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $TRAVIS_BRANCH == "develop" ]; the
     -Dsonar.analysis.mode=publish \
     -Dsonar.login=$SONAR_TOKEN \
     -Dsonar.projectKey=$SONAR_PROJECT_KEY
+        
+  set -e
+  mvn clean test verify jacoco:report coveralls:report -Pitests -DrepoToken=$COVERALLS_TOKEN
+  set +e
         
 fi
