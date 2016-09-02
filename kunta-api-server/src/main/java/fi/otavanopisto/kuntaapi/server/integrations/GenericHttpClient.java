@@ -213,7 +213,8 @@ public class GenericHttpClient {
   /**
    * Class representing request response
    * 
-   * @author Otavan Opisto
+   * @author Antti Leppä
+   * @author Heikki Kurhinen
    *
    * @param <T> response type
    */
@@ -270,6 +271,76 @@ public class GenericHttpClient {
     @JsonIgnore    
     public boolean isOk() {
       return status >= 200 && status <= 299;
+    }
+  }
+  
+  /**
+   * Wrapper class for ResultType<T>
+   * 
+   * @author Antti Leppä
+   * @author Heikki Kurhinen
+   *
+   * @param <T> wrapped type
+   */
+  public static class ResultTypeWrapper <T> extends ResultType<T> {
+
+    private Type wrappedType;
+    
+    /**
+     * Constructor
+     * 
+     * @param wrappedType wrapped type
+     */
+    public ResultTypeWrapper(Type wrappedType) {
+      this.wrappedType = wrappedType;
+    }
+    
+    @Override
+    public Type getType() {
+      return wrappedType;
+    }
+  }
+  
+  /**
+   * Wrapper class for ResultType<Response<T>>
+   * 
+   * @author Antti Leppä
+   * @author Heikki Kurhinen
+   *
+   * @param <T> wrapped type
+   */
+  public static class ResponseResultTypeWrapper <T> extends ResultType<Response<T>> {
+    
+    private Type wrappedType;
+    
+    /**
+     * Constructor
+     * 
+     * @param wrappedType wrapped type
+     */
+    public ResponseResultTypeWrapper(Type wrappedType) {
+      this.wrappedType = wrappedType;
+    }
+    
+    @Override
+    public Type getType() {
+      return new ParameterizedType() {
+        
+        @Override
+        public Type getRawType() {
+          return Response.class;
+        }
+        
+        @Override
+        public Type getOwnerType() {
+          return Response.class;
+        }
+        
+        @Override
+        public Type[] getActualTypeArguments() {
+          return new Type[] { wrappedType };
+        }
+      };
     }
   }
   

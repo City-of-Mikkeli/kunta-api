@@ -26,7 +26,7 @@ import fi.otavanopisto.ptv.client.ResultType;
 @Dependent
 public class PtvClient extends fi.otavanopisto.ptv.client.ApiClient {
 
-  private static final String BASE_PATH = "https://api.palvelutietovaranto.suomi.fi";
+  private static final String BASE_PATH = "https://api.palvelutietovaranto.trn.suomi.fi";
   private static final String INVALID_URI_SYNTAX = "Invalid uri syntax";
   
   @Inject
@@ -65,12 +65,12 @@ public class PtvClient extends fi.otavanopisto.ptv.client.ApiClient {
       return new ApiResponse<>(500, INVALID_URI_SYNTAX, null);
     }
     
-    Response<T> response = httpCache.get(PtvConsts.CACHE_NAME, uri, new GenericHttpClient.ResultType<Response<T>>() {});
+    Response<T> response = httpCache.get(PtvConsts.CACHE_NAME, uri, new GenericHttpClient.ResponseResultTypeWrapper<>(resultType.getType()));
     if (response == null) {
-      response = httpClient.doGETRequest(uri, new GenericHttpClient.ResultType<T>() {});
+      response = httpClient.doGETRequest(uri, new GenericHttpClient.ResultTypeWrapper<>(resultType.getType()));
       httpCache.put(PtvConsts.CACHE_NAME, uri, response);
     }
-    
+
     return new ApiResponse<>(response.getStatus(), response.getMessage(), response.getResponseEntity());
   }
   
