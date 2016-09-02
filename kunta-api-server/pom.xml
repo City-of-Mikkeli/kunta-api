@@ -342,6 +342,7 @@
         <it.jdbc.username>sa</it.jdbc.username>
         <it.jdbc.password>sa</it.jdbc.password>
         <it.hibernate.dialect>org.hibernate.dialect.H2Dialect</it.hibernate.dialect>
+        <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
       </properties>
       
       <dependencies>
@@ -437,6 +438,40 @@
               </execution>
             </executions>
           </plugin>
+          
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.7.6.201602180812</version>
+            <configuration>
+              <destFile>${jacoco.reportPath}</destFile>
+              <dataFile>${jacoco.reportPath}</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+              <classDumpDir>${project.reporting.outputDirectory}/jacoco-it/classes</classDumpDir>
+            </configuration>
+                
+            <executions>
+              <execution>
+                <id>jacoco-agent</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+                <configuration>
+                  <destFile>${jacoco.reportPath}</destFile>
+                  <propertyName>jacoco.agent.itArgLine</propertyName>
+                </configuration>
+              </execution>
+              <execution>
+                <id>jacoco-report</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>dump</goal>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
 
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
@@ -463,7 +498,7 @@
                 <properties>
                   <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
                   <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
-                  <cargo.jvmargs>-Xms64m -Xmx1024m</cargo.jvmargs>
+                  <cargo.jvmargs>${jacoco.agent.itArgLine},output=tcpserver,port=6300 -Xms64m -Xmx1024m -Drunmode=TEST</cargo.jvmargs>
                   <cargo.datasource.datasource.fnici>
                     cargo.datasource.driver=${it.jdbc.driver}|
                     cargo.datasource.url=${it.jdbc.url}|
@@ -541,38 +576,6 @@
                   <maxcount>20</maxcount>
                   <timeout>10000</timeout>
                 </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.7.6.201602180812</version>
-            <executions>
-              <execution>
-                <id>default-prepare-agent</id>
-                <goals>
-                  <goal>prepare-agent</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>default-prepare-agent-integration</id>
-                <goals>
-                  <goal>prepare-agent-integration</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>default-report</id>
-                <goals>
-                  <goal>report</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>default-report-integration</id>
-                <goals>
-                  <goal>report-integration</goal>
-                </goals>
               </execution>
             </executions>
           </plugin>
