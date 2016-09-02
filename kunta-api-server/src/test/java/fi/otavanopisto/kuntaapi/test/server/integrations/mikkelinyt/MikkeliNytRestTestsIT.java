@@ -15,6 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.jayway.restassured.http.ContentType;
 
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.mikkelinyt.MikkeliNytConsts;
@@ -23,24 +24,46 @@ import fi.otavanopisto.kuntaapi.test.AbstractIntegrationTest;
 import fi.otavanopisto.mikkelinyt.model.Event;
 import fi.otavanopisto.mikkelinyt.model.EventsResponse;
 
+/**
+ * Tests for MikkeliNyt integration
+ * 
+ * @author Antti Leppä
+ */
 public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
   
+  private static final String KUNTA_API_ATTACHMENT_ID = "ka-attachment-id";
+  private static final String KUNTA_API_EVENT_ID = "ka-event-id";
+  private static final String IMAGES_BASE_PATH = "uploads/testevents";
+  private static final String KUNTA_API_ORGANIZATION_ID = "ka-organization-id";
   private static final String ORGANIZATION_SETTING_APIKEY = "test-api-key";
   private static final String ORGANIZATION_SETTING_LOCATION = "test";
-  private static final int ATTACHMENT_SIZE = 38244;
-  private static final String ATTACHMENT_TYPE = "image/jpeg";
   private static final ZoneId TIMEZONE_ID = ZoneId.of("Europe/Helsinki");
   
+  private static final int TEST_EVENT_ATTACHMENT_SIZE = 38244;
+  private static final String TEST_EVENT_ATTACHMENT_TYPE = "image/jpeg";
+  private static final String TEST_EVENT_URL_TEMPLATE = "%s/event-url-address";
+  private static final String TEST_EVENT_ZIP = "12345";
+  private static final String TEST_EVENT_ADDRESS = "Testroad 3";
+  private static final String TEST_EVENT_PLACE = "Testing Ltd";
+  private static final String TEST_EVENT_DESC = "My test<br/>event";
+  private static final String TEST_EVENT_NAME = "Test Event";
+
+  /**
+   * Starts WireMock
+   */
   @Rule
   public WireMockRule wireMockRule = new WireMockRule(getWireMockPort());
 
+  /**
+   * Tests events endpoint
+   */
   @Test
   public void testEvents() {
-    String kuntaApiOrganizationId = "ka-organization-id";
+    String kuntaApiOrganizationId = KUNTA_API_ORGANIZATION_ID;
     String baseUrl = getWireMockBasePath();
-    String imagesBasePath = "uploads/testevents";
-    String kuntaApiEventId = "ka-event-id";
-    String kuntaApiAttachmentId = "ka-attachment-id";
+    String imagesBasePath = IMAGES_BASE_PATH;
+    String kuntaApiEventId = KUNTA_API_EVENT_ID;
+    String kuntaApiAttachmentId = KUNTA_API_ATTACHMENT_ID;
 
     createSettings(kuntaApiOrganizationId, baseUrl, imagesBasePath);
     
@@ -50,35 +73,38 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
     try {
       given() 
         .baseUri(getApiBasePath())
-        .contentType("application/json")
+        .contentType(ContentType.JSON)
         .get("/organizations/{ORGANIZATIONID}/events", kuntaApiOrganizationId)
         .then()
         .assertThat()
         .statusCode(200)
         .body("id.size()", is(1))
         .body("id[0]", is(kuntaApiEventId))
-        .body("originalUrl[0]", is(String.format("%s/event-url-address", baseUrl)))
-        .body("name[0]", is("Test Event"))
-        .body("description[0]", is("My test<br/>event"))
+        .body("originalUrl[0]", is(String.format(TEST_EVENT_URL_TEMPLATE, baseUrl)))
+        .body("name[0]", is(TEST_EVENT_NAME))
+        .body("description[0]", is(TEST_EVENT_DESC))
         .body("start[0]", sameInstant(getInstant(2020, 5, 6, 17, 30, TIMEZONE_ID)))
         .body("end[0]", sameInstant(getInstant(2020, 5, 6, 19, 00, TIMEZONE_ID)))
         .body("city[0]", is(ORGANIZATION_SETTING_LOCATION))
-        .body("place[0]", is("Testing Ltd"))
-        .body("address[0]", is("Testroad 3"))
-        .body("zip[0]", is("12345"));
+        .body("place[0]", is(TEST_EVENT_PLACE))
+        .body("address[0]", is(TEST_EVENT_ADDRESS))
+        .body("zip[0]", is(TEST_EVENT_ZIP));
     } finally {
       cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
       deleteSettings(kuntaApiOrganizationId);
     }
   }
   
+  /**
+   * Tests single event
+   */
   @Test
   public void testEvent() {
-    String kuntaApiOrganizationId = "ka-organization-id";
+    String kuntaApiOrganizationId = KUNTA_API_ORGANIZATION_ID;
     String baseUrl = getWireMockBasePath();
-    String imagesBasePath = "uploads/testevents";
-    String kuntaApiEventId = "ka-event-id";
-    String kuntaApiAttachmentId = "ka-attachment-id";
+    String imagesBasePath = IMAGES_BASE_PATH;
+    String kuntaApiEventId = KUNTA_API_EVENT_ID;
+    String kuntaApiAttachmentId = KUNTA_API_ATTACHMENT_ID;
 
     createSettings(kuntaApiOrganizationId, baseUrl, imagesBasePath);
     
@@ -88,34 +114,37 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
     try {
       given() 
         .baseUri(getApiBasePath())
-        .contentType("application/json")
+        .contentType(ContentType.JSON)
         .get("/organizations/{ORGANIZATIONID}/events/{EVENTID}", kuntaApiOrganizationId, kuntaApiEventId)
         .then()
         .assertThat()
         .statusCode(200)
         .body("id", is(kuntaApiEventId))
-        .body("originalUrl", is(String.format("%s/event-url-address", baseUrl)))
-        .body("name", is("Test Event"))
-        .body("description", is("My test<br/>event"))
+        .body("originalUrl", is(String.format(TEST_EVENT_URL_TEMPLATE, baseUrl)))
+        .body("name", is(TEST_EVENT_NAME))
+        .body("description", is(TEST_EVENT_DESC))
         .body("start", sameInstant(getInstant(2020, 5, 6, 17, 30, TIMEZONE_ID)))
         .body("end", sameInstant(getInstant(2020, 5, 6, 19, 00, TIMEZONE_ID)))
         .body("city", is(ORGANIZATION_SETTING_LOCATION))
-        .body("place", is("Testing Ltd"))
-        .body("address", is("Testroad 3"))
-        .body("zip", is("12345"));
+        .body("place", is(TEST_EVENT_PLACE))
+        .body("address", is(TEST_EVENT_ADDRESS))
+        .body("zip", is(TEST_EVENT_ZIP));
     } finally {
       cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
       deleteSettings(kuntaApiOrganizationId);
     }
   }
   
+  /**
+   * Tests event image metadata retrieval
+   */
   @Test
   public void testImage() {
-    String kuntaApiOrganizationId = "ka-organization-id";
+    String kuntaApiOrganizationId = KUNTA_API_ORGANIZATION_ID;
     String baseUrl = getWireMockBasePath();
-    String imagesBasePath = "uploads/testevents";
-    String kuntaApiEventId = "ka-event-id";
-    String kuntaApiAttachmentId = "ka-attachment-id";
+    String imagesBasePath = IMAGES_BASE_PATH;
+    String kuntaApiEventId = KUNTA_API_EVENT_ID;
+    String kuntaApiAttachmentId = KUNTA_API_ATTACHMENT_ID;
 
     createSettings(kuntaApiOrganizationId, baseUrl, imagesBasePath);
 
@@ -125,26 +154,29 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
     try {
       given() 
         .baseUri(getApiBasePath())
-        .contentType("application/json")
+        .contentType(ContentType.JSON)
         .get("/organizations/{ORGANIZATIONID}/events/{EVENTID}/images/{IMAGEID}", kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId)
         .then()
         .assertThat()
         .statusCode(200)
         .body("id", is(kuntaApiAttachmentId))
-        .body("contentType", is(ATTACHMENT_TYPE));
+        .body("contentType", is(TEST_EVENT_ATTACHMENT_TYPE));
     } finally {
       cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
       deleteSettings(kuntaApiOrganizationId);
     }
   }
 
+  /**
+   * Tests listing of event images
+   */
   @Test
   public void testImages() {
-    String kuntaApiOrganizationId = "ka-organization-id";
+    String kuntaApiOrganizationId = KUNTA_API_ORGANIZATION_ID;
     String baseUrl = getWireMockBasePath();
-    String imagesBasePath = "uploads/testevents";
-    String kuntaApiEventId = "ka-event-id";
-    String kuntaApiAttachmentId = "ka-attachment-id";
+    String imagesBasePath = IMAGES_BASE_PATH;
+    String kuntaApiEventId = KUNTA_API_EVENT_ID;
+    String kuntaApiAttachmentId = KUNTA_API_ATTACHMENT_ID;
 
     createSettings(kuntaApiOrganizationId, baseUrl, imagesBasePath);
 
@@ -154,26 +186,30 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
     try {
       given() 
         .baseUri(getApiBasePath())
-        .contentType("application/json")
+        .contentType(ContentType.JSON)
         .get("/organizations/{ORGANIZATIONID}/events/{EVENTID}/images", kuntaApiOrganizationId, kuntaApiEventId)
         .then()
         .assertThat()
         .statusCode(200)
         .body("id.size()", is(1))
         .body("id[0]", is(kuntaApiAttachmentId))
-        .body("contentType[0]", is(ATTACHMENT_TYPE));
+        .body("contentType[0]", is(TEST_EVENT_ATTACHMENT_TYPE));
     } finally {
       cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
       deleteSettings(kuntaApiOrganizationId);
     }
   }
+  
+  /**
+   * Tests retrieval of event image data
+   */
   @Test
-  public void testImageData() throws Exception {
-    String kuntaApiOrganizationId = "ka-organization-id";
+  public void testImageData() {
+    String kuntaApiOrganizationId = KUNTA_API_ORGANIZATION_ID;
     String baseUrl = getWireMockBasePath();
-    String imagesBasePath = "uploads/testevents";
-    String kuntaApiEventId = "ka-event-id";
-    String kuntaApiAttachmentId = "ka-attachment-id";
+    String imagesBasePath = IMAGES_BASE_PATH;
+    String kuntaApiEventId = KUNTA_API_EVENT_ID;
+    String kuntaApiAttachmentId = KUNTA_API_ATTACHMENT_ID;
 
     createSettings(kuntaApiOrganizationId, baseUrl, imagesBasePath);
 
@@ -183,12 +219,12 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
     try {
       given() 
         .baseUri(getApiBasePath())
-        .contentType("application/json")
+        .contentType(ContentType.JSON)
         .get("/organizations/{ORGANIZATIONID}/events/{EVENTID}/images/{IMAGEID}/data", kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId)
         .then()
         .assertThat()
         .statusCode(200)
-        .header("Content-Type", "image/jpeg");
+        .header("Content-Type", TEST_EVENT_ATTACHMENT_TYPE);
     } finally {
       cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
       deleteSettings(kuntaApiOrganizationId);
@@ -198,13 +234,13 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
   private Event mockEvent(MikkeliNytMocker mocker, String kuntaApiOrganizationId, String kuntaApiEventId, String kuntaApiAttachmentId, String baseUrl, String imagesBasePath) {
     String eventId = "mn-event-id";
     String attachmentId = "mn-attachment-id.jpg";
-    String eventUrl = String.format("%s/event-url-address", baseUrl);
-    String eventName = "Test Event";
-    String eventDescription = "My test<br/>event";
+    String eventUrl = String.format(TEST_EVENT_URL_TEMPLATE, baseUrl);
+    String eventName = TEST_EVENT_NAME;
+    String eventDescription = TEST_EVENT_DESC;
     String eventCity = ORGANIZATION_SETTING_LOCATION;
-    String eventAddres = "Testroad 3";
-    String eventZip = "12345";
-    String eventPlace = "Testing Ltd";
+    String eventAddres = TEST_EVENT_ADDRESS;
+    String eventZip = TEST_EVENT_ZIP;
+    String eventPlace = TEST_EVENT_PLACE;
     String eventThumbPath = String.format("%s/480/%s", imagesBasePath, attachmentId);
     String eventImagePath = String.format("%s/1000/%s", imagesBasePath, attachmentId);
     String eventThumb = String.format("%s%s", baseUrl, eventThumbPath);
@@ -215,8 +251,8 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
     createIdentifier(kuntaApiOrganizationId, MikkeliNytConsts.IDENTIFIER_NAME, "test-source-id", IdType.ORGANIZATION.name());
     createIdentifier(kuntaApiEventId, MikkeliNytConsts.IDENTIFIER_NAME, eventId, IdType.EVENT.name());
     createIdentifier(kuntaApiAttachmentId, MikkeliNytConsts.IDENTIFIER_NAME, attachmentId, IdType.ATTACHMENT.name());
-    mocker.mockGetBinary("/" + eventThumbPath, "image/jpeg", "test-image-480.jpg");
-    mocker.mockGetBinary("/" + eventImagePath, "image/jpeg", "test-image-1000.jpg");
+    mocker.mockGetBinary("/" + eventThumbPath, TEST_EVENT_ATTACHMENT_TYPE, "test-image-480.jpg");
+    mocker.mockGetBinary("/" + eventImagePath, TEST_EVENT_ATTACHMENT_TYPE, "test-image-1000.jpg");
 
     return mocker.mockEvent(kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId, eventId, eventUrl, eventName, eventDescription, eventCity, eventAddres, eventZip, eventPlace, eventImage, eventThumb, start, end);
   }
@@ -243,12 +279,35 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
     deleteOrganizationSetting(kuntaApiOrganizationId, MikkeliNytConsts.ORGANIZATION_SETTING_IMAGEBASEURL);
   }
   
-  public class MikkeliNytMocker extends AbstractMocker {
+  private class MikkeliNytMocker extends AbstractMocker {
+    
+    private List<Event> events;
     
     public MikkeliNytMocker() {
       this.events = new ArrayList<>();
     }
     
+    /**
+     * Mocks a MikkeliNyt event
+     * 
+     * @param kuntaApiOrganizationId organization Kunta API id
+     * @param kuntaApiEventId event Kunta API id
+     * @param kuntaApiAttachmentId event image Kunta API id
+     * @param id MikkeliNyt id
+     * @param url MikkeliNyt URL
+     * @param name MikkeliNyt name
+     * @param description MikkeliNyt description
+     * @param city MikkeliNyt city
+     * @param address MikkeliNyt address 
+     * @param zip MikkeliNyt ZIP
+     * @param place MikkeliNyt place
+     * @param image MikkeliNyt image
+     * @param thumb MikkeliNyt thumb
+     * @param start MikkeliNyt start
+     * @param end MikkeliNyt end
+     * @return
+     */
+    @SuppressWarnings ("squid:S00107")
     public Event mockEvent(String kuntaApiOrganizationId, String kuntaApiEventId, String kuntaApiAttachmentId, String id, String url, String name, String description, String city, String address, String zip, String place, String image, String thumb, OffsetDateTime start, OffsetDateTime end) {
       String location = String.format("%s, %s", formatAddress(address), formatZip(zip));
       
@@ -269,8 +328,8 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
       event.setZip(formatZip(zip));
       
       Attachment imageAttachment = new Attachment();
-      imageAttachment.setContentType(ATTACHMENT_TYPE);
-      imageAttachment.setSize(new Long(ATTACHMENT_SIZE));
+      imageAttachment.setContentType(TEST_EVENT_ATTACHMENT_TYPE);
+      imageAttachment.setSize(new Long(TEST_EVENT_ATTACHMENT_SIZE));
       imageAttachment.setId(kuntaApiAttachmentId);
       
       this.events.add(event);
@@ -342,8 +401,6 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
       mockGetJSON(String.format("/json.php?apiKey=%s&location=%s", ORGANIZATION_SETTING_APIKEY, ORGANIZATION_SETTING_LOCATION), eventsResponse);
       super.startMock();
     }
-    
-    private List<Event> events;
   }
   
   

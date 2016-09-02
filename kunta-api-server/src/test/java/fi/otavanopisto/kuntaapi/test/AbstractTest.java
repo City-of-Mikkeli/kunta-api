@@ -12,6 +12,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -24,6 +26,8 @@ import org.hamcrest.Matcher;
  */
 public abstract class AbstractTest {
     
+  private static Logger logger = Logger.getLogger(AbstractTest.class.getName());
+  
   protected ZonedDateTime getZonedDateTime(int year, int month, int dayOfMonth, int hour, int minute, ZoneId zone) {
     return ZonedDateTime.of(year, month, dayOfMonth, hour, minute, 0, 0, zone);
   }
@@ -93,15 +97,22 @@ public abstract class AbstractTest {
         statement.execute();
         
         try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-          if (generatedKeys.next()) {
-            return generatedKeys.getLong(1);
-          }
+          return getGeneratedKey(generatedKeys);
         }
       } finally {
         statement.close();
       }
     } catch (Exception e) {
+      logger.log(Level.SEVERE, "Failed to execute insert", e);
       fail(e.getMessage());
+    }
+    
+    return -1;
+  }
+  
+  private long getGeneratedKey(ResultSet generatedKeys) throws SQLException {
+    if (generatedKeys.next()) {
+      return generatedKeys.getLong(1);
     }
     
     return -1;
@@ -121,6 +132,7 @@ public abstract class AbstractTest {
         statement.close();
       }
     } catch (Exception e) {
+      logger.log(Level.SEVERE, "Failed to execute delete", e);
       fail(e.getMessage());
     }
   }
@@ -132,18 +144,21 @@ public abstract class AbstractTest {
     try {
       Class.forName(System.getProperty("it.jdbc.driver")).newInstance();
     } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+      logger.log(Level.SEVERE, "Failed to load JDBC driver", e);
       fail(e.getMessage());
     }
 
     try {
       return DriverManager.getConnection(url, username, password);
     } catch (SQLException e) {
+      logger.log(Level.SEVERE, "Failed to get connection", e);
       fail(e.getMessage());
     }
     
     return null;
   }
 
+  @SuppressWarnings ({"squid:S1188", "squid:MethodCyclomaticComplexity"})
   protected static Matcher<Instant> sameInstant(final Instant instant) {
     
     return new BaseMatcher<Instant>(){
@@ -163,18 +178,25 @@ public abstract class AbstractTest {
           return false;
         }
         
-        Instant itemInstant;        
-        if (item instanceof String) {
-          itemInstant = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse((String) item));
-        } else if (item instanceof Instant) {
-          itemInstant = (Instant) item;
-        } else {
+        Instant itemInstant = toInstant(item);
+        if (itemInstant == null) {
           return false;
         }
         
         return itemInstant.getEpochSecond() == instant.getEpochSecond();
       }
       
+      private Instant toInstant(Object item) {
+        if (item instanceof String) {
+          return Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse((String) item));
+        } else if (item instanceof Instant) {
+          return (Instant) item;
+        }
+        
+        return null;
+      }
+      
     };
+    
   }
 }
