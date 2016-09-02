@@ -8,6 +8,7 @@ import fi.otavanopisto.kuntaapi.server.rest.model.InternalServerError;
 import fi.otavanopisto.kuntaapi.server.rest.model.NotFound;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
+import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
 
@@ -23,7 +24,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-01T19:10:20.027+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-02T09:35:43.812+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -126,6 +127,18 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Event.class, responseContainer = "List"),
         @ApiResponse(code = 500, message = "Internal server error", response = Event.class, responseContainer = "List") })
     public abstract Response listOrganizationEvents(@PathParam("organizationId") String organizationId);
+
+    @GET
+    
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "List organizations", notes = "List organizations", response = Organization.class, responseContainer = "List", tags={ "Organizations",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "An array of organizations", response = Organization.class, responseContainer = "List"),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = Organization.class, responseContainer = "List"),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Organization.class, responseContainer = "List"),
+        @ApiResponse(code = 500, message = "Internal server error", response = Organization.class, responseContainer = "List") })
+    public abstract Response listOrganizations(@QueryParam("businessName") String businessName,@QueryParam("businessCode") String businessCode);
 
     @GET
     @Path("/{organizationId}/serviceClasses/")
