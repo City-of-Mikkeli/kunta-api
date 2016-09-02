@@ -4,7 +4,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
@@ -29,6 +29,7 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
   private static final String ORGANIZATION_SETTING_LOCATION = "test";
   private static final int ATTACHMENT_SIZE = 38244;
   private static final String ATTACHMENT_TYPE = "image/jpeg";
+  private static final ZoneId TIMEZONE_ID = ZoneId.of("Europe/Helsinki");
   
   @Rule
   public WireMockRule wireMockRule = new WireMockRule(getWireMockPort());
@@ -59,8 +60,8 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
         .body("originalUrl[0]", is(String.format("%s/event-url-address", baseUrl)))
         .body("name[0]", is("Test Event"))
         .body("description[0]", is("My test<br/>event"))
-        .body("start[0]", sameInstant(OffsetDateTime.of(2020, 5, 6, 17, 30, 0, 0, ZoneOffset.ofHours(3)).toInstant()))
-        .body("end[0]", sameInstant(OffsetDateTime.of(2020, 5, 6, 19, 00, 0, 0, ZoneOffset.ofHours(3)).toInstant()))
+        .body("start[0]", sameInstant(getInstant(2020, 5, 6, 17, 30, TIMEZONE_ID)))
+        .body("end[0]", sameInstant(getInstant(2020, 5, 6, 19, 00, TIMEZONE_ID)))
         .body("city[0]", is(ORGANIZATION_SETTING_LOCATION))
         .body("place[0]", is("Testing Ltd"))
         .body("address[0]", is("Testroad 3"))
@@ -96,8 +97,8 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
         .body("originalUrl", is(String.format("%s/event-url-address", baseUrl)))
         .body("name", is("Test Event"))
         .body("description", is("My test<br/>event"))
-        .body("start", sameInstant(OffsetDateTime.of(2020, 5, 6, 17, 30, 0, 0, ZoneOffset.ofHours(3)).toInstant()))
-        .body("end", sameInstant(OffsetDateTime.of(2020, 5, 6, 19, 00, 0, 0, ZoneOffset.ofHours(3)).toInstant()))
+        .body("start", sameInstant(getInstant(2020, 5, 6, 17, 30, TIMEZONE_ID)))
+        .body("end", sameInstant(getInstant(2020, 5, 6, 19, 00, TIMEZONE_ID)))
         .body("city", is(ORGANIZATION_SETTING_LOCATION))
         .body("place", is("Testing Ltd"))
         .body("address", is("Testroad 3"))
@@ -208,8 +209,9 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
     String eventImagePath = String.format("%s/1000/%s", imagesBasePath, attachmentId);
     String eventThumb = String.format("%s%s", baseUrl, eventThumbPath);
     String eventImage = String.format("%s%s", baseUrl, eventImagePath);
-    OffsetDateTime start = OffsetDateTime.of(2020, 5, 6, 17, 30, 0, 0, ZoneOffset.ofHours(3));
-    OffsetDateTime end = OffsetDateTime.of(2020, 5, 6, 19, 00, 0, 0, ZoneOffset.ofHours(3));
+    
+    OffsetDateTime start = getOffsetDateTime(2020, 5, 6, 17, 30, TIMEZONE_ID);
+    OffsetDateTime end = getOffsetDateTime(2020, 5, 6, 19, 00, TIMEZONE_ID);
     createIdentifier(kuntaApiOrganizationId, MikkeliNytConsts.IDENTIFIER_NAME, "test-source-id", IdType.ORGANIZATION.name());
     createIdentifier(kuntaApiEventId, MikkeliNytConsts.IDENTIFIER_NAME, eventId, IdType.EVENT.name());
     createIdentifier(kuntaApiAttachmentId, MikkeliNytConsts.IDENTIFIER_NAME, attachmentId, IdType.ATTACHMENT.name());

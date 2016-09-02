@@ -397,7 +397,7 @@ public class MikkeliNytEventProvider implements EventProvider {
   
   private OffsetDateTime parseOffsetDateTime(String text) {
     LocalDateTime localDateTime = parseLocalDateTime(text);
-    return localDateTime.atZone(ZoneId.systemDefault()).toOffsetDateTime();
+    return localDateTime.atZone(ZoneId.of(MikkeliNytConsts.SERVER_TIMEZONE_ID)).toOffsetDateTime();
   }
   
   private LocalDateTime parseLocalDateTime(String text) {
