@@ -5,8 +5,13 @@ jdk: oraclejdk8
 cache:
   directories:
   - $HOME/.sonar
-
-script: . travis.sh
+  - $HOME/.m2
+  - kunta-api-server/.cargo
+addons:
+  hosts:
+    - api.kunta-api.test
+script:
+  - . travis.sh
 
 notifications:
   email: false

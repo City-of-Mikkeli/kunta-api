@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -320,7 +321,8 @@ public class MikkeliNytEventProvider implements EventProvider {
           int statusCode = statusLine.getStatusCode();
           String message = statusLine.getReasonPhrase();
           byte[] data = IOUtils.toByteArray(httpResponse.getEntity().getContent());
-          String type = httpResponse.getEntity().getContentType().getValue();
+          Header typeHeader = httpResponse.getEntity().getContentType();
+          String type = typeHeader != null ? typeHeader.getValue() : null;
           Response<AttachmentData> attachmentResponse = new Response<>(statusCode, message, new AttachmentData(type, data));
           httpCache.put(MikkeliNytConsts.CACHE_NAME, uri, attachmentResponse); 
           return attachmentResponse;
@@ -395,7 +397,7 @@ public class MikkeliNytEventProvider implements EventProvider {
   
   private OffsetDateTime parseOffsetDateTime(String text) {
     LocalDateTime localDateTime = parseLocalDateTime(text);
-    return localDateTime.atZone(ZoneId.systemDefault()).toOffsetDateTime();
+    return localDateTime.atZone(ZoneId.of(MikkeliNytConsts.SERVER_TIMEZONE_ID)).toOffsetDateTime();
   }
   
   private LocalDateTime parseLocalDateTime(String text) {

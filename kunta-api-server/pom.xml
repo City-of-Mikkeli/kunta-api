@@ -60,11 +60,18 @@
     
     <wildfly-spec-api.version>10.1.0.Final</wildfly-spec-api.version>
     
-    <kunta-api-spec.version>0.0.1-SNAPSHOT</kunta-api-spec.version>
+    <!-- Integrations -->
+    
+    <kunta-api-spec.version>0.0.3</kunta-api-spec.version>
     <ptv-rest-client.version>0.0.5</ptv-rest-client.version>
     <mwp-rest-client.version>0.0.3</mwp-rest-client.version>
+    <mikkelinyt.rest-model.version>0.0.1</mikkelinyt.rest-model.version>
     
-    <mikkelinyt.rest-model.version>0.0.1-SNAPSHOT</mikkelinyt.rest-model.version>
+    <!-- Test -->
+    
+    <restassured.version>2.9.0</restassured.version> 
+    <wiremock.version>2.1.11</wiremock.version>
+    
   </properties>
   
   <dependencyManagement>
@@ -281,6 +288,307 @@
       <artifactId>infinispan-commons</artifactId>
       <scope>provided</scope>
     </dependency>
+    
+    <!-- Test -->
+    
+    <dependency>
+      <groupId>com.jayway.restassured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+      <version>${restassured.version}</version>
+    </dependency> 
+    
+    <dependency>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock</artifactId>
+      <version>${wiremock.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.7</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
   </dependencies>
+  
+  <profiles>
+    
+    <profile>
+      <id>itests</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      
+      <properties>
+        <h2.version>1.4.192</h2.version>
+        <it.port.http>58080</it.port.http>
+        <it.host>api.kunta-api.test</it.host>
+        <it.jdbc.driver>org.h2.Driver</it.jdbc.driver>
+        <it.jdbc.url>jdbc:h2:file:${project.build.directory}/h2;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE</it.jdbc.url>
+        <it.jdbc.jndi>java:/jboss/datasources/kuntaapi</it.jdbc.jndi>
+        <it.jdbc.username>sa</it.jdbc.username>
+        <it.jdbc.password>sa</it.jdbc.password>
+        <it.hibernate.dialect>org.hibernate.dialect.H2Dialect</it.hibernate.dialect>
+        <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
+      </properties>
+      
+      <dependencies>
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>${h2.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.19.1</version>
+            <configuration>
+              <failIfNoTests>true</failIfNoTests>
+              <includes>
+                <include>**/*IT.java</include>
+              </includes>
+              <systemPropertyVariables>
+                <java.util.logging.config.file>${project.basedir}/src/test/resources/logging.properties</java.util.logging.config.file>
+                <jboss.home>${wildfly.home}</jboss.home>
+                <module.path>${wildfly.home}/modules</module.path>
+                <it.host>${it.host}</it.host>
+                <it.port.http>${it.port.http}</it.port.http>
+                <it.jdbc.driver>${it.jdbc.driver}</it.jdbc.driver>
+                <it.jdbc.url>${it.jdbc.url}</it.jdbc.url>
+                <it.jdbc.jndi>${it.jdbc.jndi}</it.jdbc.jndi>
+                <it.jdbc.username>${it.jdbc.username}</it.jdbc.username>
+                <it.jdbc.password>${it.jdbc.password}</it.jdbc.password>
+              </systemPropertyVariables>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>verify</id>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>de.juplo</groupId>
+            <artifactId>hibernate-maven-plugin</artifactId>
+            <version>2.0.0</version>
+            <dependencies>
+              <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <driver>${it.jdbc.driver}</driver>
+              <hibernateDialect>${it.hibernate.dialect}</hibernateDialect> 
+              <url><![CDATA[${it.jdbc.url}]]></url>
+              <username>${it.jdbc.username}</username>
+              <password>${it.jdbc.password}</password>
+            </configuration>
+            <executions>
+              <execution> 
+                <id>create-schema</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>create</goal>
+                </goals>
+                <configuration>
+                  <type>CREATE</type>
+                </configuration>
+              </execution>
+              
+              <execution> 
+                <id>drop-db-after-test</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>drop</goal>
+                </goals>
+                <configuration>
+                  <type>DROP</type>
+                  <force>true</force>
+                  <skip>${it.skipdatabasedrop}</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.7.6.201602180812</version>
+            <configuration>
+              <destFile>${jacoco.reportPath}</destFile>
+              <dataFile>${jacoco.reportPath}</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+              <classDumpDir>${project.reporting.outputDirectory}/jacoco-it/classes</classDumpDir>
+            </configuration>
+                
+            <executions>
+              <execution>
+                <id>jacoco-agent</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+                <configuration>
+                  <destFile>${jacoco.reportPath}</destFile>
+                  <propertyName>jacoco.agent.itArgLine</propertyName>
+                </configuration>
+              </execution>
+              <execution>
+                <id>jacoco-report</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>dump</goal>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <version>1.5.0</version>
+            <configuration>
+              <container>
+                <containerId>wildfly10x</containerId>
+                <log>${project.basedir}/target/cargo.log</log>
+                <output>${project.basedir}/target/wildfly.log</output>
+                <zipUrlInstaller>
+                  <url>http://download.jboss.org/wildfly/10.1.0.Final/wildfly-10.1.0.Final.zip</url>
+                  <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
+                  <extractDir>${project.basedir}/.cargo/extracts</extractDir>
+                </zipUrlInstaller>     
+                <dependencies>
+                  <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                  </dependency>
+                </dependencies>         
+              </container>
+              <configuration>
+                <properties>
+                  <cargo.servlet.port>${it.port.http}</cargo.servlet.port>
+                  <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
+                  <cargo.jvmargs>${jacoco.agent.itArgLine},output=tcpserver,port=6300 -Xms64m -Xmx1024m -Drunmode=TEST</cargo.jvmargs>
+                  <cargo.datasource.datasource.fnici>
+                    cargo.datasource.driver=${it.jdbc.driver}|
+                    cargo.datasource.url=${it.jdbc.url}|
+                    cargo.datasource.jndi=${it.jdbc.jndi}|
+                    cargo.datasource.username=${it.jdbc.username}|
+                    cargo.datasource.password=${it.jdbc.password}|
+                    cargo.datasource.transactionsupport=LOCAL_TRANSACTION
+                  </cargo.datasource.datasource.fnici>
+                </properties>    
+              </configuration>
+              <deployer/>
+            </configuration>
+            <executions>
+              <execution>
+                <id>start-cargo</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>stop-cargo</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+                <configuration>
+                  <skip>${it.skipserverstop}</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.wildfly.plugins</groupId>
+            <artifactId>wildfly-maven-plugin</artifactId>
+            <version>1.0.2.Final</version>
+            <executions>
+              <execution>
+                <id>deploy</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+                <configuration>
+                  <before-deployment>
+                    <batch>true</batch>
+                    <commands>
+                      <command>/subsystem=infinispan/cache-container=kunta-api:add()</command>
+                      <command>/subsystem=undertow/server=default-server/host=kunta-api:add(alias=["${it.host}"])</command>
+                    </commands>
+                  </before-deployment>
+                  <filename>${project.build.finalName}.${project.packaging}</filename>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+                    
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>wait-maven-plugin</artifactId>
+            <version>1.0</version>
+            <executions>
+              <execution>
+                <id>wait</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>wait</goal>
+                </goals>      
+                <configuration>
+                  <protocol>http</protocol>
+                  <host>${it.host}</host>
+                  <port>${it.port.http}</port>
+                  <file>/v1/system/ping</file>
+                  <maxcount>20</maxcount>
+                  <timeout>10000</timeout>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.eluder.coveralls</groupId>
+            <artifactId>coveralls-maven-plugin</artifactId>
+            <version>4.2.0</version>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+  </profiles>
   
 </project>
