@@ -275,7 +275,7 @@ module.exports = function(grunt) {
         'path': config.wordpress.path,
         'command': 'plugin',
         'subcommand': 'install',
-        'arguments': 'qtranslate-x rest-api https://github.com/starfishmod/WPAPI-SwaggerGenerator/archive/master.zip',
+        'arguments': 'qtranslate-x rest-api error-log-monitor https://github.com/starfishmod/WPAPI-SwaggerGenerator/archive/master.zip',
         'options': {
           'activate': true
         }
@@ -284,6 +284,14 @@ module.exports = function(grunt) {
         'path': config.wordpress.path,
         'command': 'core',
         'subcommand': 'language update'
+      },
+      'update-plugins': {
+        'path': config.wordpress.path,
+        'command': 'plugin',
+        'subcommand': 'update',
+        'options': {
+          'all': true
+        }
       }
     },
     'http': {
@@ -307,6 +315,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('uninstall-management-wordpress', ['mustache_render:wordpressdb-drop', 'mysqlrunfile:wordpressdb-drop', 'clean:remove-wordpress' ]);
   grunt.registerTask('install-management-wordpress', ['mustache_render:wordpressdb', 'mysqlrunfile:wordpressdb', 'wp-cli:download', 'wp-cli:config', "wp-cli:install", "shell:wordpress-languages-writable", "wp-cli:plugins", "shell:wordpress-management-plugin", "http:visit-wordpress-admin", "wp-cli:update-languages"]);
+  grunt.registerTask('update-management-wordpress-plugins', ["wp-cli:update-plugins"]);
+  grunt.registerTask('install-management-wordpress-plugins', ["wp-cli:plugins"]);
 
   grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-javascript-client-to-www', 'install-php-client']);
 };
