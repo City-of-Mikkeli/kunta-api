@@ -23,12 +23,14 @@ import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
+import fi.otavanopisto.kuntaapi.server.integrations.OrganizationProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
+import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 
@@ -46,6 +48,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   private Logger logger;
   
   @Inject
+  private Instance<OrganizationProvider> organizationProviders;
+  
+  @Inject
   private Instance<ServiceProvider> serviceProviders;
 
   @Inject
@@ -53,6 +58,17 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Inject
   private Instance<EventProvider> eventProviders;
+
+  @Override
+  public Response listOrganizations(String businessName, String businessCode) {
+    List<Organization> organizations = new ArrayList<>();
+    for (OrganizationProvider organizationProvider : getOrganizationProviders()) {
+      organizations.addAll(organizationProvider.listOrganizations(businessName, businessCode));
+    }
+    
+    return Response.ok(organizations)
+      .build();
+  }
   
   @Override
   public Response createService(String organizationId, Service body) {
@@ -212,6 +228,19 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     
     return Response.ok(result)
       .build();
+  }
+  
+  private List<OrganizationProvider> getOrganizationProviders() {
+    // TODO: Prioritize providers
+    
+    List<OrganizationProvider> result = new ArrayList<>();
+    
+    Iterator<OrganizationProvider> iterator = organizationProviders.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
   }
   
   private List<ServiceProvider> getServiceProviders() {

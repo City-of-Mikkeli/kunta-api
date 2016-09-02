@@ -66,9 +66,9 @@ public class MwpClient extends fi.otavanopisto.mwp.client.ApiClient {
       return new ApiResponse<>(500, INVALID_URI_SYNTAX, null);
     }
     
-    Response<T> response = httpCache.get(MwpConsts.CACHE_NAME, uri, new GenericHttpClient.ResultType<Response<T>>() {});
+    Response<T> response = httpCache.get(MwpConsts.CACHE_NAME, uri, new GenericHttpClient.ResponseResultTypeWrapper<>(resultType.getType()));
     if (response == null) {
-      response = httpClient.doGETRequest(uri, new GenericHttpClient.ResultType<T>() {});
+      response = httpClient.doGETRequest(uri, new GenericHttpClient.ResultTypeWrapper<>(resultType.getType()));
       httpCache.put(MwpConsts.CACHE_NAME, uri, response);
     }
     
