@@ -11,6 +11,8 @@
   	add_filter('content_edit_pre', 'kunta_api_setup_embeds');
   }
 
+  add_filter('the_content', 'kunta_api_content_filter');
+
   function kunta_api_setup_embeds($content) {
     $serviceLoader = new ServiceLoader();
   	$dom = HtmlDomParser::str_get_html($content);
@@ -32,5 +34,27 @@
 
   	return $dom;
   }
-  
+
+  function kunta_api_content_filter($content) {
+    $serviceLoader = new ServiceLoader();
+    $dom = HtmlDomParser::str_get_html($content);
+    
+    foreach ($dom->find('*[data-type="kunta-api-embedded-data"]') as $article) {
+      $serviceId = $article->{'data-service-id'};
+      $serviceComponent = $article->{'data-service-component'};
+      $article->class = 'mceNonEditable';
+      $content = $serviceLoader->loadServiceComponent($serviceId, $serviceComponent);
+
+      if (!empty($content)) {
+        $article->innertext = $content;
+      } else {
+        if (empty($article->innertext)) {
+          $article->innertext = __( 'Failed to load embedded content', 'kunta_api_management');
+        }
+      }
+    }
+
+    return $dom;
+  }
+
 ?>
