@@ -1,0 +1,28 @@
+{% if name %}
+<h3>Nimi</h3>
+<p>{{ name }}</p>
+{% endif %}
+
+{% if shortDescription %}
+<h3>Lyhyt kuvaus</h3>
+<article data-type="kunta-api-embedded-data" data-service-id="{{ serviceId }}" data-service-component="shortDescription">{{ shortDescription }}</article>
+{% endif %}
+
+{% if description %}
+<h3>Kuvaus</h3>
+<article data-type="kunta-api-embedded-data" data-service-id="{{ serviceId }}" data-service-component="description">{{ description }}</article>
+{% endif %}
+
+{% if serviceUserInstruction %}
+<h3>Toimintaohjeet</h3>
+<article data-type="kunta-api-embedded-data" data-service-id="{{ serviceId }}" data-service-component="serviceUserInstruction">{{ serviceUserInstruction }}</article>
+{% endif %}
+
+{% if languages %}
+<h3>Kielet, joilla palvelu on saatavilla</h3>
+<article data-type="kunta-api-embedded-data" data-service-id="{{ serviceId }}" data-service-component="languages">
+  {% for language in languages %}
+    <span>{{ language }}</span>
+  {% endfor %}  
+</article>
+{% endif %}
