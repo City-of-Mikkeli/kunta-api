@@ -31,7 +31,7 @@
   	  	    $serviceUserInstruction = $serviceDescription->getValue();
   	  	  break;
   	  	  default:
-  	  	  	
+  	  	  	error_log("Unknown description type: $serviceDescription->getType() found.");
   	  	  break;
   	  	}
   	  }
