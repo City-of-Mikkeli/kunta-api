@@ -329,7 +329,7 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
       
       Attachment imageAttachment = new Attachment();
       imageAttachment.setContentType(TEST_EVENT_ATTACHMENT_TYPE);
-      imageAttachment.setSize(new Long(TEST_EVENT_ATTACHMENT_SIZE));
+      imageAttachment.setSize(Long.valueOf(TEST_EVENT_ATTACHMENT_SIZE));
       imageAttachment.setId(kuntaApiAttachmentId);
       
       this.events.add(event);
