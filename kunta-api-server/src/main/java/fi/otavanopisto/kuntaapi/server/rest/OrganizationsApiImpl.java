@@ -17,6 +17,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventId;
@@ -97,8 +99,14 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Override
   public Response listServices(String organizationIdParam, String serviceClassIdParam) {
+    if (StringUtils.isBlank(organizationIdParam)) {
+      return Response.status(Status.BAD_REQUEST)
+        .entity("Organization parameter is mandatory")
+        .build();
+    }
+    
     OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
-    ServiceClassId serviceClassId = new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, serviceClassIdParam);
+    ServiceClassId serviceClassId = StringUtils.isBlank(serviceClassIdParam) ? null : new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, serviceClassIdParam);
     
     // TODO: Merge services
     
