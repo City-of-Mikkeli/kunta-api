@@ -1,6 +1,7 @@
 package fi.otavanopisto.kuntaapi.server.integrations.ptv;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -62,6 +63,11 @@ public class PtvOrganizationProvider implements OrganizationProvider {
     List<Organization> result = new ArrayList<>();
     
     ApiResponse<VmOpenApiGuidPage> apiOrganizationGet = ptvApi.getOrganizationApi().apiOrganizationGet(null, 0);
+    if (!apiOrganizationGet.isOk()) {
+      logger.severe(String.format("Organizations listing reported [%d] %s", apiOrganizationGet.getStatus(), apiOrganizationGet.getMessage()));
+      return Collections.emptyList();
+    }
+    
     VmOpenApiGuidPage page = apiOrganizationGet.getResponse();
    
     for (String guid : page.getGuidList()) {
