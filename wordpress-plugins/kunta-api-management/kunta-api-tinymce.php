@@ -18,7 +18,7 @@
   }
   
   function kunta_api_tinymce_styles() {
-  	add_editor_style(plugin_dir_url( __FILE__ ) . 'tinymce/kunta-api-styles.css');
+  	add_editor_style(plugin_dir_url( __FILE__ ) . 'tinymce-styles.css');
   }
   
 ?>
