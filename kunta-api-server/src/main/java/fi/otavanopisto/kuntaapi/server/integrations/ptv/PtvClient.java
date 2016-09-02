@@ -26,10 +26,9 @@ import fi.otavanopisto.ptv.client.ResultType;
 @Dependent
 public class PtvClient extends fi.otavanopisto.ptv.client.ApiClient {
 
+  private static final String BASE_PATH = "https://api.palvelutietovaranto.suomi.fi";
   private static final String INVALID_URI_SYNTAX = "Invalid uri syntax";
-
-  private static final String BASE_PATH = "http://ptvenv.cloudapp.net:1494";
-
+  
   @Inject
   private Logger logger;
 
