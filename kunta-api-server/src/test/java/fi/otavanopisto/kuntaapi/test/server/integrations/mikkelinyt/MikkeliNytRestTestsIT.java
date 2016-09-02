@@ -41,6 +41,7 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
   
   private static final int TEST_EVENT_ATTACHMENT_SIZE = 38244;
   private static final String TEST_EVENT_ATTACHMENT_TYPE = "image/jpeg";
+  private static final String TEST_EVENT_ATTACHMENT_SCALED_TYPE = "image/png";
   private static final String TEST_EVENT_URL_TEMPLATE = "%s/event-url-address";
   private static final String TEST_EVENT_ZIP = "12345";
   private static final String TEST_EVENT_ADDRESS = "Testroad 3";
@@ -225,6 +226,37 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
         .assertThat()
         .statusCode(200)
         .header("Content-Type", TEST_EVENT_ATTACHMENT_TYPE);
+    } finally {
+      cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
+      deleteSettings(kuntaApiOrganizationId);
+    }
+  }
+  
+  /**
+   * Tests retrieval of event scaled image data
+   */
+  @Test
+  public void testImageDataScaled() {
+    String kuntaApiOrganizationId = KUNTA_API_ORGANIZATION_ID;
+    String baseUrl = getWireMockBasePath();
+    String imagesBasePath = IMAGES_BASE_PATH;
+    String kuntaApiEventId = KUNTA_API_EVENT_ID;
+    String kuntaApiAttachmentId = KUNTA_API_ATTACHMENT_ID;
+
+    createSettings(kuntaApiOrganizationId, baseUrl, imagesBasePath);
+
+    MikkeliNytMocker mocker = new MikkeliNytMocker();
+    mockEvent(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId, baseUrl, imagesBasePath);
+    mocker.startMock();
+    try {
+      given() 
+        .baseUri(getApiBasePath())
+        .contentType(ContentType.JSON)
+        .get("/organizations/{ORGANIZATIONID}/events/{EVENTID}/images/{IMAGEID}/data?size=100", kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId)
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .header("Content-Type", TEST_EVENT_ATTACHMENT_SCALED_TYPE);
     } finally {
       cleanMock(mocker, kuntaApiOrganizationId, kuntaApiEventId, kuntaApiAttachmentId);
       deleteSettings(kuntaApiOrganizationId);
