@@ -10,7 +10,8 @@ cache:
 addons:
   hosts:
     - api.kunta-api.test
-script: . travis.sh
+script:
+  - . travis.sh
 
 notifications:
   email: false

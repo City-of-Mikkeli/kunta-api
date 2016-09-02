@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${SONAR_TOKEN}" ]; then
 
   # It's a pull-request, run SonarQube analysis in the pull-request and execute tests
@@ -12,10 +10,12 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${
     -Dsonar.projectKey=$SONAR_PROJECT_KEY \
     -Dsonar.github.oauth=$GITHUB_TOKEN \
     -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
-    -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST &&
-  pushd . &&
-  cd kunta-api-server &&
-  mvn clean test verify jacoco:report coveralls:report -Pitests -DrepoToken=$COVERALLS_TOKEN &&
+    -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST
+  pushd .
+  cd kunta-api-server
+  set -e
+  mvn clean test verify jacoco:report coveralls:report -Pitests -DrepoToken=$COVERALLS_TOKEN
+  set +e
   popd
 fi
 
