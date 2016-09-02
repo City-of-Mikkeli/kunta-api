@@ -1,5 +1,5 @@
 <?php
-  defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+  defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
   require_once('vendor/autoload.php');
   
   if (is_admin()) {

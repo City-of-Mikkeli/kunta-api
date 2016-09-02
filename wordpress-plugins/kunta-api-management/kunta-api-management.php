@@ -7,7 +7,7 @@
   Author: Antti Leppä / Otavan Opisto
 */
 
-defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
 
 require_once 'kunta-api-settings.php';
 require_once 'kunta-api-updater.php';
