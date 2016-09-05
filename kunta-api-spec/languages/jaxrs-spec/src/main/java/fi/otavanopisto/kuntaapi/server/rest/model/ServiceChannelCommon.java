@@ -1,9 +1,9 @@
 package fi.otavanopisto.kuntaapi.server.rest.model;
 
 import fi.otavanopisto.kuntaapi.server.rest.model.LocalizedValue;
-import fi.otavanopisto.kuntaapi.server.rest.model.ServiceHour;
-import fi.otavanopisto.kuntaapi.server.rest.model.Support;
-import fi.otavanopisto.kuntaapi.server.rest.model.WebPage;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceChannelServiceHour;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceChannelSupport;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceChannelWebPage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +16,11 @@ import java.util.Objects;
 public class ServiceChannelCommon   {
   
   private String id = null;
-  private String organizationId = null;
   private List<LocalizedValue> description = new ArrayList<LocalizedValue>();
   private List<LocalizedValue> name = new ArrayList<LocalizedValue>();
-  private List<WebPage> webPages = new ArrayList<WebPage>();
-  private List<ServiceHour> serviceHours = new ArrayList<ServiceHour>();
-  private List<Support> supportContacts = new ArrayList<Support>();
+  private List<ServiceChannelWebPage> webPages = new ArrayList<ServiceChannelWebPage>();
+  private List<ServiceChannelServiceHour> serviceHours = new ArrayList<ServiceChannelServiceHour>();
+  private List<ServiceChannelSupport> supportContacts = new ArrayList<ServiceChannelSupport>();
 
   /**
    **/
@@ -37,22 +36,6 @@ public class ServiceChannelCommon   {
   }
   public void setId(String id) {
     this.id = id;
-  }
-
-  /**
-   **/
-  public ServiceChannelCommon organizationId(String organizationId) {
-    this.organizationId = organizationId;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public String getOrganizationId() {
-    return organizationId;
-  }
-  public void setOrganizationId(String organizationId) {
-    this.organizationId = organizationId;
   }
 
   /**
@@ -89,49 +72,49 @@ public class ServiceChannelCommon   {
 
   /**
    **/
-  public ServiceChannelCommon webPages(List<WebPage> webPages) {
+  public ServiceChannelCommon webPages(List<ServiceChannelWebPage> webPages) {
     this.webPages = webPages;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public List<WebPage> getWebPages() {
+  public List<ServiceChannelWebPage> getWebPages() {
     return webPages;
   }
-  public void setWebPages(List<WebPage> webPages) {
+  public void setWebPages(List<ServiceChannelWebPage> webPages) {
     this.webPages = webPages;
   }
 
   /**
    **/
-  public ServiceChannelCommon serviceHours(List<ServiceHour> serviceHours) {
+  public ServiceChannelCommon serviceHours(List<ServiceChannelServiceHour> serviceHours) {
     this.serviceHours = serviceHours;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public List<ServiceHour> getServiceHours() {
+  public List<ServiceChannelServiceHour> getServiceHours() {
     return serviceHours;
   }
-  public void setServiceHours(List<ServiceHour> serviceHours) {
+  public void setServiceHours(List<ServiceChannelServiceHour> serviceHours) {
     this.serviceHours = serviceHours;
   }
 
   /**
    **/
-  public ServiceChannelCommon supportContacts(List<Support> supportContacts) {
+  public ServiceChannelCommon supportContacts(List<ServiceChannelSupport> supportContacts) {
     this.supportContacts = supportContacts;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public List<Support> getSupportContacts() {
+  public List<ServiceChannelSupport> getSupportContacts() {
     return supportContacts;
   }
-  public void setSupportContacts(List<Support> supportContacts) {
+  public void setSupportContacts(List<ServiceChannelSupport> supportContacts) {
     this.supportContacts = supportContacts;
   }
 
@@ -146,7 +129,6 @@ public class ServiceChannelCommon   {
     }
     ServiceChannelCommon serviceChannelCommon = (ServiceChannelCommon) o;
     return Objects.equals(id, serviceChannelCommon.id) &&
-        Objects.equals(organizationId, serviceChannelCommon.organizationId) &&
         Objects.equals(description, serviceChannelCommon.description) &&
         Objects.equals(name, serviceChannelCommon.name) &&
         Objects.equals(webPages, serviceChannelCommon.webPages) &&
@@ -156,7 +138,7 @@ public class ServiceChannelCommon   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, organizationId, description, name, webPages, serviceHours, supportContacts);
+    return Objects.hash(id, description, name, webPages, serviceHours, supportContacts);
   }
 
   @Override
@@ -165,7 +147,6 @@ public class ServiceChannelCommon   {
     sb.append("class ServiceChannelCommon {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    organizationId: ").append(toIndentedString(organizationId)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    webPages: ").append(toIndentedString(webPages)).append("\n");

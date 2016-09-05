@@ -1,7 +1,6 @@
 package fi.otavanopisto.kuntaapi.server.rest.model;
 
 import fi.otavanopisto.kuntaapi.server.rest.model.LocalizedValue;
-import fi.otavanopisto.kuntaapi.server.rest.model.ServiceDescription;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +13,11 @@ import java.util.Objects;
 public class Service   {
   
   private String id = null;
-  private List<ServiceDescription> descriptions = new ArrayList<ServiceDescription>();
-  private List<LocalizedValue> name = new ArrayList<LocalizedValue>();
-  private List<String> sourceIds = new ArrayList<String>();
+  private List<LocalizedValue> shortDescriptions = new ArrayList<LocalizedValue>();
+  private List<LocalizedValue> descriptions = new ArrayList<LocalizedValue>();
+  private List<LocalizedValue> serviceUserInstructions = new ArrayList<LocalizedValue>();
+  private List<LocalizedValue> names = new ArrayList<LocalizedValue>();
+  private List<LocalizedValue> alternativeNames = new ArrayList<LocalizedValue>();
   private List<String> classIds = new ArrayList<String>();
   private List<String> electronicChannelIds = new ArrayList<String>();
   private List<String> phoneChannelIds = new ArrayList<String>();
@@ -43,51 +44,84 @@ public class Service   {
 
   /**
    **/
-  public Service descriptions(List<ServiceDescription> descriptions) {
+  public Service shortDescriptions(List<LocalizedValue> shortDescriptions) {
+    this.shortDescriptions = shortDescriptions;
+    return this;
+  }
+
+  
+  @ApiModelProperty(example = "null", value = "")
+  public List<LocalizedValue> getShortDescriptions() {
+    return shortDescriptions;
+  }
+  public void setShortDescriptions(List<LocalizedValue> shortDescriptions) {
+    this.shortDescriptions = shortDescriptions;
+  }
+
+  /**
+   **/
+  public Service descriptions(List<LocalizedValue> descriptions) {
     this.descriptions = descriptions;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public List<ServiceDescription> getDescriptions() {
+  public List<LocalizedValue> getDescriptions() {
     return descriptions;
   }
-  public void setDescriptions(List<ServiceDescription> descriptions) {
+  public void setDescriptions(List<LocalizedValue> descriptions) {
     this.descriptions = descriptions;
   }
 
   /**
    **/
-  public Service name(List<LocalizedValue> name) {
-    this.name = name;
+  public Service serviceUserInstructions(List<LocalizedValue> serviceUserInstructions) {
+    this.serviceUserInstructions = serviceUserInstructions;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public List<LocalizedValue> getName() {
-    return name;
+  public List<LocalizedValue> getServiceUserInstructions() {
+    return serviceUserInstructions;
   }
-  public void setName(List<LocalizedValue> name) {
-    this.name = name;
+  public void setServiceUserInstructions(List<LocalizedValue> serviceUserInstructions) {
+    this.serviceUserInstructions = serviceUserInstructions;
   }
 
   /**
    * Name of the service.
    **/
-  public Service sourceIds(List<String> sourceIds) {
-    this.sourceIds = sourceIds;
+  public Service names(List<LocalizedValue> names) {
+    this.names = names;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "Name of the service.")
-  public List<String> getSourceIds() {
-    return sourceIds;
+  public List<LocalizedValue> getNames() {
+    return names;
   }
-  public void setSourceIds(List<String> sourceIds) {
-    this.sourceIds = sourceIds;
+  public void setNames(List<LocalizedValue> names) {
+    this.names = names;
+  }
+
+  /**
+   * Name of the service.
+   **/
+  public Service alternativeNames(List<LocalizedValue> alternativeNames) {
+    this.alternativeNames = alternativeNames;
+    return this;
+  }
+
+  
+  @ApiModelProperty(example = "null", value = "Name of the service.")
+  public List<LocalizedValue> getAlternativeNames() {
+    return alternativeNames;
+  }
+  public void setAlternativeNames(List<LocalizedValue> alternativeNames) {
+    this.alternativeNames = alternativeNames;
   }
 
   /**
@@ -198,9 +232,11 @@ public class Service   {
     }
     Service service = (Service) o;
     return Objects.equals(id, service.id) &&
+        Objects.equals(shortDescriptions, service.shortDescriptions) &&
         Objects.equals(descriptions, service.descriptions) &&
-        Objects.equals(name, service.name) &&
-        Objects.equals(sourceIds, service.sourceIds) &&
+        Objects.equals(serviceUserInstructions, service.serviceUserInstructions) &&
+        Objects.equals(names, service.names) &&
+        Objects.equals(alternativeNames, service.alternativeNames) &&
         Objects.equals(classIds, service.classIds) &&
         Objects.equals(electronicChannelIds, service.electronicChannelIds) &&
         Objects.equals(phoneChannelIds, service.phoneChannelIds) &&
@@ -211,7 +247,7 @@ public class Service   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, descriptions, name, sourceIds, classIds, electronicChannelIds, phoneChannelIds, printableFormChannelIds, serviceLocationChannelIds, webpageChannelIds);
+    return Objects.hash(id, shortDescriptions, descriptions, serviceUserInstructions, names, alternativeNames, classIds, electronicChannelIds, phoneChannelIds, printableFormChannelIds, serviceLocationChannelIds, webpageChannelIds);
   }
 
   @Override
@@ -220,9 +256,11 @@ public class Service   {
     sb.append("class Service {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    shortDescriptions: ").append(toIndentedString(shortDescriptions)).append("\n");
     sb.append("    descriptions: ").append(toIndentedString(descriptions)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    sourceIds: ").append(toIndentedString(sourceIds)).append("\n");
+    sb.append("    serviceUserInstructions: ").append(toIndentedString(serviceUserInstructions)).append("\n");
+    sb.append("    names: ").append(toIndentedString(names)).append("\n");
+    sb.append("    alternativeNames: ").append(toIndentedString(alternativeNames)).append("\n");
     sb.append("    classIds: ").append(toIndentedString(classIds)).append("\n");
     sb.append("    electronicChannelIds: ").append(toIndentedString(electronicChannelIds)).append("\n");
     sb.append("    phoneChannelIds: ").append(toIndentedString(phoneChannelIds)).append("\n");

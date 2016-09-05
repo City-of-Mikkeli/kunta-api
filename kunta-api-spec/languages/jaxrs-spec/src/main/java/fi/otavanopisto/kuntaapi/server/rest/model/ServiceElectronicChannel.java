@@ -2,9 +2,9 @@ package fi.otavanopisto.kuntaapi.server.rest.model;
 
 import fi.otavanopisto.kuntaapi.server.rest.model.LocalizedValue;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceChannelAttachment;
-import fi.otavanopisto.kuntaapi.server.rest.model.ServiceHour;
-import fi.otavanopisto.kuntaapi.server.rest.model.Support;
-import fi.otavanopisto.kuntaapi.server.rest.model.WebPage;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceChannelServiceHour;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceChannelSupport;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceChannelWebPage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +21,11 @@ public class ServiceElectronicChannel   {
   private Boolean requiresAuthentication = null;
   private Boolean requiresSignature = null;
   private Integer signatureQuantity = null;
-  private List<Support> supportContacts = new ArrayList<Support>();
-  private List<ServiceHour> serviceHours = new ArrayList<ServiceHour>();
-  private List<WebPage> webPages = new ArrayList<WebPage>();
+  private List<ServiceChannelSupport> supportContacts = new ArrayList<ServiceChannelSupport>();
+  private List<ServiceChannelServiceHour> serviceHours = new ArrayList<ServiceChannelServiceHour>();
+  private List<ServiceChannelWebPage> webPages = new ArrayList<ServiceChannelWebPage>();
   private List<LocalizedValue> name = new ArrayList<LocalizedValue>();
   private List<LocalizedValue> description = new ArrayList<LocalizedValue>();
-  private String organizationId = null;
   private String id = null;
 
   /**
@@ -111,49 +110,49 @@ public class ServiceElectronicChannel   {
 
   /**
    **/
-  public ServiceElectronicChannel supportContacts(List<Support> supportContacts) {
+  public ServiceElectronicChannel supportContacts(List<ServiceChannelSupport> supportContacts) {
     this.supportContacts = supportContacts;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public List<Support> getSupportContacts() {
+  public List<ServiceChannelSupport> getSupportContacts() {
     return supportContacts;
   }
-  public void setSupportContacts(List<Support> supportContacts) {
+  public void setSupportContacts(List<ServiceChannelSupport> supportContacts) {
     this.supportContacts = supportContacts;
   }
 
   /**
    **/
-  public ServiceElectronicChannel serviceHours(List<ServiceHour> serviceHours) {
+  public ServiceElectronicChannel serviceHours(List<ServiceChannelServiceHour> serviceHours) {
     this.serviceHours = serviceHours;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public List<ServiceHour> getServiceHours() {
+  public List<ServiceChannelServiceHour> getServiceHours() {
     return serviceHours;
   }
-  public void setServiceHours(List<ServiceHour> serviceHours) {
+  public void setServiceHours(List<ServiceChannelServiceHour> serviceHours) {
     this.serviceHours = serviceHours;
   }
 
   /**
    **/
-  public ServiceElectronicChannel webPages(List<WebPage> webPages) {
+  public ServiceElectronicChannel webPages(List<ServiceChannelWebPage> webPages) {
     this.webPages = webPages;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public List<WebPage> getWebPages() {
+  public List<ServiceChannelWebPage> getWebPages() {
     return webPages;
   }
-  public void setWebPages(List<WebPage> webPages) {
+  public void setWebPages(List<ServiceChannelWebPage> webPages) {
     this.webPages = webPages;
   }
 
@@ -187,22 +186,6 @@ public class ServiceElectronicChannel   {
   }
   public void setDescription(List<LocalizedValue> description) {
     this.description = description;
-  }
-
-  /**
-   **/
-  public ServiceElectronicChannel organizationId(String organizationId) {
-    this.organizationId = organizationId;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public String getOrganizationId() {
-    return organizationId;
-  }
-  public void setOrganizationId(String organizationId) {
-    this.organizationId = organizationId;
   }
 
   /**
@@ -241,13 +224,12 @@ public class ServiceElectronicChannel   {
         Objects.equals(webPages, serviceElectronicChannel.webPages) &&
         Objects.equals(name, serviceElectronicChannel.name) &&
         Objects.equals(description, serviceElectronicChannel.description) &&
-        Objects.equals(organizationId, serviceElectronicChannel.organizationId) &&
         Objects.equals(id, serviceElectronicChannel.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(attachments, urls, requiresAuthentication, requiresSignature, signatureQuantity, supportContacts, serviceHours, webPages, name, description, organizationId, id);
+    return Objects.hash(attachments, urls, requiresAuthentication, requiresSignature, signatureQuantity, supportContacts, serviceHours, webPages, name, description, id);
   }
 
   @Override
@@ -265,7 +247,6 @@ public class ServiceElectronicChannel   {
     sb.append("    webPages: ").append(toIndentedString(webPages)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    organizationId: ").append(toIndentedString(organizationId)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("}");
     return sb.toString();
