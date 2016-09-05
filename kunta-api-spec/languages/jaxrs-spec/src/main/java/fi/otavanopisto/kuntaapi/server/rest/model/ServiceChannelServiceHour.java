@@ -1,6 +1,8 @@
 package fi.otavanopisto.kuntaapi.server.rest.model;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -10,50 +12,45 @@ import java.util.Objects;
 
 public class ServiceChannelServiceHour   {
   
-  private String serviceHourType = null;
-  private String exceptionHourType = null;
+  private String type = null;
+  private String displayable = null;
   private OffsetDateTime validFrom = null;
   private OffsetDateTime validTo = null;
-  private Boolean monday = null;
-  private Boolean tuesday = null;
-  private Boolean wednesday = null;
-  private Boolean thursday = null;
-  private Boolean friday = null;
-  private Boolean saturday = null;
-  private Boolean sunday = null;
   private String opens = null;
   private String closes = null;
+  private List<Integer> days = new ArrayList<Integer>();
+  private String status = null;
 
   /**
    **/
-  public ServiceChannelServiceHour serviceHourType(String serviceHourType) {
-    this.serviceHourType = serviceHourType;
+  public ServiceChannelServiceHour type(String type) {
+    this.type = type;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public String getServiceHourType() {
-    return serviceHourType;
+  public String getType() {
+    return type;
   }
-  public void setServiceHourType(String serviceHourType) {
-    this.serviceHourType = serviceHourType;
+  public void setType(String type) {
+    this.type = type;
   }
 
   /**
    **/
-  public ServiceChannelServiceHour exceptionHourType(String exceptionHourType) {
-    this.exceptionHourType = exceptionHourType;
+  public ServiceChannelServiceHour displayable(String displayable) {
+    this.displayable = displayable;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public String getExceptionHourType() {
-    return exceptionHourType;
+  public String getDisplayable() {
+    return displayable;
   }
-  public void setExceptionHourType(String exceptionHourType) {
-    this.exceptionHourType = exceptionHourType;
+  public void setDisplayable(String displayable) {
+    this.displayable = displayable;
   }
 
   /**
@@ -90,118 +87,6 @@ public class ServiceChannelServiceHour   {
 
   /**
    **/
-  public ServiceChannelServiceHour monday(Boolean monday) {
-    this.monday = monday;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public Boolean getMonday() {
-    return monday;
-  }
-  public void setMonday(Boolean monday) {
-    this.monday = monday;
-  }
-
-  /**
-   **/
-  public ServiceChannelServiceHour tuesday(Boolean tuesday) {
-    this.tuesday = tuesday;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public Boolean getTuesday() {
-    return tuesday;
-  }
-  public void setTuesday(Boolean tuesday) {
-    this.tuesday = tuesday;
-  }
-
-  /**
-   **/
-  public ServiceChannelServiceHour wednesday(Boolean wednesday) {
-    this.wednesday = wednesday;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public Boolean getWednesday() {
-    return wednesday;
-  }
-  public void setWednesday(Boolean wednesday) {
-    this.wednesday = wednesday;
-  }
-
-  /**
-   **/
-  public ServiceChannelServiceHour thursday(Boolean thursday) {
-    this.thursday = thursday;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public Boolean getThursday() {
-    return thursday;
-  }
-  public void setThursday(Boolean thursday) {
-    this.thursday = thursday;
-  }
-
-  /**
-   **/
-  public ServiceChannelServiceHour friday(Boolean friday) {
-    this.friday = friday;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public Boolean getFriday() {
-    return friday;
-  }
-  public void setFriday(Boolean friday) {
-    this.friday = friday;
-  }
-
-  /**
-   **/
-  public ServiceChannelServiceHour saturday(Boolean saturday) {
-    this.saturday = saturday;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public Boolean getSaturday() {
-    return saturday;
-  }
-  public void setSaturday(Boolean saturday) {
-    this.saturday = saturday;
-  }
-
-  /**
-   **/
-  public ServiceChannelServiceHour sunday(Boolean sunday) {
-    this.sunday = sunday;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public Boolean getSunday() {
-    return sunday;
-  }
-  public void setSunday(Boolean sunday) {
-    this.sunday = sunday;
-  }
-
-  /**
-   **/
   public ServiceChannelServiceHour opens(String opens) {
     this.opens = opens;
     return this;
@@ -232,6 +117,38 @@ public class ServiceChannelServiceHour   {
     this.closes = closes;
   }
 
+  /**
+   **/
+  public ServiceChannelServiceHour days(List<Integer> days) {
+    this.days = days;
+    return this;
+  }
+
+  
+  @ApiModelProperty(example = "null", value = "")
+  public List<Integer> getDays() {
+    return days;
+  }
+  public void setDays(List<Integer> days) {
+    this.days = days;
+  }
+
+  /**
+   **/
+  public ServiceChannelServiceHour status(String status) {
+    this.status = status;
+    return this;
+  }
+
+  
+  @ApiModelProperty(example = "null", value = "")
+  public String getStatus() {
+    return status;
+  }
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -242,24 +159,19 @@ public class ServiceChannelServiceHour   {
       return false;
     }
     ServiceChannelServiceHour serviceChannelServiceHour = (ServiceChannelServiceHour) o;
-    return Objects.equals(serviceHourType, serviceChannelServiceHour.serviceHourType) &&
-        Objects.equals(exceptionHourType, serviceChannelServiceHour.exceptionHourType) &&
+    return Objects.equals(type, serviceChannelServiceHour.type) &&
+        Objects.equals(displayable, serviceChannelServiceHour.displayable) &&
         Objects.equals(validFrom, serviceChannelServiceHour.validFrom) &&
         Objects.equals(validTo, serviceChannelServiceHour.validTo) &&
-        Objects.equals(monday, serviceChannelServiceHour.monday) &&
-        Objects.equals(tuesday, serviceChannelServiceHour.tuesday) &&
-        Objects.equals(wednesday, serviceChannelServiceHour.wednesday) &&
-        Objects.equals(thursday, serviceChannelServiceHour.thursday) &&
-        Objects.equals(friday, serviceChannelServiceHour.friday) &&
-        Objects.equals(saturday, serviceChannelServiceHour.saturday) &&
-        Objects.equals(sunday, serviceChannelServiceHour.sunday) &&
         Objects.equals(opens, serviceChannelServiceHour.opens) &&
-        Objects.equals(closes, serviceChannelServiceHour.closes);
+        Objects.equals(closes, serviceChannelServiceHour.closes) &&
+        Objects.equals(days, serviceChannelServiceHour.days) &&
+        Objects.equals(status, serviceChannelServiceHour.status);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(serviceHourType, exceptionHourType, validFrom, validTo, monday, tuesday, wednesday, thursday, friday, saturday, sunday, opens, closes);
+    return Objects.hash(type, displayable, validFrom, validTo, opens, closes, days, status);
   }
 
   @Override
@@ -267,19 +179,14 @@ public class ServiceChannelServiceHour   {
     StringBuilder sb = new StringBuilder();
     sb.append("class ServiceChannelServiceHour {\n");
     
-    sb.append("    serviceHourType: ").append(toIndentedString(serviceHourType)).append("\n");
-    sb.append("    exceptionHourType: ").append(toIndentedString(exceptionHourType)).append("\n");
+    sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    displayable: ").append(toIndentedString(displayable)).append("\n");
     sb.append("    validFrom: ").append(toIndentedString(validFrom)).append("\n");
     sb.append("    validTo: ").append(toIndentedString(validTo)).append("\n");
-    sb.append("    monday: ").append(toIndentedString(monday)).append("\n");
-    sb.append("    tuesday: ").append(toIndentedString(tuesday)).append("\n");
-    sb.append("    wednesday: ").append(toIndentedString(wednesday)).append("\n");
-    sb.append("    thursday: ").append(toIndentedString(thursday)).append("\n");
-    sb.append("    friday: ").append(toIndentedString(friday)).append("\n");
-    sb.append("    saturday: ").append(toIndentedString(saturday)).append("\n");
-    sb.append("    sunday: ").append(toIndentedString(sunday)).append("\n");
     sb.append("    opens: ").append(toIndentedString(opens)).append("\n");
     sb.append("    closes: ").append(toIndentedString(closes)).append("\n");
+    sb.append("    days: ").append(toIndentedString(days)).append("\n");
+    sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("}");
     return sb.toString();
   }

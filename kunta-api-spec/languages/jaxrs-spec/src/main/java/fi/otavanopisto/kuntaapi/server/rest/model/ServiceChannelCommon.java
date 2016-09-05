@@ -21,6 +21,7 @@ public class ServiceChannelCommon   {
   private List<LocalizedValue> shortDescriptions = new ArrayList<LocalizedValue>();
   private List<ServiceChannelWebPage> webPages = new ArrayList<ServiceChannelWebPage>();
   private List<ServiceChannelServiceHour> serviceHours = new ArrayList<ServiceChannelServiceHour>();
+  private String serviceHoursAdditinalInformation = null;
   private List<ServiceChannelSupport> supportContacts = new ArrayList<ServiceChannelSupport>();
 
   /**
@@ -121,6 +122,22 @@ public class ServiceChannelCommon   {
 
   /**
    **/
+  public ServiceChannelCommon serviceHoursAdditinalInformation(String serviceHoursAdditinalInformation) {
+    this.serviceHoursAdditinalInformation = serviceHoursAdditinalInformation;
+    return this;
+  }
+
+  
+  @ApiModelProperty(example = "null", value = "")
+  public String getServiceHoursAdditinalInformation() {
+    return serviceHoursAdditinalInformation;
+  }
+  public void setServiceHoursAdditinalInformation(String serviceHoursAdditinalInformation) {
+    this.serviceHoursAdditinalInformation = serviceHoursAdditinalInformation;
+  }
+
+  /**
+   **/
   public ServiceChannelCommon supportContacts(List<ServiceChannelSupport> supportContacts) {
     this.supportContacts = supportContacts;
     return this;
@@ -151,12 +168,13 @@ public class ServiceChannelCommon   {
         Objects.equals(shortDescriptions, serviceChannelCommon.shortDescriptions) &&
         Objects.equals(webPages, serviceChannelCommon.webPages) &&
         Objects.equals(serviceHours, serviceChannelCommon.serviceHours) &&
+        Objects.equals(serviceHoursAdditinalInformation, serviceChannelCommon.serviceHoursAdditinalInformation) &&
         Objects.equals(supportContacts, serviceChannelCommon.supportContacts);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, names, descriptions, shortDescriptions, webPages, serviceHours, supportContacts);
+    return Objects.hash(id, names, descriptions, shortDescriptions, webPages, serviceHours, serviceHoursAdditinalInformation, supportContacts);
   }
 
   @Override
@@ -170,6 +188,7 @@ public class ServiceChannelCommon   {
     sb.append("    shortDescriptions: ").append(toIndentedString(shortDescriptions)).append("\n");
     sb.append("    webPages: ").append(toIndentedString(webPages)).append("\n");
     sb.append("    serviceHours: ").append(toIndentedString(serviceHours)).append("\n");
+    sb.append("    serviceHoursAdditinalInformation: ").append(toIndentedString(serviceHoursAdditinalInformation)).append("\n");
     sb.append("    supportContacts: ").append(toIndentedString(supportContacts)).append("\n");
     sb.append("}");
     return sb.toString();

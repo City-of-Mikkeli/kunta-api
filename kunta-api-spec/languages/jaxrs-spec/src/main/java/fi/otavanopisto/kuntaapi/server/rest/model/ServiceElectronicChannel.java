@@ -22,6 +22,7 @@ public class ServiceElectronicChannel   {
   private Boolean requiresSignature = null;
   private Integer signatureQuantity = null;
   private List<ServiceChannelSupport> supportContacts = new ArrayList<ServiceChannelSupport>();
+  private String serviceHoursAdditinalInformation = null;
   private List<ServiceChannelServiceHour> serviceHours = new ArrayList<ServiceChannelServiceHour>();
   private List<ServiceChannelWebPage> webPages = new ArrayList<ServiceChannelWebPage>();
   private List<LocalizedValue> shortDescriptions = new ArrayList<LocalizedValue>();
@@ -123,6 +124,22 @@ public class ServiceElectronicChannel   {
   }
   public void setSupportContacts(List<ServiceChannelSupport> supportContacts) {
     this.supportContacts = supportContacts;
+  }
+
+  /**
+   **/
+  public ServiceElectronicChannel serviceHoursAdditinalInformation(String serviceHoursAdditinalInformation) {
+    this.serviceHoursAdditinalInformation = serviceHoursAdditinalInformation;
+    return this;
+  }
+
+  
+  @ApiModelProperty(example = "null", value = "")
+  public String getServiceHoursAdditinalInformation() {
+    return serviceHoursAdditinalInformation;
+  }
+  public void setServiceHoursAdditinalInformation(String serviceHoursAdditinalInformation) {
+    this.serviceHoursAdditinalInformation = serviceHoursAdditinalInformation;
   }
 
   /**
@@ -237,6 +254,7 @@ public class ServiceElectronicChannel   {
         Objects.equals(requiresSignature, serviceElectronicChannel.requiresSignature) &&
         Objects.equals(signatureQuantity, serviceElectronicChannel.signatureQuantity) &&
         Objects.equals(supportContacts, serviceElectronicChannel.supportContacts) &&
+        Objects.equals(serviceHoursAdditinalInformation, serviceElectronicChannel.serviceHoursAdditinalInformation) &&
         Objects.equals(serviceHours, serviceElectronicChannel.serviceHours) &&
         Objects.equals(webPages, serviceElectronicChannel.webPages) &&
         Objects.equals(shortDescriptions, serviceElectronicChannel.shortDescriptions) &&
@@ -247,7 +265,7 @@ public class ServiceElectronicChannel   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(attachments, urls, requiresAuthentication, requiresSignature, signatureQuantity, supportContacts, serviceHours, webPages, shortDescriptions, descriptions, names, id);
+    return Objects.hash(attachments, urls, requiresAuthentication, requiresSignature, signatureQuantity, supportContacts, serviceHoursAdditinalInformation, serviceHours, webPages, shortDescriptions, descriptions, names, id);
   }
 
   @Override
@@ -261,6 +279,7 @@ public class ServiceElectronicChannel   {
     sb.append("    requiresSignature: ").append(toIndentedString(requiresSignature)).append("\n");
     sb.append("    signatureQuantity: ").append(toIndentedString(signatureQuantity)).append("\n");
     sb.append("    supportContacts: ").append(toIndentedString(supportContacts)).append("\n");
+    sb.append("    serviceHoursAdditinalInformation: ").append(toIndentedString(serviceHoursAdditinalInformation)).append("\n");
     sb.append("    serviceHours: ").append(toIndentedString(serviceHours)).append("\n");
     sb.append("    webPages: ").append(toIndentedString(webPages)).append("\n");
     sb.append("    shortDescriptions: ").append(toIndentedString(shortDescriptions)).append("\n");
