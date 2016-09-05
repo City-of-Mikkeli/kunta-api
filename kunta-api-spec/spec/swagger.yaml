@@ -754,8 +754,6 @@ definitions:
     properties:
       type: 
         type: string
-      displayable:
-        type: string
       validFrom:
         type: string
         format: date-time
