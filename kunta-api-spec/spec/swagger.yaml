@@ -670,11 +670,15 @@ definitions:
       id:
         type: string
         format: uuid
-      description:
+      names:
         type: array
         items:
           $ref: '#/definitions/LocalizedValue'
-      name:
+      descriptions:
+        type: array
+        items:
+          $ref: '#/definitions/LocalizedValue'
+      shortDescriptions:
         type: array
         items:
           $ref: '#/definitions/LocalizedValue'
