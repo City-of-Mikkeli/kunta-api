@@ -586,57 +586,64 @@ definitions:
         type: string
         format: uuid
         description: Unique identifier representing a specific service.
+      shortDescriptions:
+        type: array
+        items:
+          $ref: '#/definitions/LocalizedValue'
       descriptions:
         type: array
         items:
-          $ref: '#/definitions/ServiceDescription'
-      name:
+          $ref: '#/definitions/LocalizedValue'
+      serviceUserInstructions:
+        type: array
+        items:
+          $ref: '#/definitions/LocalizedValue'
+      names:
         type: array
         description: Name of the service.
         items:
           $ref: '#/definitions/LocalizedValue'
-      class_ids:  
+      alternativeNames:
+        type: array
+        description: Name of the service.
+        items:
+          $ref: '#/definitions/LocalizedValue'
+      classIds:  
         type: array
         description: List of service classes
         items:
           type: string
-      electronic_channel_ids:
+      electronicChannelIds:
         type: array
         items:
           type: string
           format: uuid
-      phone_channel_ids:
+      phoneChannelIds:
         type: array
         items:
           type: string
           format: uuid
-      printable_form_channel_ids:
+      printableFormChannelIds:
         type: array
         items:
           type: string
           format: uuid
-      service_location_channel_ids:
+      serviceLocationChannelIds:
         type: array
         items:
           type: string
           format: uuid
-      webpage_channel_ids:
+      webpageChannelIds:
         type: array
         items:
           type: string
           format: uuid
   LocalizedValue: 
     type: object
-    properties: &LocalizedValue
+    properties:
       language:
         type: string
       value:
-        type: string
-  ServiceDescription:
-    type: object
-    properties: 
-      <<: *LocalizedValue
-      type:
         type: string
   ServiceClass:
     type: object
@@ -663,9 +670,6 @@ definitions:
       id:
         type: string
         format: uuid
-      organizationId:
-        type: string
-        format: uuid
       description:
         type: array
         items:
@@ -677,15 +681,15 @@ definitions:
       webPages:
         type: array
         items:
-          $ref: '#/definitions/WebPage'
+          $ref: '#/definitions/ServiceChannelWebPage'
       serviceHours:
         type: array
         items:
-          $ref: '#/definitions/ServiceHour'
+          $ref: '#/definitions/ServiceChannelServiceHour'
       supportContacts:
         type: array
         items:
-          $ref: '#/definitions/Support'
+          $ref: '#/definitions/ServiceChannelSupport'
   ServiceElectronicChannel:
     type: object
     properties:
@@ -704,7 +708,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ServiceChannelAttachment'
-  Support:
+  ServiceChannelSupport:
     properties:
       email:
         type: string
@@ -730,7 +734,7 @@ definitions:
         type: string
       language:
         type: string
-  WebPage:
+  ServiceChannelWebPage:
     properties:
       type:
         type: string
@@ -740,7 +744,7 @@ definitions:
         type: string
       language:
         type: string
-  ServiceHour:
+  ServiceChannelServiceHour:
     properties:
       serviceHourType:
         type: string
