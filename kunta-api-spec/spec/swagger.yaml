@@ -775,9 +775,6 @@ definitions:
           format: int32
       status:
         type: string
-        enum:
-          - OPEN
-          - CLOSED
   Event:
     properties:
       id:
