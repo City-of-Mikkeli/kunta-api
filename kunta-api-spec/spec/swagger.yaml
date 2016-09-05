@@ -690,6 +690,8 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ServiceChannelServiceHour'
+      serviceHoursAdditinalInformation:
+        type: string
       supportContacts:
         type: array
         items:
@@ -750,9 +752,9 @@ definitions:
         type: string
   ServiceChannelServiceHour:
     properties:
-      serviceHourType:
+      type: 
         type: string
-      exceptionHourType:
+      displayable:
         type: string
       validFrom:
         type: string
@@ -760,24 +762,22 @@ definitions:
       validTo:
         type: string
         format: date-time
-      monday:
-        type: boolean
-      tuesday:
-        type: boolean
-      wednesday:
-        type: boolean
-      thursday:
-        type: boolean
-      friday:
-        type: boolean
-      saturday:
-        type: boolean
-      sunday:
-        type: boolean
       opens:
         type: string
+        format: time
       closes:
         type: string
+        format: time
+      days:
+        type: array
+        items:
+          type: integer
+          format: int32
+      status:
+        type: string
+        enum:
+          - OPEN
+          - CLOSED
   Event:
     properties:
       id:
