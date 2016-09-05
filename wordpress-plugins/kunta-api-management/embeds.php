@@ -17,7 +17,7 @@
     $serviceLoader = new ServiceLoader();
   	$dom = HtmlDomParser::str_get_html($content);
     
-  	foreach ($dom->find('*[data-type="kunta-api-embedded-data"]') as $article) {
+  	foreach ($dom->find('*[data-type="kunta-api-embedded-service-component"]') as $article) {
       $serviceId = $article->{'data-service-id'};
       $serviceComponent = $article->{'data-service-component'};
       $article->class = 'mceNonEditable';
@@ -39,7 +39,7 @@
     $serviceLoader = new ServiceLoader();
     $dom = HtmlDomParser::str_get_html($content);
     
-    foreach ($dom->find('*[data-type="kunta-api-embedded-data"]') as $article) {
+    foreach ($dom->find('*[data-type="kunta-api-embedded-service-component"]') as $article) {
       $serviceId = $article->{'data-service-id'};
       $serviceComponent = $article->{'data-service-component'};
       $article->class = 'mceNonEditable';
