@@ -130,7 +130,7 @@ module.exports = function(grunt) {
         }
       },
       'release-jaxrs-spec': {
-        command : 'mvn -B release:clean release:prepare release:perform',
+        command : 'git add src pom.xml && git commit -m "Generated source" && git push && mvn -B release:clean release:prepare release:perform',
         options: {
           execOptions: {
             cwd: 'kunta-api-spec/languages/jaxrs-spec/'
