@@ -9,24 +9,31 @@ import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
 import fi.otavanopisto.kuntaapi.server.integrations.IdController;
+import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
-import fi.otavanopisto.kuntaapi.server.rest.model.LocalizedValue;
+import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
-import fi.otavanopisto.kuntaapi.server.rest.model.ServiceDescription;
 import fi.otavanopisto.ptv.client.ApiResponse;
 import fi.otavanopisto.ptv.client.model.IVmOpenApiService;
 import fi.otavanopisto.ptv.client.model.VmOpenApiFintoItem;
-import fi.otavanopisto.ptv.client.model.VmOpenApiLocalizedListItem;
 import fi.otavanopisto.ptv.client.model.VmOpenApiOrganization;
 import fi.otavanopisto.ptv.client.model.VmOpenApiOrganizationService;
+import fi.otavanopisto.ptv.client.model.VmOpenApiServiceChannels;
 
+/**
+ * PTV Service provider
+ * 
+ * @author Antti Leppä
+ */
 @Dependent
-public class PtvServiceProvider implements ServiceProvider {
+public class PtvServiceProvider extends AbstractPtvProvider implements ServiceProvider {
 
   @Inject
   private Logger logger;
@@ -36,6 +43,12 @@ public class PtvServiceProvider implements ServiceProvider {
   
   @Inject
   private IdController idController;
+
+  @Inject
+  private IdentifierController identifierController;
+
+  private PtvServiceProvider() {
+  }
 
   @Override
   public Service findOrganizationService(OrganizationId organizationId, ServiceId serviceId) {
@@ -145,8 +158,13 @@ public class PtvServiceProvider implements ServiceProvider {
     
     Service service = new Service();
     service.setId(kuntaApiId.getId());
-    service.setName(getLocalizedValues("Name", ptvService.getServiceNames()));
-    service.setDescriptions(getServiceDescriptions(ptvService.getServiceDescriptions()));
+    service.setNames(translateLocalizedItems("Name", ptvService.getServiceNames()));
+    service.setAlternativeNames(translateLocalizedItems("AlternativeName", ptvService.getServiceNames()));
+    service.setDescriptions(translateLocalizedItems("Description", ptvService.getServiceDescriptions()));
+    service.setShortDescriptions(translateLocalizedItems("ShortDescription", ptvService.getServiceDescriptions()));
+    service.setServiceUserInstructions(translateLocalizedItems("ServiceUserInstruction", ptvService.getServiceDescriptions()));
+    parseChannelIds(ptvService, service);
+    
     List<String> classIds = new ArrayList<>(ptvService.getServiceClasses().size());
     
     for (VmOpenApiFintoItem serviceClass : ptvService.getServiceClasses()) {
@@ -163,48 +181,63 @@ public class PtvServiceProvider implements ServiceProvider {
     
     return service;
   }
-  
-  private List<LocalizedValue> getLocalizedValues(String type, List<VmOpenApiLocalizedListItem> items) {
-    if (items != null && !items.isEmpty()) {
-      List<LocalizedValue> result = new ArrayList<>();
-      List<VmOpenApiLocalizedListItem> typeItems = new ArrayList<>();
-      
-      for (VmOpenApiLocalizedListItem item : items) {
-        if (type.equals(item.getType())) {
-          typeItems.add(item);
+
+  private void parseChannelIds(IVmOpenApiService ptvService, Service service) {
+    List<String> electronicChannelIds = new ArrayList<>();
+    List<String> phoneChannelIds = new ArrayList<>();
+    List<String> printableFormChannelIds = new ArrayList<>();
+    List<String> webpageChannelIds = new ArrayList<>();
+    List<String> serviceLocationChannelIds = new ArrayList<>();
+    
+    for (String serviceChanneld : ptvService.getServiceChannels()) {
+      ApiResponse<VmOpenApiServiceChannels> channelResponse = ptvApi.getServiceChannelApi().apiServiceChannelByIdGet(serviceChanneld);
+      if (!channelResponse.isOk()) {
+        logger.severe(String.format("Channel response %s reported [%d] %s", serviceChanneld, channelResponse.getStatus(), channelResponse.getMessage()));
+      } else {
+        String serviceChannelKuntaApiId = getKuntaApiChannelId(serviceChanneld);
+        
+        VmOpenApiServiceChannels channels = channelResponse.getResponse();
+        if (channels.getElectronicChannel() != null) {
+          electronicChannelIds.add(serviceChannelKuntaApiId);
         }
-      }
-      
-      if (!typeItems.isEmpty()) {
-        for (VmOpenApiLocalizedListItem item : typeItems) {
-          LocalizedValue localizedValue = new LocalizedValue();
-          localizedValue.setLanguage(item.getLanguage());
-          localizedValue.setValue(item.getValue());
-          result.add(localizedValue);
+        
+        if (channels.getPhoneChannel() != null) {
+          phoneChannelIds.add(serviceChannelKuntaApiId);
         }
-      
-        return result;
+        
+        if (channels.getPrintableFormChannel() != null) {
+          printableFormChannelIds.add(serviceChannelKuntaApiId);
+        }
+        
+        if (channels.getWebPageChannel() != null) {
+          webpageChannelIds.add(serviceChannelKuntaApiId);
+        }
+        
+        if (channels.getLocationChannel() != null) {
+          serviceLocationChannelIds.add(serviceChannelKuntaApiId);
+        }
+        
       }
     }
     
-    return null;
+    service.setElectronicChannelIds(electronicChannelIds);
+    service.setPhoneChannelIds(phoneChannelIds);
+    service.setPrintableFormChannelIds(printableFormChannelIds);
+    service.setWebpageChannelIds(webpageChannelIds);
+    service.setServiceLocationChannelIds(serviceLocationChannelIds);
   }
 
-  private List<ServiceDescription> getServiceDescriptions(List<VmOpenApiLocalizedListItem> ptvDescriptions) {
-    if (ptvDescriptions != null && !ptvDescriptions.isEmpty()) {
-      List<ServiceDescription> result = new ArrayList<>();
-      
-      for (VmOpenApiLocalizedListItem ptvDescription : ptvDescriptions) {
-        ServiceDescription serviceDescription = new ServiceDescription();
-        serviceDescription.setType(ptvDescription.getType());
-        serviceDescription.setLanguage(ptvDescription.getLanguage());
-        serviceDescription.setValue(ptvDescription.getValue());
-        result.add(serviceDescription);
-      }
+  private String getKuntaApiChannelId(String ptvChannelId) {
+    ServiceChannelId ptvId = new ServiceChannelId(PtvConsts.IDENTIFIFER_NAME, ptvChannelId);
     
-      return result;
+    ServiceChannelId kuntaApiId = idController.translateServiceChannelId(ptvId,  KuntaApiConsts.IDENTIFIER_NAME);
+    if (kuntaApiId == null) {
+      Identifier identifier = identifierController.createIdentifier(IdType.SERVICE_CHANNEL, ptvId.getSource(), ptvId.getId());
+      logger.info(String.format("Discovered new electric service channel %s", ptvId.toString()));
+      kuntaApiId = new ServiceChannelId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
     }
     
-    return Collections.emptyList();
+    return kuntaApiId.getId();
   }
+
 }
