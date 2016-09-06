@@ -81,6 +81,26 @@ public class IdController {
     
     return null;
   }
+
+  /**
+   * Translates service channel id into into target id
+   * 
+   * @param serviceChannelId id to be translated
+   * @param target target
+   * @return translated id or null if translation has failed
+   */
+  public ServiceChannelId translateServiceChannelId(ServiceChannelId serviceChannelId, String target) {
+    if (StringUtils.equals(serviceChannelId.getSource(), target)) {
+      return serviceChannelId;
+    }
+    
+    IdProvider idProvider = getIdProvider(serviceChannelId.getSource(), target);
+    if (idProvider != null) {
+      return idProvider.translate(serviceChannelId, target);
+    }
+    
+    return null;
+  }
   
   /**
    * Translates event class id into into target id
@@ -168,6 +188,24 @@ public class IdController {
   public boolean idsEqual(OrganizationId id1, OrganizationId id2) {
     OrganizationId kuntaApiId1 = translateOrganizationId(id1, KuntaApiConsts.IDENTIFIER_NAME);
     OrganizationId kuntaApiId2 = translateOrganizationId(id2, KuntaApiConsts.IDENTIFIER_NAME);
+    
+    if (kuntaApiId1 == null || kuntaApiId2 == null) {
+      return false;
+    }
+    
+    return kuntaApiId1.equals(kuntaApiId2);
+  }
+
+  /**
+   * Translates both ids into Kunta Api ids and check whether they match
+   * 
+   * @param id1 id1
+   * @param id2 id2
+   * @return whether ids match
+   */
+  public boolean idsEqual(ServiceChannelId id1, ServiceChannelId id2) {
+    ServiceChannelId kuntaApiId1 = translateServiceChannelId(id1, KuntaApiConsts.IDENTIFIER_NAME);
+    ServiceChannelId kuntaApiId2 = translateServiceChannelId(id2, KuntaApiConsts.IDENTIFIER_NAME);
     
     if (kuntaApiId1 == null || kuntaApiId2 == null) {
       return false;

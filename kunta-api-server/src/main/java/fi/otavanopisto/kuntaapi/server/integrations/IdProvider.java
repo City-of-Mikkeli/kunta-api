@@ -33,6 +33,15 @@ public interface IdProvider {
    * @return translated service id
    */
   public ServiceId translate(ServiceId serviceId, String target);
+
+  /**
+   * Translate service channel id
+   * 
+   * @param serviceChannelId original id
+   * @param target target type
+   * @return translated id
+   */
+  public ServiceChannelId translate(ServiceChannelId serviceChannelId, String target);
   
   /**
    * Translate service class id
