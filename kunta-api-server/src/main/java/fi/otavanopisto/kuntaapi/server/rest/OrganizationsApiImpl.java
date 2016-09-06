@@ -26,6 +26,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationProvider;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
@@ -35,6 +36,7 @@ import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
 
 /**
  * REST Service implementation
@@ -54,6 +56,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Inject
   private Instance<ServiceProvider> serviceProviders;
+
+  @Inject
+  private Instance<ServiceChannelProvider> serviceChannelProvider;
 
   @Inject
   private Instance<ServiceClassProvider> serviceClassProvider;
@@ -130,8 +135,19 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
   
   @Override
-  public Response listServiceElectornicChannels(String organizationId, String serviceId) {
-    return createNotImplemented("Not implemented");
+  public Response listServiceElectornicChannels(String organizationIdParam, String serviceIdParam) {
+    OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
+    
+    // TODO: Merge provider results
+    
+    List<ServiceElectronicChannel> result = new ArrayList<>();
+    for (ServiceChannelProvider serviceChannelProvider : getServiceChannelProviders()) {
+      result.addAll(serviceChannelProvider.listElectronicChannels(organizationId, serviceId));
+    }
+    
+    return Response.ok(result)
+      .build();
   }
   
   @Override
@@ -257,6 +273,19 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     List<ServiceProvider> result = new ArrayList<>();
     
     Iterator<ServiceProvider> iterator = serviceProviders.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+  
+  private List<ServiceChannelProvider> getServiceChannelProviders() {
+    // TODO: Prioritize providers
+    
+    List<ServiceChannelProvider> result = new ArrayList<>();
+    
+    Iterator<ServiceChannelProvider> iterator = serviceChannelProvider.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     }
