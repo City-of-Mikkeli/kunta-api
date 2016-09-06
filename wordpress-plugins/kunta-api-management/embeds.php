@@ -21,6 +21,7 @@
       $serviceId = $article->{'data-service-id'};
       $serviceComponent = $article->{'data-service-component'};
       $article->class = 'mceNonEditable';
+      $article->title = __( 'Embedded read-only content from PTV', 'kunta_api_management');
       $content = $serviceLoader->loadServiceComponent($serviceId, $serviceComponent);
 
       if (!empty($content)) {
