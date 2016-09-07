@@ -8,6 +8,8 @@ import fi.otavanopisto.kuntaapi.server.rest.model.InternalServerError;
 import fi.otavanopisto.kuntaapi.server.rest.model.NotFound;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
+import java.time.OffsetDateTime;
+import java.math.BigDecimal;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
@@ -24,7 +26,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-05T13:25:53.155+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-07T09:24:05.230+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -126,7 +128,7 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = Event.class, responseContainer = "List"),
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Event.class, responseContainer = "List"),
         @ApiResponse(code = 500, message = "Internal server error", response = Event.class, responseContainer = "List") })
-    public abstract Response listOrganizationEvents(@PathParam("organizationId") String organizationId);
+    public abstract Response listOrganizationEvents(@PathParam("organizationId") String organizationId,@QueryParam("startBefore") OffsetDateTime startBefore,@QueryParam("startAfter") OffsetDateTime startAfter,@QueryParam("endBefore") OffsetDateTime endBefore,@QueryParam("endAfter") OffsetDateTime endAfter,@QueryParam("firstResult") BigDecimal firstResult,@QueryParam("maxResults") BigDecimal maxResults,@QueryParam("orderBy") String orderBy,@QueryParam("orderDir") String orderDir);
 
     @GET
     
