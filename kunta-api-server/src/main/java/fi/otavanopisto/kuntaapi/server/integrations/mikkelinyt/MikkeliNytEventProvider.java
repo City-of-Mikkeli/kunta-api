@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -105,8 +106,11 @@ public class MikkeliNytEventProvider implements EventProvider {
   }
 
   @Override
-  public List<Event> listOrganizationEvents(OrganizationId organizationId) {
-    if (StringUtils.isBlank(apiKey)) {
+  public List<Event> listOrganizationEvents(OrganizationId organizationId, OffsetDateTime startBefore,
+      OffsetDateTime startAfter, OffsetDateTime endBefore, OffsetDateTime endAfter, EventOrder order,
+      EventOrderDirection orderDirection, Integer firstResult, Integer maxResults) {
+    
+   if (StringUtils.isBlank(apiKey)) {
       logger.severe(API_KEY_NOT_CONFIGURED);
       return Collections.emptyList();
     }
@@ -114,14 +118,19 @@ public class MikkeliNytEventProvider implements EventProvider {
     Response<EventsResponse> response = listEvents(organizationId);
     if (response.isOk()) {
       EventsResponse events = response.getResponseEntity();
-      return transform(events.getData());
+      
+      List<fi.otavanopisto.mikkelinyt.model.Event> mikkeliNytEvents = getFilteredEventsByDates(startBefore, startAfter, endBefore, endAfter, events.getData());
+      mikkeliNytEvents = limitEventCount(firstResult, maxResults, mikkeliNytEvents);
+      Collections.sort(mikkeliNytEvents, new EventComparator(order, orderDirection));
+      
+      return transform(mikkeliNytEvents);
     } else {
       logger.severe(String.format("Request list organization %s failed on [%d] %s", organizationId.toString(), response.getStatus(), response.getMessage()));
     }
     
     return Collections.emptyList();
   }
-  
+
   @Override
   public Event findOrganizationEvent(OrganizationId organizationId, EventId eventId) {
     if (StringUtils.isBlank(apiKey)) {
@@ -195,6 +204,70 @@ public class MikkeliNytEventProvider implements EventProvider {
     return null;
   }
 
+  private List<fi.otavanopisto.mikkelinyt.model.Event> limitEventCount(Integer firstResult, Integer maxResults, List<fi.otavanopisto.mikkelinyt.model.Event> mikkeliNytEvents) {
+    if (firstResult != null || maxResults != null) {
+      int first = firstResult == null ? 0 : firstResult.intValue();
+      int last = maxResults == null ? mikkeliNytEvents.size() : maxResults.intValue() + first;
+
+      if (first >= mikkeliNytEvents.size()) {
+        return Collections.emptyList();
+      }
+      
+      return mikkeliNytEvents.subList(first, last);
+    }
+    
+    return mikkeliNytEvents;
+  }
+
+  private List<fi.otavanopisto.mikkelinyt.model.Event> getFilteredEventsByDates(OffsetDateTime startBefore, OffsetDateTime startAfter, OffsetDateTime endBefore,
+      OffsetDateTime endAfter, List<fi.otavanopisto.mikkelinyt.model.Event> events) {
+    
+    List<fi.otavanopisto.mikkelinyt.model.Event> filteredResult = new ArrayList<>(events);
+    
+    for (int i = filteredResult.size() - 1; i >= 0; i--) {
+      fi.otavanopisto.mikkelinyt.model.Event event = filteredResult.get(i);
+      if (!isWithinTimeRanges(event, startBefore, startAfter, endBefore, endAfter)) {
+        filteredResult.remove(i);
+      } 
+    }
+    
+    return filteredResult;
+  }
+  
+  private boolean isWithinTimeRanges(fi.otavanopisto.mikkelinyt.model.Event event, OffsetDateTime startBefore,
+      OffsetDateTime startAfter, OffsetDateTime endBefore, OffsetDateTime endAfter) {
+    
+    OffsetDateTime eventStart = parseOffsetDateTime(event.getStart());
+    OffsetDateTime eventEnd = parseOffsetDateTime(event.getEnd());
+    
+    if (eventStart == null || eventEnd == null) {
+      return false;
+    }
+    
+    if (!isWithinTimeRange(startBefore, startAfter, eventStart)) {
+      return false;
+    }
+    
+    if (!isWithinTimeRange(endBefore, endAfter, eventEnd)) {
+      return false;
+    }
+    
+    return true;
+  }
+
+  private boolean isWithinTimeRange(OffsetDateTime before, OffsetDateTime after, OffsetDateTime time) {
+    if (before != null && time.isAfter(before)) {
+      return false;
+    }
+
+
+    if (after != null && time.isBefore(after)) {
+      return false;
+    }
+    
+    return true;
+  }
+  
   private AttachmentData scaleEventImage(AttachmentData imageData, Integer size) {
     BufferedImage bufferedImage = imageReader.readBufferedImage(imageData.getData());
     if (bufferedImage != null) {
@@ -246,7 +319,7 @@ public class MikkeliNytEventProvider implements EventProvider {
     
     URI uri;
     try {
-      URIBuilder uriBuilder = new URIBuilder(String.format("%s%s", baseUrl, "/json.php"));
+      URIBuilder uriBuilder = new URIBuilder(String.format("%s%s", baseUrl, "/json.php?showall=1"));
 
       uriBuilder.addParameter("apiKey", apiKey);
       if (StringUtils.isNotBlank(location)) {
@@ -412,4 +485,62 @@ public class MikkeliNytEventProvider implements EventProvider {
     return LocalDateTime.parse(text, formatter);
   }
 
+  private class EventComparator implements Comparator<fi.otavanopisto.mikkelinyt.model.Event> {
+    
+    private EventOrder order;
+    private EventOrderDirection direction;
+    
+    public EventComparator(EventOrder order, EventOrderDirection direction) {
+      this.order = order;
+      this.direction = direction;
+    }
+    
+    @Override
+    public int compare(fi.otavanopisto.mikkelinyt.model.Event event1, fi.otavanopisto.mikkelinyt.model.Event event2) {
+      int result;
+      
+      switch (order) {
+        case END_DATE:
+          result = compareEndDates(event1, event2);
+        break;
+        case START_DATE:
+          result = compareStartDates(event1, event2);
+        break;
+        default:
+          result = 0;
+        break;
+      }
+      
+      if (direction == EventOrderDirection.ASCENDING) {
+        return -result;
+      } 
+      
+      return result;
+    }
+
+    private int compareStartDates(fi.otavanopisto.mikkelinyt.model.Event event1,
+        fi.otavanopisto.mikkelinyt.model.Event event2) {
+      return compareDates(parseLocalDateTime(event1.getStart()), parseLocalDateTime(event2.getStart()));
+    }
+
+    private int compareEndDates(fi.otavanopisto.mikkelinyt.model.Event event1,
+        fi.otavanopisto.mikkelinyt.model.Event event2) {
+      return compareDates(parseLocalDateTime(event1.getEnd()), parseLocalDateTime(event2.getEnd()));
+    }
+    
+    private int compareDates(LocalDateTime dateTime1, LocalDateTime dateTime2) {
+      if (dateTime1 == null && dateTime2 == null) {
+        return 0;
+      }
+      
+      if (dateTime1 == null) {
+        return 1;
+      } else if (dateTime2 == null) {
+        return -1;
+      }
+              
+      return dateTime1.compareTo(dateTime2);
+    }
+    
+  }
 }

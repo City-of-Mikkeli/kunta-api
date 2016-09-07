@@ -3,6 +3,7 @@ package fi.otavanopisto.kuntaapi.server.rest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
@@ -240,20 +242,53 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
 
   @Override
-  public Response listOrganizationEvents(String organizationIdParam) {
+  public Response listOrganizationEvents(String organizationIdParam, 
+      String startBefore, String startAfter,
+      String endBefore, String endAfter,
+      Integer firstResult, Integer maxResults,
+      String orderBy, String orderDir) {
+    
+    EventProvider.EventOrder order = EventProvider.EventOrder.START_DATE;
+    EventProvider.EventOrderDirection orderDirection = EventProvider.EventOrderDirection.DESCENDING;
+    
+    if (StringUtils.isNotBlank(orderBy)) {
+      order = EnumUtils.getEnum(EventProvider.EventOrder.class, orderBy);
+      if (order == null) {
+        return Response.status(Status.BAD_REQUEST)
+          .entity(String.format("Invalid event order %s", orderBy))
+          .build();
+      }
+    }
+    
+    if (StringUtils.isNotBlank(orderDir)) {
+      orderDirection = EnumUtils.getEnum(EventProvider.EventOrderDirection.class, orderDir);
+      if (orderDirection == null) {
+        return Response.status(Status.BAD_REQUEST)
+          .entity(String.format("Invalid event order direction %s", orderDir))
+          .build();
+      }
+    }
+    
     OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
     
     List<Event> result = new ArrayList<>();
    
-    // TODO: Sort events 
     for (EventProvider eventProvider : getEventProviders()) {
-      result.addAll(eventProvider.listOrganizationEvents(organizationId));
+      result.addAll(eventProvider.listOrganizationEvents(organizationId, getDateTime(startBefore), getDateTime(startAfter), getDateTime(endBefore), getDateTime(endAfter), order, orderDirection, firstResult, maxResults));
     }
     
     return Response.ok(result)
       .build();
   }
   
+  private OffsetDateTime getDateTime(String timeString) {
+    if (StringUtils.isNotBlank(timeString)) {
+      return OffsetDateTime.parse(timeString);
+    }
+    
+    return null;
+  }
+
   private List<OrganizationProvider> getOrganizationProviders() {
     // TODO: Prioritize providers
     

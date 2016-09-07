@@ -74,7 +74,7 @@ module.exports = function(grunt) {
           -l javascript \
           --template-dir kunta-api-spec/templates/javascript \
           -o kunta-api-spec/languages/javascript/ \
-          --additional-properties usePromises=true,projectName=kunta-api-client,projectVersion=0.0.2'
+          --additional-properties usePromises=true,projectName=kunta-api-client,projectVersion=0.0.3'
       },
       'generate-php-client': {
         command : 'java -jar swagger-codegen-cli.jar generate \
@@ -318,5 +318,5 @@ module.exports = function(grunt) {
   grunt.registerTask('update-management-wordpress-plugins', ["wp-cli:update-plugins"]);
   grunt.registerTask('install-management-wordpress-plugins', ["wp-cli:plugins"]);
 
-  grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-javascript-client-to-www', 'install-php-client']);
+  grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-php-client']);
 };
