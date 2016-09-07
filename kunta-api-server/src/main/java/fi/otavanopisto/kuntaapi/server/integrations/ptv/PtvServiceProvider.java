@@ -25,7 +25,6 @@ import fi.otavanopisto.ptv.client.model.IVmOpenApiService;
 import fi.otavanopisto.ptv.client.model.VmOpenApiFintoItem;
 import fi.otavanopisto.ptv.client.model.VmOpenApiOrganization;
 import fi.otavanopisto.ptv.client.model.VmOpenApiOrganizationService;
-import fi.otavanopisto.ptv.client.model.VmOpenApiServiceChannels;
 
 /**
  * PTV Service provider
@@ -232,6 +231,7 @@ public class PtvServiceProvider extends AbstractPtvProvider implements ServicePr
     service.setServiceLocationChannelIds(serviceLocationChannelIds);
   }
 
+  @SuppressWarnings("unused")
   private String getKuntaApiChannelId(String ptvChannelId) {
     ServiceChannelId ptvId = new ServiceChannelId(PtvConsts.IDENTIFIFER_NAME, ptvChannelId);
     

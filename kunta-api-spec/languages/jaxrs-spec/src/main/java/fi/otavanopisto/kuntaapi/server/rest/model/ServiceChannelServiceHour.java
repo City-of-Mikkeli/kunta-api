@@ -13,7 +13,6 @@ import java.util.Objects;
 public class ServiceChannelServiceHour   {
   
   private String type = null;
-  private String displayable = null;
   private OffsetDateTime validFrom = null;
   private OffsetDateTime validTo = null;
   private String opens = null;
@@ -35,22 +34,6 @@ public class ServiceChannelServiceHour   {
   }
   public void setType(String type) {
     this.type = type;
-  }
-
-  /**
-   **/
-  public ServiceChannelServiceHour displayable(String displayable) {
-    this.displayable = displayable;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public String getDisplayable() {
-    return displayable;
-  }
-  public void setDisplayable(String displayable) {
-    this.displayable = displayable;
   }
 
   /**
@@ -160,7 +143,6 @@ public class ServiceChannelServiceHour   {
     }
     ServiceChannelServiceHour serviceChannelServiceHour = (ServiceChannelServiceHour) o;
     return Objects.equals(type, serviceChannelServiceHour.type) &&
-        Objects.equals(displayable, serviceChannelServiceHour.displayable) &&
         Objects.equals(validFrom, serviceChannelServiceHour.validFrom) &&
         Objects.equals(validTo, serviceChannelServiceHour.validTo) &&
         Objects.equals(opens, serviceChannelServiceHour.opens) &&
@@ -171,7 +153,7 @@ public class ServiceChannelServiceHour   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, displayable, validFrom, validTo, opens, closes, days, status);
+    return Objects.hash(type, validFrom, validTo, opens, closes, days, status);
   }
 
   @Override
@@ -180,7 +162,6 @@ public class ServiceChannelServiceHour   {
     sb.append("class ServiceChannelServiceHour {\n");
     
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    displayable: ").append(toIndentedString(displayable)).append("\n");
     sb.append("    validFrom: ").append(toIndentedString(validFrom)).append("\n");
     sb.append("    validTo: ").append(toIndentedString(validTo)).append("\n");
     sb.append("    opens: ").append(toIndentedString(opens)).append("\n");

@@ -4,7 +4,7 @@
   <artifactId>kunta-api-spec</artifactId>
   <packaging>jar</packaging>
   <name>kunta-api-spec</name>
-  <version>0.0.12-SNAPSHOT</version>
+  <version>0.0.16-SNAPSHOT</version>
   <description>Kunta API specifications</description>
   <url>https://github.com/otavanopisto/kunta-api</url>
 
