@@ -430,7 +430,7 @@ public class MikkeliNytRestTestsIT extends AbstractIntegrationTest {
       eventsResponse.setData(events);
       eventsResponse.setMessage(String.format("Löytyi %d tapahtumaa", events.size()));
       eventsResponse.setStatus(1);
-      mockGetJSON(String.format("/json.php?apiKey=%s&location=%s", ORGANIZATION_SETTING_APIKEY, ORGANIZATION_SETTING_LOCATION), eventsResponse);
+      mockGetJSON(String.format("/json.php?showall=1&apiKey=%s&location=%s", ORGANIZATION_SETTING_APIKEY, ORGANIZATION_SETTING_LOCATION), eventsResponse);
       super.startMock();
     }
   }
