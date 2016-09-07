@@ -363,22 +363,18 @@ paths:
           in: query
           description: return only events starting before the date
           type: string
-          format: date-time
         - name: startAfter
           in: query
           description: return only events starting after the date
           type: string
-          format: date-time
         - name: endBefore
           in: query
           description: return only events ending before the date
           type: string
-          format: date-time
         - name: endAfter
           in: query
           description: return only events ending after the date
           type: string
-          format: date-time
         - name: firstResult
           in: query
           description: first index of results
