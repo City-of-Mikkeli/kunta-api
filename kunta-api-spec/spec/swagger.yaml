@@ -382,12 +382,12 @@ paths:
         - name: firstResult
           in: query
           description: first index of results
-          type: number
+          type: integer
           format: int32
         - name: maxResults
           in: query
           description: maximum number of results
-          type: number
+          type: integer
           format: int32
         - name: orderBy
           in: query
