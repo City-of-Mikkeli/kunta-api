@@ -9,6 +9,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.IdProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
+import fi.otavanopisto.kuntaapi.server.integrations.NewsArticleId;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
@@ -125,6 +126,11 @@ public class PtvIdProvider implements IdProvider {
 
   @Override
   public AttachmentId translate(AttachmentId attachmentId, String target) {
+    return null;
+  }
+
+  @Override
+  public NewsArticleId translate(NewsArticleId newsArticleId, String target) {
     return null;
   }
 

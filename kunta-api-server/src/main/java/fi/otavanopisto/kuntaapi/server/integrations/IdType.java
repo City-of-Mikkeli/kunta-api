@@ -12,6 +12,8 @@ public enum IdType {
   
   EVENT,
   
-  ATTACHMENT
+  ATTACHMENT,
+  
+  NEWS_ARTICLE
   
 }
