@@ -58,10 +58,10 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   private Instance<ServiceProvider> serviceProviders;
 
   @Inject
-  private Instance<ServiceChannelProvider> serviceChannelProvider;
+  private Instance<ServiceChannelProvider> serviceChannelProviders;
 
   @Inject
-  private Instance<ServiceClassProvider> serviceClassProvider;
+  private Instance<ServiceClassProvider> serviceClassProviders;
 
   @Inject
   private Instance<EventProvider> eventProviders;
@@ -285,7 +285,7 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     
     List<ServiceChannelProvider> result = new ArrayList<>();
     
-    Iterator<ServiceChannelProvider> iterator = serviceChannelProvider.iterator();
+    Iterator<ServiceChannelProvider> iterator = serviceChannelProviders.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     }
@@ -298,7 +298,7 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     
     List<ServiceClassProvider> result = new ArrayList<>();
     
-    Iterator<ServiceClassProvider> iterator = serviceClassProvider.iterator();
+    Iterator<ServiceClassProvider> iterator = serviceClassProviders.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     }
