@@ -188,7 +188,12 @@ public class PtvServiceProvider extends AbstractPtvProvider implements ServicePr
     List<String> printableFormChannelIds = new ArrayList<>();
     List<String> webpageChannelIds = new ArrayList<>();
     List<String> serviceLocationChannelIds = new ArrayList<>();
+    /**
     
+    FIXME: Temporarity disabled because PTV does not respect design REST principles. Currently trying 
+    to convince PTV team to fix their API but if they refuse we need to create some dirty hack
+    to fix this problem
+
     for (String serviceChanneld : ptvService.getServiceChannels()) {
       ApiResponse<VmOpenApiServiceChannels> channelResponse = ptvApi.getServiceChannelApi().apiServiceChannelByIdGet(serviceChanneld);
       if (!channelResponse.isOk()) {
@@ -219,7 +224,7 @@ public class PtvServiceProvider extends AbstractPtvProvider implements ServicePr
         
       }
     }
-    
+    **/
     service.setElectronicChannelIds(electronicChannelIds);
     service.setPhoneChannelIds(phoneChannelIds);
     service.setPrintableFormChannelIds(printableFormChannelIds);
