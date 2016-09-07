@@ -17,6 +17,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventId;
@@ -24,6 +26,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationProvider;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
@@ -33,6 +36,7 @@ import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
+import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
 
 /**
  * REST Service implementation
@@ -54,7 +58,10 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   private Instance<ServiceProvider> serviceProviders;
 
   @Inject
-  private Instance<ServiceClassProvider> serviceClassProvider;
+  private Instance<ServiceChannelProvider> serviceChannelProviders;
+
+  @Inject
+  private Instance<ServiceClassProvider> serviceClassProviders;
 
   @Inject
   private Instance<EventProvider> eventProviders;
@@ -97,8 +104,14 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Override
   public Response listServices(String organizationIdParam, String serviceClassIdParam) {
+    if (StringUtils.isBlank(organizationIdParam)) {
+      return Response.status(Status.BAD_REQUEST)
+        .entity("Organization parameter is mandatory")
+        .build();
+    }
+    
     OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
-    ServiceClassId serviceClassId = new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, serviceClassIdParam);
+    ServiceClassId serviceClassId = StringUtils.isBlank(serviceClassIdParam) ? null : new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, serviceClassIdParam);
     
     // TODO: Merge services
     
@@ -122,8 +135,19 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
   
   @Override
-  public Response listServiceElectornicChannels(String organizationId, String serviceId) {
-    return createNotImplemented("Not implemented");
+  public Response listServiceElectornicChannels(String organizationIdParam, String serviceIdParam) {
+    OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
+    
+    // TODO: Merge provider results
+    
+    List<ServiceElectronicChannel> result = new ArrayList<>();
+    for (ServiceChannelProvider serviceChannelProvider : getServiceChannelProviders()) {
+      result.addAll(serviceChannelProvider.listElectronicChannels(organizationId, serviceId));
+    }
+    
+    return Response.ok(result)
+      .build();
   }
   
   @Override
@@ -256,12 +280,25 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     return Collections.unmodifiableList(result);
   }
   
+  private List<ServiceChannelProvider> getServiceChannelProviders() {
+    // TODO: Prioritize providers
+    
+    List<ServiceChannelProvider> result = new ArrayList<>();
+    
+    Iterator<ServiceChannelProvider> iterator = serviceChannelProviders.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+  
   private List<ServiceClassProvider> getServiceClassProviders() {
     // TODO: Prioritize providers
     
     List<ServiceClassProvider> result = new ArrayList<>();
     
-    Iterator<ServiceClassProvider> iterator = serviceClassProvider.iterator();
+    Iterator<ServiceClassProvider> iterator = serviceClassProviders.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     }

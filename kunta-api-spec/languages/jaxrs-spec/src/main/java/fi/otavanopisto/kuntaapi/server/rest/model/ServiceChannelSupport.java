@@ -9,7 +9,7 @@ import io.swagger.annotations.*;
 import java.util.Objects;
 
 
-public class Support   {
+public class ServiceChannelSupport   {
   
   private String email = null;
   private String phone = null;
@@ -19,7 +19,7 @@ public class Support   {
 
   /**
    **/
-  public Support email(String email) {
+  public ServiceChannelSupport email(String email) {
     this.email = email;
     return this;
   }
@@ -35,7 +35,7 @@ public class Support   {
 
   /**
    **/
-  public Support phone(String phone) {
+  public ServiceChannelSupport phone(String phone) {
     this.phone = phone;
     return this;
   }
@@ -51,7 +51,7 @@ public class Support   {
 
   /**
    **/
-  public Support phoneChargeDescription(String phoneChargeDescription) {
+  public ServiceChannelSupport phoneChargeDescription(String phoneChargeDescription) {
     this.phoneChargeDescription = phoneChargeDescription;
     return this;
   }
@@ -67,7 +67,7 @@ public class Support   {
 
   /**
    **/
-  public Support language(String language) {
+  public ServiceChannelSupport language(String language) {
     this.language = language;
     return this;
   }
@@ -83,7 +83,7 @@ public class Support   {
 
   /**
    **/
-  public Support serviceChargeTypes(List<String> serviceChargeTypes) {
+  public ServiceChannelSupport serviceChargeTypes(List<String> serviceChargeTypes) {
     this.serviceChargeTypes = serviceChargeTypes;
     return this;
   }
@@ -106,12 +106,12 @@ public class Support   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Support support = (Support) o;
-    return Objects.equals(email, support.email) &&
-        Objects.equals(phone, support.phone) &&
-        Objects.equals(phoneChargeDescription, support.phoneChargeDescription) &&
-        Objects.equals(language, support.language) &&
-        Objects.equals(serviceChargeTypes, support.serviceChargeTypes);
+    ServiceChannelSupport serviceChannelSupport = (ServiceChannelSupport) o;
+    return Objects.equals(email, serviceChannelSupport.email) &&
+        Objects.equals(phone, serviceChannelSupport.phone) &&
+        Objects.equals(phoneChargeDescription, serviceChannelSupport.phoneChargeDescription) &&
+        Objects.equals(language, serviceChannelSupport.language) &&
+        Objects.equals(serviceChargeTypes, serviceChannelSupport.serviceChargeTypes);
   }
 
   @Override
@@ -122,7 +122,7 @@ public class Support   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Support {\n");
+    sb.append("class ServiceChannelSupport {\n");
     
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
     sb.append("    phone: ").append(toIndentedString(phone)).append("\n");

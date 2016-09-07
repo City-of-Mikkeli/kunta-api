@@ -10,6 +10,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.IdProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
@@ -73,6 +74,25 @@ public class PtvIdProvider implements IdProvider {
       identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE, PtvConsts.IDENTIFIFER_NAME, serviceId.getId());
       if (identifier != null) {
         return new ServiceId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
+      }
+    }
+    
+    return null;
+  }
+
+  @Override
+  public ServiceChannelId translate(ServiceChannelId serviceChannelId, String target) {
+    Identifier identifier;
+    
+    if (PtvConsts.IDENTIFIFER_NAME.equals(serviceChannelId.getSource())) {
+      identifier = identifierController.findIdentifierById(serviceChannelId);
+      if (identifier != null) {
+        return new ServiceChannelId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
+      }
+    } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(serviceChannelId.getSource())) {
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE_CHANNEL, PtvConsts.IDENTIFIFER_NAME, serviceChannelId.getId());
+      if (identifier != null) {
+        return new ServiceChannelId(PtvConsts.IDENTIFIFER_NAME, identifier.getSourceId());
       }
     }
     

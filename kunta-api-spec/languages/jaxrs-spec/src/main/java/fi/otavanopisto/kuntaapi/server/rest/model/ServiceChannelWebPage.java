@@ -7,7 +7,7 @@ import io.swagger.annotations.*;
 import java.util.Objects;
 
 
-public class WebPage   {
+public class ServiceChannelWebPage   {
   
   private String type = null;
   private String value = null;
@@ -16,7 +16,7 @@ public class WebPage   {
 
   /**
    **/
-  public WebPage type(String type) {
+  public ServiceChannelWebPage type(String type) {
     this.type = type;
     return this;
   }
@@ -32,7 +32,7 @@ public class WebPage   {
 
   /**
    **/
-  public WebPage value(String value) {
+  public ServiceChannelWebPage value(String value) {
     this.value = value;
     return this;
   }
@@ -48,7 +48,7 @@ public class WebPage   {
 
   /**
    **/
-  public WebPage url(String url) {
+  public ServiceChannelWebPage url(String url) {
     this.url = url;
     return this;
   }
@@ -64,7 +64,7 @@ public class WebPage   {
 
   /**
    **/
-  public WebPage language(String language) {
+  public ServiceChannelWebPage language(String language) {
     this.language = language;
     return this;
   }
@@ -87,11 +87,11 @@ public class WebPage   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    WebPage webPage = (WebPage) o;
-    return Objects.equals(type, webPage.type) &&
-        Objects.equals(value, webPage.value) &&
-        Objects.equals(url, webPage.url) &&
-        Objects.equals(language, webPage.language);
+    ServiceChannelWebPage serviceChannelWebPage = (ServiceChannelWebPage) o;
+    return Objects.equals(type, serviceChannelWebPage.type) &&
+        Objects.equals(value, serviceChannelWebPage.value) &&
+        Objects.equals(url, serviceChannelWebPage.url) &&
+        Objects.equals(language, serviceChannelWebPage.language);
   }
 
   @Override
@@ -102,7 +102,7 @@ public class WebPage   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class WebPage {\n");
+    sb.append("class ServiceChannelWebPage {\n");
     
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    value: ").append(toIndentedString(value)).append("\n");

@@ -1,5 +1,5 @@
 <?php
-  defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+  defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
   
   function kunta_api_get_data($object, $field_name, $request) {
   	return array(

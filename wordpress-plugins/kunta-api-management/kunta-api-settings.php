@@ -1,5 +1,5 @@
 <?php
-  defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+  defined( 'ABSPATH' ) || die( 'No script kiddies please!' );
 
   if (is_admin()) {
     add_action ( 'admin_menu', 'kunta_api_management_settings_menu' );

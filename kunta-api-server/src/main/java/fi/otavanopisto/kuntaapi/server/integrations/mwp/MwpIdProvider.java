@@ -10,6 +10,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.IdProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
@@ -74,6 +75,11 @@ public class MwpIdProvider implements IdProvider {
       break;
     }
     
+    return null;
+  }
+  
+  @Override
+  public ServiceChannelId translate(ServiceChannelId serviceChannelId, String target) {
     return null;
   }
 

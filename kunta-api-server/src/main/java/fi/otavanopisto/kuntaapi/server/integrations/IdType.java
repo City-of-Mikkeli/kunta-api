@@ -8,6 +8,8 @@ public enum IdType {
   
   SERVICE_CLASS,
   
+  SERVICE_CHANNEL,
+  
   EVENT,
   
   ATTACHMENT
