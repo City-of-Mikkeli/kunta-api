@@ -62,7 +62,7 @@
     
     <!-- Integrations -->
     
-    <kunta-api-spec.version>0.0.15</kunta-api-spec.version>
+    <kunta-api-spec.version>0.0.16</kunta-api-spec.version>
     <ptv-rest-client.version>0.0.5</ptv-rest-client.version>
     <mwp-rest-client.version>0.0.3</mwp-rest-client.version>
     <mikkelinyt.rest-model.version>0.0.1</mikkelinyt.rest-model.version>
