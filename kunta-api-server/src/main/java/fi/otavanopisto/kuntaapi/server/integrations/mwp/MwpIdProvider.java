@@ -17,7 +17,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 
 /**
- * Id provider for management wordpress service
+ * Id provider for management Wordpress service
  * 
  * @author Antti Leppä
  */
@@ -32,11 +32,11 @@ public class MwpIdProvider implements IdProvider {
   
   @Override
   public boolean canTranslate(String source, String target) {
-    if (MwpConsts.IDENTIFIFER_NAME.equals(source) && KuntaApiConsts.IDENTIFIER_NAME.equals(target)) {
+    if (MwpConsts.IDENTIFIER_NAME.equals(source) && KuntaApiConsts.IDENTIFIER_NAME.equals(target)) {
       return true;
     }
     
-    if (MwpConsts.IDENTIFIFER_NAME.equals(target) && KuntaApiConsts.IDENTIFIER_NAME.equals(source)) {
+    if (MwpConsts.IDENTIFIER_NAME.equals(target) && KuntaApiConsts.IDENTIFIER_NAME.equals(source)) {
       return true;
     }
     
@@ -47,15 +47,15 @@ public class MwpIdProvider implements IdProvider {
   public OrganizationId translate(OrganizationId organizationId, String target) {
     Identifier identifier;
     
-    if (MwpConsts.IDENTIFIFER_NAME.equals(organizationId.getSource())) {
+    if (MwpConsts.IDENTIFIER_NAME.equals(organizationId.getSource())) {
       identifier = identifierController.findIdentifierById(organizationId);
       if (identifier != null) {
         return new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
       } 
     } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(organizationId.getSource())) {
-      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.ORGANIZATION, MwpConsts.IDENTIFIFER_NAME, organizationId.getId());
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.ORGANIZATION, MwpConsts.IDENTIFIER_NAME, organizationId.getId());
       if (identifier != null) {
-        return new OrganizationId(MwpConsts.IDENTIFIFER_NAME, identifier.getSourceId());
+        return new OrganizationId(MwpConsts.IDENTIFIER_NAME, identifier.getSourceId());
       }
     }
     
@@ -66,15 +66,15 @@ public class MwpIdProvider implements IdProvider {
   public ServiceId translate(ServiceId serviceId, String target) {
     Identifier identifier;
     
-    if (MwpConsts.IDENTIFIFER_NAME.equals(serviceId.getSource())) {
+    if (MwpConsts.IDENTIFIER_NAME.equals(serviceId.getSource())) {
       identifier = identifierController.findIdentifierById(serviceId);
       if (identifier != null) {
         return new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
       }
     } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(serviceId.getSource())) {
-      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE, MwpConsts.IDENTIFIFER_NAME, serviceId.getId());
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE, MwpConsts.IDENTIFIER_NAME, serviceId.getId());
       if (identifier != null) {
-        return new ServiceId(MwpConsts.IDENTIFIFER_NAME, identifier.getSourceId());
+        return new ServiceId(MwpConsts.IDENTIFIER_NAME, identifier.getSourceId());
       }
     }
     
@@ -91,15 +91,15 @@ public class MwpIdProvider implements IdProvider {
   public ServiceClassId translate(ServiceClassId serviceClassId, String target) {
     Identifier identifier;
     
-    if (MwpConsts.IDENTIFIFER_NAME.equals(serviceClassId.getSource())) {
+    if (MwpConsts.IDENTIFIER_NAME.equals(serviceClassId.getSource())) {
       identifier = identifierController.findIdentifierById(serviceClassId);
       if (identifier != null) {
         return new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
       }
     } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(serviceClassId.getSource())) {
-      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE_CLASS, MwpConsts.IDENTIFIFER_NAME, serviceClassId.getId());
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.SERVICE_CLASS, MwpConsts.IDENTIFIER_NAME, serviceClassId.getId());
       if (identifier != null) {
-        return new ServiceClassId(MwpConsts.IDENTIFIFER_NAME, identifier.getSourceId());
+        return new ServiceClassId(MwpConsts.IDENTIFIER_NAME, identifier.getSourceId());
       }
     }
     
@@ -115,19 +115,16 @@ public class MwpIdProvider implements IdProvider {
   public NewsArticleId translate(NewsArticleId newsArticleId, String target) {
     Identifier identifier;
     
-    switch (newsArticleId.getSource()) {
-      case MwpConsts.IDENTIFIFER_NAME:
-        identifier = identifierController.findIdentifierById(newsArticleId);
-        if (identifier != null) {
-          return new NewsArticleId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
-        }
-      break;
-      case KuntaApiConsts.IDENTIFIER_NAME:
-        identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.NEWS_ARTICLE, MwpConsts.IDENTIFIFER_NAME, newsArticleId.getId());
-        if (identifier != null) {
-          return new NewsArticleId(MwpConsts.IDENTIFIFER_NAME, identifier.getSourceId());
-        }
-      break;
+    if (MwpConsts.IDENTIFIER_NAME.equals(newsArticleId.getSource())) {
+      identifier = identifierController.findIdentifierById(newsArticleId);
+      if (identifier != null) {
+        return new NewsArticleId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
+      }
+    } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(newsArticleId.getSource())) {
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.NEWS_ARTICLE, MwpConsts.IDENTIFIER_NAME, newsArticleId.getId());
+      if (identifier != null) {
+        return new NewsArticleId(MwpConsts.IDENTIFIER_NAME, identifier.getSourceId());
+      }
     }
     
     return null;
@@ -135,6 +132,20 @@ public class MwpIdProvider implements IdProvider {
 
   @Override
   public AttachmentId translate(AttachmentId attachmentId, String target) {
+    Identifier identifier;
+    
+    if (MwpConsts.IDENTIFIER_NAME.equals(attachmentId.getSource())) {
+      identifier = identifierController.findIdentifierById(attachmentId);
+      if (identifier != null) {
+        return new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
+      }
+    } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(attachmentId.getSource())) {
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.ATTACHMENT, MwpConsts.IDENTIFIER_NAME, attachmentId.getId());
+      if (identifier != null) {
+        return new AttachmentId(MwpConsts.IDENTIFIER_NAME, identifier.getSourceId());
+      }
+    }
+    
     return null;
   }
 
