@@ -26,6 +26,8 @@ import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
+import fi.otavanopisto.kuntaapi.server.integrations.NewsArticleId;
+import fi.otavanopisto.kuntaapi.server.integrations.NewsProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelProvider;
@@ -35,6 +37,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
+import fi.otavanopisto.kuntaapi.server.rest.model.NewsArticle;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
@@ -68,6 +71,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   @Inject
   private Instance<EventProvider> eventProviders;
 
+  @Inject
+  private Instance<NewsProvider> newsProviders;
+
   @Override
   public Response listOrganizations(String businessName, String businessCode) {
     List<Organization> organizations = new ArrayList<>();
@@ -86,10 +92,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Override
   public Response findService(String organizationIdParam, String serviceIdParam) {
-    OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
-    ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
-    
-    // TODO: Merge services
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    ServiceId serviceId = toServiceId(serviceIdParam);
     
     for (ServiceProvider serviceProvider : getServiceProviders()) {
       Service service = serviceProvider.findOrganizationService(organizationId, serviceId);
@@ -112,10 +116,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
         .build();
     }
     
-    OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
     ServiceClassId serviceClassId = StringUtils.isBlank(serviceClassIdParam) ? null : new ServiceClassId(KuntaApiConsts.IDENTIFIER_NAME, serviceClassIdParam);
-    
-    // TODO: Merge services
     
     List<Service> services = new ArrayList<>();
     for (ServiceProvider serviceProvider : getServiceProviders()) {
@@ -138,10 +140,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Override
   public Response listServiceElectornicChannels(String organizationIdParam, String serviceIdParam) {
-    OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
-    ServiceId serviceId = new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, serviceIdParam);
-    
-    // TODO: Merge provider results
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    ServiceId serviceId = toServiceId(serviceIdParam);
     
     List<ServiceElectronicChannel> result = new ArrayList<>();
     for (ServiceChannelProvider serviceChannelProvider : getServiceChannelProviders()) {
@@ -154,10 +154,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Override
   public Response listServiceClasses(String organizationIdParam) {
-    OrganizationId organizationId  = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
 
-    // TODO: Merge provider results
-    
     List<ServiceClass> result = new ArrayList<>();
     for (ServiceClassProvider serviceClassProvider : getServiceClassProviders()) {
       result.addAll(serviceClassProvider.listOrganizationServiceClasses(organizationId));
@@ -169,8 +167,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Override
   public Response findOrganizationEvent(String organizationIdParam, String eventIdParam) {
-    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
-    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    EventId eventId = toEventId(eventIdParam);
     
     for (EventProvider eventProvider : getEventProviders()) {
       Event event = eventProvider.findOrganizationEvent(organizationId, eventId);
@@ -186,8 +184,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Override
   public Response findOrganizationEventImage(String organizationIdParam, String eventIdParam, String imageIdParam) {
-    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
-    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    EventId eventId = toEventId(eventIdParam);
     AttachmentId attachmentId = new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, imageIdParam);
     
     for (EventProvider eventProvider : getEventProviders()) {
@@ -204,8 +202,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Override
   public Response getOrganizationEventImageData(String organizationIdParam, String eventIdParam, String imageIdParam, Integer size) {
-    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
-    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    EventId eventId = toEventId(eventIdParam);
     AttachmentId attachmentId = new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, imageIdParam);
     
     for (EventProvider eventProvider : getEventProviders()) {
@@ -230,8 +228,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   @Override
   public Response listOrganizationEventImages(String organizationIdParam, String eventIdParam) {
     List<Attachment> result = new ArrayList<>();
-    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
-    EventId eventId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, eventIdParam);
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    EventId eventId = toEventId(eventIdParam);
     
     for (EventProvider eventProvider : getEventProviders()) {
       result.addAll(eventProvider.listEventImages(organizationId, eventId));
@@ -269,7 +267,7 @@ public class OrganizationsApiImpl extends OrganizationsApi {
       }
     }
     
-    OrganizationId organizationId = new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, organizationIdParam);
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
     
     List<Event> result = new ArrayList<>();
    
@@ -280,6 +278,138 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     return Response.ok(result)
       .build();
   }
+
+  @Override
+  public Response findOrganizationNewsArticle(String organizationIdParam, String newsArticleIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    NewsArticleId newsArticleId = toNewsArticleId(newsArticleIdParam);
+    
+    for (NewsProvider newsProvider : getNewsProviders()) {
+      NewsArticle newsArticle = newsProvider.findOrganizationNewsArticle(organizationId, newsArticleId);
+      if (newsArticle != null) {
+        return Response.ok(newsArticle)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response findOrganizationNewsArticleImage(String organizationIdParam, String newsArticleIdParam, String imageIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    NewsArticleId newsArticleId = toNewsArticleId(newsArticleIdParam);
+    AttachmentId attachmentId = toAttachmentId(imageIdParam);
+    
+    for (NewsProvider newsProvider : getNewsProviders()) {
+      Attachment attachment = newsProvider.findNewsArticleImage(organizationId, newsArticleId, attachmentId);
+      if (attachment != null) {
+        return Response.ok(attachment)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response getOrganizationNewsArticleImageData(String organizationIdParam, String newsArticleIdParam, String imageIdParam, Integer size) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    NewsArticleId newsArticleId = toNewsArticleId(newsArticleIdParam);
+    AttachmentId attachmentId = toAttachmentId(imageIdParam);
+    
+    for (NewsProvider newsProvider : getNewsProviders()) {
+      AttachmentData attachmentData = newsProvider.getNewsArticleImageData(organizationId, newsArticleId, attachmentId, size);
+      if (attachmentData != null) {
+        try (InputStream stream = new ByteArrayInputStream(attachmentData.getData())) {
+          return Response.ok(stream, attachmentData.getType())
+              .build();
+        } catch (IOException e) {
+          logger.log(Level.SEVERE, "Failed to stream image to client", e);
+          return Response.status(Status.INTERNAL_SERVER_ERROR)
+            .entity("Internal Server Error")
+            .build();
+        }
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response listOrganizationNews(String organizationIdParam, String publishedBefore, String publishedAfter,
+      Integer firstResult, Integer maxResults) {
+    
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    
+    List<NewsArticle> result = new ArrayList<>();
+   
+    for (NewsProvider newsProvider : getNewsProviders()) {
+      result.addAll(newsProvider.listOrganizationNews(organizationId, getDateTime(publishedBefore), getDateTime(publishedAfter), firstResult, maxResults));
+    }
+    
+    return Response.ok(result)
+      .build();
+    
+  }
+
+  @Override
+  public Response listOrganizationNewsArticleImages(String organizationIdParam, String newsArticleIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    NewsArticleId newsArticleId = toNewsArticleId(newsArticleIdParam);
+    
+    List<Attachment> result = new ArrayList<>();
+   
+    for (NewsProvider newsProvider : getNewsProviders()) {
+      result.addAll(newsProvider.listNewsArticleImages(organizationId, newsArticleId));
+    }
+    
+    return Response.ok(result)
+      .build();
+  }
+  
+  private NewsArticleId toNewsArticleId(String id) {
+    if (StringUtils.isNotBlank(id)) {
+      return new NewsArticleId(KuntaApiConsts.IDENTIFIER_NAME, id);
+    }
+    
+    return null;
+  }
+
+  private OrganizationId toOrganizationId(String id) {
+    if (StringUtils.isNotBlank(id)) {
+      return new OrganizationId(KuntaApiConsts.IDENTIFIER_NAME, id);
+    }
+    
+    return null;
+  }
+
+  private ServiceId toServiceId(String id) {
+    if (StringUtils.isNotBlank(id)) {
+      return new ServiceId(KuntaApiConsts.IDENTIFIER_NAME, id);
+    }
+    
+    return null;
+  }
+
+  private EventId toEventId(String id) {
+    if (StringUtils.isNotBlank(id)) {
+      return new EventId(KuntaApiConsts.IDENTIFIER_NAME, id);
+    }
+    
+    return null;
+  }
+
+  private AttachmentId toAttachmentId(String id) {
+    if (StringUtils.isNotBlank(id)) {
+      return new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, id);
+    }
+    
+    return null;
+  }
   
   private OffsetDateTime getDateTime(String timeString) {
     if (StringUtils.isNotBlank(timeString)) {
@@ -288,10 +418,8 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     
     return null;
   }
-
+  
   private List<OrganizationProvider> getOrganizationProviders() {
-    // TODO: Prioritize providers
-    
     List<OrganizationProvider> result = new ArrayList<>();
     
     Iterator<OrganizationProvider> iterator = organizationProviders.iterator();
@@ -303,8 +431,6 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
   
   private List<ServiceProvider> getServiceProviders() {
-    // TODO: Prioritize providers
-    
     List<ServiceProvider> result = new ArrayList<>();
     
     Iterator<ServiceProvider> iterator = serviceProviders.iterator();
@@ -316,8 +442,6 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
   
   private List<ServiceChannelProvider> getServiceChannelProviders() {
-    // TODO: Prioritize providers
-    
     List<ServiceChannelProvider> result = new ArrayList<>();
     
     Iterator<ServiceChannelProvider> iterator = serviceChannelProviders.iterator();
@@ -329,8 +453,6 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
   
   private List<ServiceClassProvider> getServiceClassProviders() {
-    // TODO: Prioritize providers
-    
     List<ServiceClassProvider> result = new ArrayList<>();
     
     Iterator<ServiceClassProvider> iterator = serviceClassProviders.iterator();
@@ -342,11 +464,20 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   }
   
   private List<EventProvider> getEventProviders() {
-    // TODO: Prioritize providers
-    
     List<EventProvider> result = new ArrayList<>();
     
     Iterator<EventProvider> iterator = eventProviders.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+  
+  private List<NewsProvider> getNewsProviders() {
+    List<NewsProvider> result = new ArrayList<>();
+    
+    Iterator<NewsProvider> iterator = newsProviders.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     }

@@ -8,6 +8,7 @@ import fi.otavanopisto.kuntaapi.server.rest.model.InternalServerError;
 import fi.otavanopisto.kuntaapi.server.rest.model.NotFound;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
+import fi.otavanopisto.kuntaapi.server.rest.model.NewsArticle;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
@@ -24,7 +25,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-07T12:53:04.993+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-07T15:24:35.051+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -80,6 +81,30 @@ public abstract class OrganizationsApi extends AbstractApi {
     public abstract Response findOrganizationEventImage(@PathParam("organizationId") String organizationId,@PathParam("eventId") String eventId,@PathParam("imageId") String imageId);
 
     @GET
+    @Path("/{organizationId}/news/{newsArticleId}")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Finds organizations news article", notes = "Finds organizations single news article ", response = NewsArticle.class, tags={ "News",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns a single news article", response = NewsArticle.class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = NewsArticle.class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = NewsArticle.class),
+        @ApiResponse(code = 500, message = "Internal server error", response = NewsArticle.class) })
+    public abstract Response findOrganizationNewsArticle(@PathParam("organizationId") String organizationId,@PathParam("newsArticleId") String newsArticleId);
+
+    @GET
+    @Path("/{organizationId}/news/{newsArticleId}/images/{imageId}")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Returns an news article image", notes = "Returns an news article image ", response = Attachment.class, tags={ "News",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns an news article image", response = Attachment.class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = Attachment.class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Attachment.class),
+        @ApiResponse(code = 500, message = "Internal server error", response = Attachment.class) })
+    public abstract Response findOrganizationNewsArticleImage(@PathParam("organizationId") String organizationId,@PathParam("newsArticleId") String newsArticleId,@PathParam("imageId") String imageId);
+
+    @GET
     @Path("/{organizationId}/services/{serviceId}")
     @Consumes({ "application/json;charset=utf-8" })
     @Produces({ "application/json;charset=utf-8" })
@@ -105,6 +130,18 @@ public abstract class OrganizationsApi extends AbstractApi {
     public abstract Response getOrganizationEventImageData(@PathParam("organizationId") String organizationId,@PathParam("eventId") String eventId,@PathParam("imageId") String imageId,@QueryParam("size") Integer size);
 
     @GET
+    @Path("/{organizationId}/news/{newsArticleId}/images/{imageId}/data")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/octet-stream" })
+    @ApiOperation(value = "Returns a news article image data", notes = "Returns a news article image data ", response = byte[].class, tags={ "News",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns a news article image data", response = byte[].class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = byte[].class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = byte[].class),
+        @ApiResponse(code = 500, message = "Internal server error", response = byte[].class) })
+    public abstract Response getOrganizationNewsArticleImageData(@PathParam("organizationId") String organizationId,@PathParam("newsArticleId") String newsArticleId,@PathParam("imageId") String imageId,@QueryParam("size") Integer size);
+
+    @GET
     @Path("/{organizationId}/events/{eventId}/images")
     @Consumes({ "application/json;charset=utf-8" })
     @Produces({ "application/json;charset=utf-8" })
@@ -127,6 +164,30 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Event.class, responseContainer = "List"),
         @ApiResponse(code = 500, message = "Internal server error", response = Event.class, responseContainer = "List") })
     public abstract Response listOrganizationEvents(@PathParam("organizationId") String organizationId,@QueryParam("startBefore") String startBefore,@QueryParam("startAfter") String startAfter,@QueryParam("endBefore") String endBefore,@QueryParam("endAfter") String endAfter,@QueryParam("firstResult") Integer firstResult,@QueryParam("maxResults") Integer maxResults,@QueryParam("orderBy") String orderBy,@QueryParam("orderDir") String orderDir);
+
+    @GET
+    @Path("/{organizationId}/news")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Lists organizations news", notes = "Lists organizations news ", response = NewsArticle.class, responseContainer = "List", tags={ "News",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns a list of news", response = NewsArticle.class, responseContainer = "List"),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = NewsArticle.class, responseContainer = "List"),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = NewsArticle.class, responseContainer = "List"),
+        @ApiResponse(code = 500, message = "Internal server error", response = NewsArticle.class, responseContainer = "List") })
+    public abstract Response listOrganizationNews(@PathParam("organizationId") String organizationId,@QueryParam("publishedBefore") String publishedBefore,@QueryParam("publishedAfter") String publishedAfter,@QueryParam("firstResult") Integer firstResult,@QueryParam("maxResults") Integer maxResults);
+
+    @GET
+    @Path("/{organizationId}/news/{newsArticleId}/images")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Returns list of news article images", notes = "Returns list of news article images ", response = Attachment.class, responseContainer = "List", tags={ "News",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns a news article images", response = Attachment.class, responseContainer = "List"),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = Attachment.class, responseContainer = "List"),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Attachment.class, responseContainer = "List"),
+        @ApiResponse(code = 500, message = "Internal server error", response = Attachment.class, responseContainer = "List") })
+    public abstract Response listOrganizationNewsArticleImages(@PathParam("organizationId") String organizationId,@PathParam("newsArticleId") String newsArticleId);
 
     @GET
     

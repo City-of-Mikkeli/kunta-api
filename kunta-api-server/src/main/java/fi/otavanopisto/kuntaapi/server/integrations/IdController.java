@@ -123,6 +123,26 @@ public class IdController {
   }
   
   /**
+   * Translates news article id into into target id
+   * 
+   * @param newsArticleId id to be translated
+   * @param target target
+   * @return translated id or null if translation has failed
+   */
+  public NewsArticleId translateNewsArticleId(NewsArticleId newsArticleId, String target) {
+    if (StringUtils.equals(newsArticleId.getSource(), target)) {
+      return newsArticleId;
+    }
+    
+    IdProvider idProvider = getIdProvider(newsArticleId.getSource(), target);
+    if (idProvider != null) {
+      return idProvider.translate(newsArticleId, target);
+    }
+    
+    return null;
+  }
+  
+  /**
    * Translates event class id into into target id
    * 
    * @param attachmentId id to be translated
@@ -170,6 +190,24 @@ public class IdController {
   public boolean idsEqual(EventId id1, EventId id2) {
     EventId kuntaApiId1 = translateEventId(id1, KuntaApiConsts.IDENTIFIER_NAME);
     EventId kuntaApiId2 = translateEventId(id2, KuntaApiConsts.IDENTIFIER_NAME);
+    
+    if (kuntaApiId1 == null || kuntaApiId2 == null) {
+      return false;
+    }
+    
+    return kuntaApiId1.equals(kuntaApiId2);
+  }
+
+  /**
+   * Translates both ids into Kunta Api ids and check whether they match
+   * 
+   * @param id1 id1
+   * @param id2 id2
+   * @return whether ids match
+   */
+  public boolean idsEqual(NewsArticleId id1, NewsArticleId id2) {
+    NewsArticleId kuntaApiId1 = translateNewsArticleId(id1, KuntaApiConsts.IDENTIFIER_NAME);
+    NewsArticleId kuntaApiId2 = translateNewsArticleId(id2, KuntaApiConsts.IDENTIFIER_NAME);
     
     if (kuntaApiId1 == null || kuntaApiId2 == null) {
       return false;

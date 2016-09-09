@@ -1,7 +1,6 @@
 package fi.otavanopisto.kuntaapi.server.integrations.mikkelinyt;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
@@ -19,16 +18,10 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import org.apache.commons.io.IOUtils;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
 import fi.otavanopisto.kuntaapi.server.images.ImageReader;
@@ -36,6 +29,8 @@ import fi.otavanopisto.kuntaapi.server.images.ImageScaler;
 import fi.otavanopisto.kuntaapi.server.images.ImageWriter;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
+import fi.otavanopisto.kuntaapi.server.integrations.BinaryHttpClient;
+import fi.otavanopisto.kuntaapi.server.integrations.BinaryHttpClient.BinaryResponse;
 import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpCache;
@@ -73,6 +68,9 @@ public class MikkeliNytEventProvider implements EventProvider {
   
   @Inject
   private GenericHttpClient httpClient;
+  
+  @Inject
+  private BinaryHttpClient binaryHttpClient;
   
   @Inject
   private GenericHttpCache httpCache;
@@ -383,32 +381,17 @@ public class MikkeliNytEventProvider implements EventProvider {
       return cachedResponse;
     }
     
-    try {
-      CloseableHttpClient imageClient = HttpClients.createDefault();
-      try {
-        HttpGet httpGet = new HttpGet(uri);
-        
-        CloseableHttpResponse httpResponse = imageClient.execute(httpGet);
-        try {
-          StatusLine statusLine = httpResponse.getStatusLine();
-          int statusCode = statusLine.getStatusCode();
-          String message = statusLine.getReasonPhrase();
-          byte[] data = IOUtils.toByteArray(httpResponse.getEntity().getContent());
-          Header typeHeader = httpResponse.getEntity().getContentType();
-          String type = typeHeader != null ? typeHeader.getValue() : null;
-          Response<AttachmentData> attachmentResponse = new Response<>(statusCode, message, new AttachmentData(type, data));
-          httpCache.put(MikkeliNytConsts.CACHE_NAME, uri, attachmentResponse); 
-          return attachmentResponse;
-        } finally {
-          httpResponse.close();
-        }
-      } finally {
-        imageClient.close();
-      }
-    } catch (IOException e) {
-      logger.log(Level.WARNING, String.format("Failed to fetch event imagae from %s", imageUrl), e);
-      return new Response<>(500, "Interval Server Error", null);
+    Response<BinaryResponse> response = binaryHttpClient.downloadBinary(uri);
+    AttachmentData data = null;
+    if (response.getResponseEntity() != null) {
+      data = new AttachmentData(response.getResponseEntity().getType(), response.getResponseEntity().getData());
     }
+    
+    Response<AttachmentData> attachmentResponse = new Response<>(response.getStatus(), response.getMessage(), data);
+    
+    httpCache.put(MikkeliNytConsts.CACHE_NAME, uri, attachmentResponse); 
+    
+    return attachmentResponse;
   }
   
   private AttachmentId getImageAttachmentId(String url) {

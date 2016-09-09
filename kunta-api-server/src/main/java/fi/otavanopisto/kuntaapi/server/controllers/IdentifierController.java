@@ -11,11 +11,19 @@ import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.persistence.dao.IdentifierDAO;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 
+/**
+ * Identifier controller
+ * 
+ * @author Antti Leppä
+ */
 @Dependent
 public class IdentifierController {
   
   @Inject
   private IdentifierDAO identifierDAO;
+  
+  private IdentifierController() {
+  }
 
   public Identifier createIdentifier(String type, String source, String sourceId) {
     String kuntaApiId = UUID.randomUUID().toString();

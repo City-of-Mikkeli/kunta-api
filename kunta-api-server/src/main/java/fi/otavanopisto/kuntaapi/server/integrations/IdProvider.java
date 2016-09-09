@@ -60,6 +60,15 @@ public interface IdProvider {
    * @return translated id
    */
   public EventId translate(EventId eventId, String target);
+  
+  /**
+   * Translate news article id
+   * 
+   * @param newsArticleId original id
+   * @param target target type
+   * @return translated id
+   */
+  public NewsArticleId translate(NewsArticleId newsArticleId, String target);
 
   /**
    * Translate attachment id
@@ -69,4 +78,5 @@ public interface IdProvider {
    * @return translated id
    */
   public AttachmentId translate(AttachmentId attachmentId, String target);
+
 }

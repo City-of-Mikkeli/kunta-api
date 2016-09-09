@@ -589,6 +589,233 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/news:
+    get:
+      operationId: listOrganizationNews
+      summary: Lists organizations news
+      description: |
+        Lists organizations news
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: publishedBefore
+          in: query
+          description: return only news published before the date
+          type: string
+        - name: publishedAfter
+          in: query
+          description: return only news published after the date
+          type: string
+        - name: firstResult
+          in: query
+          description: first index of results
+          type: integer
+          format: int32
+        - name: maxResults
+          in: query
+          description: maximum number of results
+          type: integer
+          format: int32
+      tags:
+        - News
+      responses:
+        200:
+          description: Returns a list of news
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/NewsArticle'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/news/{newsArticleId}:
+    get:
+      operationId: findOrganizationNewsArticle
+      summary: Finds organizations news article
+      description: |
+        Finds organizations single news article
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: newsArticleId
+          in: path
+          description: News article id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - News
+      responses:
+        200:
+          description: Returns a single news article
+          schema:
+            $ref: '#/definitions/NewsArticle'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/news/{newsArticleId}/images:
+    get:
+      operationId: listOrganizationNewsArticleImages
+      summary: Returns list of news article images
+      description: |
+        Returns list of news article images
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: newsArticleId
+          in: path
+          description: News article id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - News
+      responses:
+        200:
+          description: Returns a news article images
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Attachment'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/news/{newsArticleId}/images/{imageId}:
+    get:
+      operationId: findOrganizationNewsArticleImage
+      summary: Returns an news article image
+      description: |
+        Returns an news article image
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: newsArticleId
+          in: path
+          description: News article id
+          required: true
+          type: string
+          format: uuid
+        - name: imageId
+          in: path
+          description: Event image id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - News
+      responses:
+        200:
+          description: Returns an news article image
+          schema:
+            $ref: '#/definitions/Attachment'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/news/{newsArticleId}/images/{imageId}/data:
+    get:
+      produces:
+        - application/octet-stream
+      operationId: getOrganizationNewsArticleImageData
+      summary: Returns a news article image data
+      description: |
+        Returns a news article image data
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: newsArticleId
+          in: path
+          description: News article id
+          required: true
+          type: string
+          format: uuid
+        - name: imageId
+          in: path
+          description: Event image id
+          required: true
+          type: string
+          format: uuid
+        - name: size
+          in: query
+          description: Maximum width or height of image
+          required: false
+          type: integer
+          format: int32
+      tags:
+        - News
+      responses:
+        200:
+          description: Returns a news article image data
+          schema:
+            type: string
+            format: binary
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
 definitions:
   Attachment:
     properties:
@@ -832,7 +1059,21 @@ definitions:
       address:
         type: string
       zip:
-        type: string    
+        type: string   
+  NewsArticle:
+    properties:
+      id:
+        type: string
+        format: uuid
+      title:
+        type: string
+      abstract:
+        type: string
+      contents:
+        type: string
+      published:
+        type: string
+        format: date-time
   InternalServerError:
     type: object
     properties:

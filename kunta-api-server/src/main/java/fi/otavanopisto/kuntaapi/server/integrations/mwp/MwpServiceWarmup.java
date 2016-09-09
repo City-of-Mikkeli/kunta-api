@@ -66,9 +66,9 @@ public class MwpServiceWarmup {
         String pageId = String.valueOf(page.getId());
         String kuntaApiId = page.getKuntaApiData().getServiceId();
         
-        Identifier identifier = identifierController.findIdentifierByTypeSourceAndId(IdType.SERVICE, MwpConsts.IDENTIFIFER_NAME, pageId);
+        Identifier identifier = identifierController.findIdentifierByTypeSourceAndId(IdType.SERVICE, MwpConsts.IDENTIFIER_NAME, pageId);
         if (identifier == null) {
-          identifierController.createIdentifier(IdType.SERVICE, kuntaApiId, MwpConsts.IDENTIFIFER_NAME, pageId);
+          identifierController.createIdentifier(IdType.SERVICE, kuntaApiId, MwpConsts.IDENTIFIER_NAME, pageId);
           discoverCount++;
         }
       }
