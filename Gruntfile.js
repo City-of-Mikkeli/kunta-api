@@ -11,25 +11,6 @@ module.exports = function(grunt) {
       'clean-javascript': ['kunta-api-spec/languages/javascript'],
       'clean-jaxrs-generated-cruft': ['kunta-api-spec/languages/jaxrs-spec/src/main/java/fi/otavanopisto/kuntaapi/server/RestApplication.java'],
       'clean-management-composer-files': ['wordpress-plugins/kunta-api-management/vendor'],
-      'clean-mwp-java-client': ['mwp-rest-client'],
-      'clean-mwp-java-client-cruft': [
-        'mwp-rest-client/docs', 
-        'mwp-rest-client/gradle', 
-        'mwp-rest-client/build.gradle',
-        'mwp-rest-client/build.sbt',
-        'mwp-rest-client/git_push.sh',
-        'mwp-rest-client/gradle.properties',
-        'mwp-rest-client/gradlew',
-        'mwp-rest-client/gradlew.bat',
-        'mwp-rest-client/LICENSE',
-        'mwp-rest-client/README.md',
-        'mwp-rest-client/settings.gradle',
-        'mwp-rest-client/src/test',
-        'mwp-rest-client/src/main/AndroidManifest.xml',
-        'mwp-rest-client/src/main/java/io',
-        'mwp-rest-client/src/main/java/fi/otavanopisto/mwp/auth',
-        'mwp-rest-client/src/main/java/fi/otavanopisto/mwp/*.java'
-      ],
       'remove-wordpress': [ config.wordpress.path ]
     },
     'copy': {
@@ -37,12 +18,6 @@ module.exports = function(grunt) {
         src: '**',
         dest: 'kunta-api-spec/languages/jaxrs-spec/',
         cwd: 'kunta-api-spec/extras/jaxrs-spec/',
-        expand: true
-      },
-      'copy-mwp-rest-client-extras': {
-        src: '**',
-        dest: 'mwp-rest-client',
-        cwd: 'mwp-rest-client-extras',
         expand: true
       }
     },
@@ -106,21 +81,6 @@ module.exports = function(grunt) {
           --additional-properties dateLibrary=java8 \
           -o kunta-api-spec/languages/jaxrs-spec/'
       },
-      'generate-mwp-java-client': {
-        command : 'mv mwp-rest-client/pom.xml mwp-rest-client/pom.xml.before && \
-          java -jar swagger-codegen-cli.jar generate \
-          -i http://manage.kunta-api.dev/wp-json/apigenerate/swagger \
-          -l java \
-          --api-package fi.otavanopisto.mwp.client\
-          --model-package fi.otavanopisto.mwp.client.model \
-          --group-id fi.otavanopisto.mwp.mwp-rest-client \
-          --artifact-id mwp-rest-client\
-          --artifact-version `mvn -f mwp-rest-client/pom.xml.before -q -Dexec.executable=\'echo\' -Dexec.args=\'${project.version}\' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec` \
-          --template-dir mwp-java-templates \
-          --library jersey2 \
-          --additional-properties dateLibrary=java8-localdatetime \
-          -o mwp-rest-client/'
-      },
       'install-jaxrs-spec': {
         command : 'mvn install',
         options: {
@@ -134,22 +94,6 @@ module.exports = function(grunt) {
         options: {
           execOptions: {
             cwd: 'kunta-api-spec/languages/jaxrs-spec/'
-          }
-        }
-      },
-      'install-mwp-java-client': {
-        command : 'mvn install',
-        options: {
-          execOptions: {
-            cwd: 'mwp-rest-client'
-          }
-        }
-      },
-      'release-mwp-java-client': {
-        command : 'mvn -B release:clean release:prepare release:perform',
-        options: {
-          execOptions: {
-            cwd: 'mwp-rest-client'
           }
         }
       },
@@ -192,13 +136,6 @@ module.exports = function(grunt) {
     'publish': {
       'publish-javascript-client': {
         src: ['kunta-api-spec/languages/javascript']
-      }
-    },
-    'gitclone': {
-      'checkout-mwp-java-client': {
-        options: {
-          'repository': 'git@github.com:otavanopisto/mwp-rest-client.git'  
-        }
       }
     },
     'mustache_render': {
@@ -311,8 +248,6 @@ module.exports = function(grunt) {
   grunt.registerTask('publish-javascript-client', ['create-javascript-client', 'publish:publish-javascript-client']);
   grunt.registerTask('install-javascript-client-to-www', ['shell:pack-javascript-client', 'shell:install-javascript-client-www']);
   
-  grunt.registerTask('generate-mwp-java-client', ['download-dependencies', 'clean:clean-mwp-java-client', 'gitclone:checkout-mwp-java-client', 'shell:generate-mwp-java-client', 'clean:clean-mwp-java-client-cruft', 'copy:copy-mwp-rest-client-extras', 'shell:install-mwp-java-client', 'shell:release-mwp-java-client', 'clean:clean-mwp-java-client']);
-
   grunt.registerTask('uninstall-management-wordpress', ['mustache_render:wordpressdb-drop', 'mysqlrunfile:wordpressdb-drop', 'clean:remove-wordpress' ]);
   grunt.registerTask('install-management-wordpress', ['mustache_render:wordpressdb', 'mysqlrunfile:wordpressdb', 'wp-cli:download', 'wp-cli:config', "wp-cli:install", "shell:wordpress-languages-writable", "wp-cli:plugins", "shell:wordpress-management-plugin", "http:visit-wordpress-admin", "wp-cli:update-languages"]);
   grunt.registerTask('update-management-wordpress-plugins', ["wp-cli:update-plugins"]);
