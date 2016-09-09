@@ -126,7 +126,7 @@ public class MwpNewsProvider implements NewsProvider {
       Integer featuredMediaId = post.getFeaturedMedia();
       if (featuredMediaId != null) {
         fi.otavanopisto.mwp.client.model.Attachment featuredMedia = findMedia(featuredMediaId);
-        if (featuredMedia.getMediaType() == MediaTypeEnum.IMAGE) {
+        if ((featuredMedia != null) && (featuredMedia.getMediaType() == MediaTypeEnum.IMAGE)) {
           return Collections.singletonList(translateAttachment(featuredMedia));
         }
       }
