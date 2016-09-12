@@ -56,6 +56,12 @@ import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
 @SuppressWarnings ("squid:S3306")
 public class OrganizationsApiImpl extends OrganizationsApi {
   
+  private static final String NOT_IMPLEMENTED = "Not implemented";
+
+  private static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
+
+  private static final String FAILED_TO_STREAM_IMAGE_TO_CLIENT = "Failed to stream image to client";
+
   @Inject
   private Logger logger;
   
@@ -93,7 +99,7 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Override
   public Response createService(String organizationId, Service body) {
-    return createNotImplemented("Not implemented");
+    return createNotImplemented(NOT_IMPLEMENTED);
   }
   
   @Override
@@ -136,12 +142,12 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Override
   public Response updateService(String organizationId, String serviceId) {
-    return createNotImplemented("Not implemented");
+    return createNotImplemented(NOT_IMPLEMENTED);
   }
 
   @Override
   public Response deleteService(String organizationId, String serviceId) {
-    return createNotImplemented("Not implemented");
+    return createNotImplemented(NOT_IMPLEMENTED);
   }
   
   @Override
@@ -219,9 +225,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
           return Response.ok(stream, attachmentData.getType())
               .build();
         } catch (IOException e) {
-          logger.log(Level.SEVERE, "Failed to stream image to client", e);
+          logger.log(Level.SEVERE, FAILED_TO_STREAM_IMAGE_TO_CLIENT, e);
           return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity("Internal Server Error")
+            .entity(INTERNAL_SERVER_ERROR)
             .build();
         }
       }
@@ -352,9 +358,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
           return Response.ok(stream, attachmentData.getType())
               .build();
         } catch (IOException e) {
-          logger.log(Level.SEVERE, "Failed to stream image to client", e);
+          logger.log(Level.SEVERE, FAILED_TO_STREAM_IMAGE_TO_CLIENT, e);
           return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity("Internal Server Error")
+            .entity(INTERNAL_SERVER_ERROR)
             .build();
         }
       }
@@ -458,9 +464,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
           return Response.ok(stream, attachmentData.getType())
               .build();
         } catch (IOException e) {
-          logger.log(Level.SEVERE, "Failed to stream image to client", e);
+          logger.log(Level.SEVERE, FAILED_TO_STREAM_IMAGE_TO_CLIENT, e);
           return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity("Internal Server Error")
+            .entity(INTERNAL_SERVER_ERROR)
             .build();
         }
       }
