@@ -852,7 +852,7 @@ paths:
             $ref: '#/definitions/InternalServerError'
   /organizations/{organizationId}/banners/{bannerId}:
     get:
-      operationId: findOrganizationBanners
+      operationId: findOrganizationBanner
       summary: Finds organizations banner
       description: |
         Finds single organization banner
