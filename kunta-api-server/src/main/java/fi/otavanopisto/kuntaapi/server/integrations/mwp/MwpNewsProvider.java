@@ -1,34 +1,20 @@
 package fi.otavanopisto.kuntaapi.server.integrations.mwp;
 
-import java.awt.image.BufferedImage;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.http.client.utils.URIBuilder;
-
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
-import fi.otavanopisto.kuntaapi.server.images.ImageReader;
-import fi.otavanopisto.kuntaapi.server.images.ImageScaler;
-import fi.otavanopisto.kuntaapi.server.images.ImageWriter;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
-import fi.otavanopisto.kuntaapi.server.integrations.BinaryHttpClient;
-import fi.otavanopisto.kuntaapi.server.integrations.BinaryHttpClient.BinaryResponse;
-import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpClient.Response;
 import fi.otavanopisto.kuntaapi.server.integrations.IdController;
-import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.NewsArticleId;
 import fi.otavanopisto.kuntaapi.server.integrations.NewsProvider;
@@ -46,7 +32,7 @@ import fi.otavanopisto.mwp.client.model.Post;
  * @author Antti Leppä
  */
 @Dependent
-public class MwpNewsProvider implements NewsProvider {
+public class MwpNewsProvider extends AbstractMwpProvider implements NewsProvider {
   
   @Inject
   private Logger logger;
@@ -60,18 +46,6 @@ public class MwpNewsProvider implements NewsProvider {
   @Inject
   private IdentifierController identifierController;
   
-  @Inject
-  private BinaryHttpClient binaryHttpClient;
-
-  @Inject
-  private ImageReader imageReader;
-
-  @Inject
-  private ImageWriter imageWriter;
-  
-  @Inject
-  private ImageScaler imageScaler;
-
   private MwpNewsProvider() {
   }
   
@@ -182,81 +156,6 @@ public class MwpNewsProvider implements NewsProvider {
     return null;
   }
   
-  private AttachmentData scaleImage(AttachmentData imageData, Integer size) {
-    BufferedImage bufferedImage = imageReader.readBufferedImage(imageData.getData());
-    if (bufferedImage != null) {
-      BufferedImage scaledImage = imageScaler.scaleMaxSize(bufferedImage, size);
-      byte[] scaledImageData = imageWriter.writeBufferedImageAsPng(scaledImage);
-      if (scaledImageData != null) {
-        return new AttachmentData("image/png", scaledImageData);
-      }
-    }
-    
-    return null;
-  }
-  
-  private AttachmentData getImageData(String imageUrl) {
-    URI uri;
-    
-    try {
-      uri = new URIBuilder(imageUrl).build();
-    } catch (URISyntaxException e) {
-      logger.log(Level.SEVERE, String.format("Invalid uri %s", imageUrl), e);
-      return null;
-    }
-    
-    return getImageData(uri);
-  }
-
-  private AttachmentData getImageData(URI uri) {
-    Response<BinaryResponse> response = binaryHttpClient.downloadBinary(uri);
-    if (response.isOk()) {
-      return new AttachmentData(response.getResponseEntity().getType(), response.getResponseEntity().getData());
-    } else {
-      logger.severe(String.format("Image download failed on [%d] %s", response.getStatus(), response.getMessage()));
-    }
-    
-    return null;
-  }
-  
-  private AttachmentId getImageAttachmentId(Integer id) {
-    AttachmentId mwpId = new AttachmentId(MwpConsts.IDENTIFIER_NAME, String.valueOf(id));
-    AttachmentId kuntaApiId = idController.translateAttachmentId(mwpId, KuntaApiConsts.IDENTIFIER_NAME);
-    
-    if (kuntaApiId == null) {
-      logger.info(String.format("Found new mwp attachment %d", id));
-      Identifier newIdentifier = identifierController.createIdentifier(mwpId);
-      kuntaApiId = new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, newIdentifier.getKuntaApiId());
-    }
-    
-    return kuntaApiId;
-  }
-  
-  private Integer getMediaId(AttachmentId attachmentId) {
-    AttachmentId mwpAttachmentId = idController.translateAttachmentId(attachmentId, MwpConsts.IDENTIFIER_NAME);
-    if (mwpAttachmentId == null) {
-      logger.info(String.format("Could not translate %s into mwp ", attachmentId.toString()));
-      return null;
-    }
-    
-    return NumberUtils.createInteger(mwpAttachmentId.getId());
-  }
-
-  private fi.otavanopisto.mwp.client.model.Attachment findMedia(Integer featuredMediaId) {
-    if (featuredMediaId == null) {
-      return null;
-    }
-    
-    ApiResponse<fi.otavanopisto.mwp.client.model.Attachment> response = mwpApi.getApi().wpV2MediaIdGet(String.valueOf(featuredMediaId), null);
-    if (!response.isOk()) {
-      logger.severe(String.format("Finding media failed on [%d] %s", response.getStatus(), response.getMessage()));
-    } else {
-      return response.getResponse();
-    }
-    
-    return null;
-  }
-
   private Post findPostByArticleId(NewsArticleId newsArticleId) {
     NewsArticleId kuntaApiId = idController.translateNewsArticleId(newsArticleId, MwpConsts.IDENTIFIER_NAME);
     if (kuntaApiId == null) {
@@ -291,7 +190,7 @@ public class MwpNewsProvider implements NewsProvider {
     NewsArticleId kuntaApiId = idController.translateNewsArticleId(postId, KuntaApiConsts.IDENTIFIER_NAME);
     if (kuntaApiId == null) {
       logger.info(String.format("Found new news article %d", post.getId()));
-      Identifier newIdentifier = identifierController.createIdentifier(IdType.NEWS_ARTICLE, MwpConsts.IDENTIFIER_NAME, String.valueOf(post.getId()));
+      Identifier newIdentifier = identifierController.createIdentifier(postId);
       kuntaApiId = new NewsArticleId(KuntaApiConsts.IDENTIFIER_NAME, newIdentifier.getKuntaApiId());
     }
     
@@ -302,16 +201,6 @@ public class MwpNewsProvider implements NewsProvider {
     newsArticle.setTitle(post.getTitle().getRendered());
     
     return newsArticle;
-  }
-  
-  private Attachment translateAttachment(fi.otavanopisto.mwp.client.model.Attachment featuredMedia) {
-    Integer size = binaryHttpClient.getDownloadSize(featuredMedia.getSourceUrl());
-    AttachmentId id = getImageAttachmentId(featuredMedia.getId());
-    Attachment attachment = new Attachment();
-    attachment.setContentType(featuredMedia.getMimeType());
-    attachment.setId(id.getId());
-    attachment.setSize(size != null ? size.longValue() : null);
-    return attachment;
   }
   
   private OffsetDateTime toOffsetDateTime(LocalDateTime date) {
