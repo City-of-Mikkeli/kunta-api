@@ -5,6 +5,7 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
+import fi.otavanopisto.kuntaapi.server.integrations.BannerId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.IdProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
@@ -131,6 +132,11 @@ public class PtvIdProvider implements IdProvider {
 
   @Override
   public NewsArticleId translate(NewsArticleId newsArticleId, String target) {
+    return null;
+  }
+
+  @Override
+  public BannerId translate(BannerId bannerId, String target) {
     return null;
   }
 

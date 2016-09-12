@@ -1,5 +1,10 @@
 package fi.otavanopisto.kuntaapi.server.integrations;
 
+/**
+ * Enum representing id type
+ * 
+ * @author Antti Leppä
+ */
 public enum IdType {
 
   ORGANIZATION,
@@ -14,6 +19,8 @@ public enum IdType {
   
   ATTACHMENT,
   
-  NEWS_ARTICLE
+  NEWS_ARTICLE,
+  
+  BANNER
   
 }

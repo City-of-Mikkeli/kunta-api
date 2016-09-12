@@ -69,6 +69,15 @@ public interface IdProvider {
    * @return translated id
    */
   public NewsArticleId translate(NewsArticleId newsArticleId, String target);
+  
+  /**
+   * Translate banner id
+   * 
+   * @param bannerId original id
+   * @param target target type
+   * @return translated id
+   */
+  public BannerId translate(BannerId bannerId, String target);
 
   /**
    * Translate attachment id

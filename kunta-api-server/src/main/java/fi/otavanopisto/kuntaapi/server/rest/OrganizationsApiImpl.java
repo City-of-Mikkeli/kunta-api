@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentData;
 import fi.otavanopisto.kuntaapi.server.integrations.AttachmentId;
+import fi.otavanopisto.kuntaapi.server.integrations.BannerId;
+import fi.otavanopisto.kuntaapi.server.integrations.BannerProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.EventId;
 import fi.otavanopisto.kuntaapi.server.integrations.EventProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
@@ -36,6 +38,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
+import fi.otavanopisto.kuntaapi.server.rest.model.Banner;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.NewsArticle;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
@@ -53,6 +56,12 @@ import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
 @SuppressWarnings ("squid:S3306")
 public class OrganizationsApiImpl extends OrganizationsApi {
   
+  private static final String NOT_IMPLEMENTED = "Not implemented";
+
+  private static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
+
+  private static final String FAILED_TO_STREAM_IMAGE_TO_CLIENT = "Failed to stream image to client";
+
   @Inject
   private Logger logger;
   
@@ -74,6 +83,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   @Inject
   private Instance<NewsProvider> newsProviders;
 
+  @Inject
+  private Instance<BannerProvider> bannerProviders;
+
   @Override
   public Response listOrganizations(String businessName, String businessCode) {
     List<Organization> organizations = new ArrayList<>();
@@ -87,7 +99,7 @@ public class OrganizationsApiImpl extends OrganizationsApi {
   
   @Override
   public Response createService(String organizationId, Service body) {
-    return createNotImplemented("Not implemented");
+    return createNotImplemented(NOT_IMPLEMENTED);
   }
   
   @Override
@@ -130,12 +142,12 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Override
   public Response updateService(String organizationId, String serviceId) {
-    return createNotImplemented("Not implemented");
+    return createNotImplemented(NOT_IMPLEMENTED);
   }
 
   @Override
   public Response deleteService(String organizationId, String serviceId) {
-    return createNotImplemented("Not implemented");
+    return createNotImplemented(NOT_IMPLEMENTED);
   }
   
   @Override
@@ -213,9 +225,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
           return Response.ok(stream, attachmentData.getType())
               .build();
         } catch (IOException e) {
-          logger.log(Level.SEVERE, "Failed to stream image to client", e);
+          logger.log(Level.SEVERE, FAILED_TO_STREAM_IMAGE_TO_CLIENT, e);
           return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity("Internal Server Error")
+            .entity(INTERNAL_SERVER_ERROR)
             .build();
         }
       }
@@ -278,6 +290,25 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     return Response.ok(result)
       .build();
   }
+  
+  /* News */
+
+  @Override
+  public Response listOrganizationNews(String organizationIdParam, String publishedBefore, String publishedAfter,
+      Integer firstResult, Integer maxResults) {
+    
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    
+    List<NewsArticle> result = new ArrayList<>();
+   
+    for (NewsProvider newsProvider : getNewsProviders()) {
+      result.addAll(newsProvider.listOrganizationNews(organizationId, getDateTime(publishedBefore), getDateTime(publishedAfter), firstResult, maxResults));
+    }
+    
+    return Response.ok(result)
+      .build();
+    
+  }
 
   @Override
   public Response findOrganizationNewsArticle(String organizationIdParam, String newsArticleIdParam) {
@@ -327,9 +358,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
           return Response.ok(stream, attachmentData.getType())
               .build();
         } catch (IOException e) {
-          logger.log(Level.SEVERE, "Failed to stream image to client", e);
+          logger.log(Level.SEVERE, FAILED_TO_STREAM_IMAGE_TO_CLIENT, e);
           return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity("Internal Server Error")
+            .entity(INTERNAL_SERVER_ERROR)
             .build();
         }
       }
@@ -337,23 +368,6 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     
     return Response.status(Status.NOT_FOUND)
       .build();
-  }
-
-  @Override
-  public Response listOrganizationNews(String organizationIdParam, String publishedBefore, String publishedAfter,
-      Integer firstResult, Integer maxResults) {
-    
-    OrganizationId organizationId = toOrganizationId(organizationIdParam);
-    
-    List<NewsArticle> result = new ArrayList<>();
-   
-    for (NewsProvider newsProvider : getNewsProviders()) {
-      result.addAll(newsProvider.listOrganizationNews(organizationId, getDateTime(publishedBefore), getDateTime(publishedAfter), firstResult, maxResults));
-    }
-    
-    return Response.ok(result)
-      .build();
-    
   }
 
   @Override
@@ -369,6 +383,105 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     
     return Response.ok(result)
       .build();
+  }
+
+  /* Banners */
+  
+  @Override
+  public Response listOrganizationBanners(String organizationIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    
+    List<Banner> result = new ArrayList<>();
+   
+    for (BannerProvider bannerProvider : getBannerProviders()) {
+      result.addAll(bannerProvider.listOrganizationBanners(organizationId));
+    }
+    
+    return Response.ok(result)
+      .build();
+  }
+
+  @Override
+  public Response findOrganizationBanner(String organizationIdParam, String bannerIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    BannerId bannerId = toBannerId(bannerIdParam);
+    
+    for (BannerProvider bannerProvider : getBannerProviders()) {
+      Banner banner = bannerProvider.findOrganizationBanner(organizationId, bannerId);
+      if (banner != null) {
+        return Response.ok(banner)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response listOrganizationBannerImages(String organizationIdParam, String bannerIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    BannerId bannerId = toBannerId(bannerIdParam);
+    
+    List<Attachment> result = new ArrayList<>();
+   
+    for (BannerProvider bannerProvider : getBannerProviders()) {
+      result.addAll(bannerProvider.listOrganizationBannerImages(organizationId, bannerId));
+    }
+    
+    return Response.ok(result)
+      .build();
+  }
+
+  @Override
+  public Response findOrganizationBannerImage(String organizationIdParam, String bannerIdParam, String imageIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    BannerId bannerId = toBannerId(bannerIdParam);
+    AttachmentId attachmentId = toAttachmentId(imageIdParam);
+    
+    for (BannerProvider bannerProvider : getBannerProviders()) {
+      Attachment attachment = bannerProvider.findBannerImage(organizationId, bannerId, attachmentId);
+      if (attachment != null) {
+        return Response.ok(attachment)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response getOrganizationBannerImageData(String organizationIdParam, String bannerIdParam, String imageIdParam, Integer size) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    BannerId bannerId = toBannerId(bannerIdParam);
+    AttachmentId attachmentId = toAttachmentId(imageIdParam);
+    
+    for (BannerProvider bannerProvider : getBannerProviders()) {
+      AttachmentData attachmentData = bannerProvider.getBannerImageData(organizationId, bannerId, attachmentId, size);
+      if (attachmentData != null) {
+        try (InputStream stream = new ByteArrayInputStream(attachmentData.getData())) {
+          return Response.ok(stream, attachmentData.getType())
+              .build();
+        } catch (IOException e) {
+          logger.log(Level.SEVERE, FAILED_TO_STREAM_IMAGE_TO_CLIENT, e);
+          return Response.status(Status.INTERNAL_SERVER_ERROR)
+            .entity(INTERNAL_SERVER_ERROR)
+            .build();
+        }
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+  
+  private BannerId toBannerId(String id) {
+    if (StringUtils.isNotBlank(id)) {
+      return new BannerId(KuntaApiConsts.IDENTIFIER_NAME, id);
+    }
+    
+    return null;
   }
   
   private NewsArticleId toNewsArticleId(String id) {
@@ -478,6 +591,17 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     List<NewsProvider> result = new ArrayList<>();
     
     Iterator<NewsProvider> iterator = newsProviders.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+  
+  private List<BannerProvider> getBannerProviders() {
+    List<BannerProvider> result = new ArrayList<>();
+    
+    Iterator<BannerProvider> iterator = bannerProviders.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     }

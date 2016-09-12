@@ -161,6 +161,26 @@ public class IdController {
     
     return null;
   }
+  
+  /**
+   * Translates banner id into into target id
+   * 
+   * @param bannerId id to be translated
+   * @param target target
+   * @return translated id or null if translation has failed
+   */
+  public BannerId translateBannerId(BannerId bannerId, String target) {
+    if (StringUtils.equals(bannerId.getSource(), target)) {
+      return bannerId;
+    }
+    
+    IdProvider idProvider = getIdProvider(bannerId.getSource(), target);
+    if (idProvider != null) {
+      return idProvider.translate(bannerId, target);
+    }
+    
+    return null;
+  }
 
   /**
    * Translates both ids into Kunta Api ids and check whether they match
@@ -280,6 +300,24 @@ public class IdController {
   public boolean idsEqual(ServiceId id1, ServiceId id2) {
     ServiceId kuntaApiId1 = translateServiceId(id1, KuntaApiConsts.IDENTIFIER_NAME);
     ServiceId kuntaApiId2 = translateServiceId(id2, KuntaApiConsts.IDENTIFIER_NAME);
+    
+    if (kuntaApiId1 == null || kuntaApiId2 == null) {
+      return false;
+    }
+    
+    return kuntaApiId1.equals(kuntaApiId2);
+  }
+
+  /**
+   * Translates both ids into Kunta Api ids and check whether they match
+   * 
+   * @param id1 id1
+   * @param id2 id2
+   * @return whether ids match
+   */
+  public boolean idsEqual(BannerId id1, BannerId id2) {
+    BannerId kuntaApiId1 = translateBannerId(id1, KuntaApiConsts.IDENTIFIER_NAME);
+    BannerId kuntaApiId2 = translateBannerId(id2, KuntaApiConsts.IDENTIFIER_NAME);
     
     if (kuntaApiId1 == null || kuntaApiId2 == null) {
       return false;

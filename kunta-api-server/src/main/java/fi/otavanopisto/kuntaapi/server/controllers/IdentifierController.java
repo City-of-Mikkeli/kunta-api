@@ -37,7 +37,9 @@ public class IdentifierController {
    * @param source source of identifier
    * @param sourceId id in source system
    * @return created identifier
+   * @deprecated
    */
+  @Deprecated
   public Identifier createIdentifier(IdType type, String source, String sourceId) {
     return createIdentifier(type.toString(), source, sourceId);
   }
