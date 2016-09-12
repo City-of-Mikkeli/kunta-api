@@ -6,8 +6,8 @@ import fi.otavanopisto.kuntaapi.server.rest.model.Forbidden;
 import fi.otavanopisto.kuntaapi.server.rest.model.NotImplemented;
 import fi.otavanopisto.kuntaapi.server.rest.model.InternalServerError;
 import fi.otavanopisto.kuntaapi.server.rest.model.NotFound;
-import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
 import fi.otavanopisto.kuntaapi.server.rest.model.NewsArticle;
+import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Banner;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
@@ -26,7 +26,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-09T12:26:57.250+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-12T06:45:02.882+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -58,6 +58,18 @@ public abstract class OrganizationsApi extends AbstractApi {
     public abstract Response deleteService(@PathParam("organizationId") String organizationId,@PathParam("serviceId") String serviceId);
 
     @GET
+    @Path("/{organizationId}/banners/{bannerId}")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Finds organizations banner", notes = "Finds single organization banner ", response = NewsArticle.class, tags={ "Banners",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns a single organization banner", response = NewsArticle.class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = NewsArticle.class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = NewsArticle.class),
+        @ApiResponse(code = 500, message = "Internal server error", response = NewsArticle.class) })
+    public abstract Response findOrganizationBanner(@PathParam("organizationId") String organizationId,@PathParam("bannerId") String bannerId);
+
+    @GET
     @Path("/{organizationId}/banners/{bannerId}/images/{imageId}")
     @Consumes({ "application/json;charset=utf-8" })
     @Produces({ "application/json;charset=utf-8" })
@@ -68,18 +80,6 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Attachment.class),
         @ApiResponse(code = 500, message = "Internal server error", response = Attachment.class) })
     public abstract Response findOrganizationBannerImage(@PathParam("organizationId") String organizationId,@PathParam("bannerId") String bannerId,@PathParam("imageId") String imageId);
-
-    @GET
-    @Path("/{organizationId}/banners/{bannerId}")
-    @Consumes({ "application/json;charset=utf-8" })
-    @Produces({ "application/json;charset=utf-8" })
-    @ApiOperation(value = "Finds organizations banner", notes = "Finds single organization banner ", response = NewsArticle.class, tags={ "Banners",  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Returns a single organization banner", response = NewsArticle.class),
-        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = NewsArticle.class),
-        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = NewsArticle.class),
-        @ApiResponse(code = 500, message = "Internal server error", response = NewsArticle.class) })
-    public abstract Response findOrganizationBanners(@PathParam("organizationId") String organizationId,@PathParam("bannerId") String bannerId);
 
     @GET
     @Path("/{organizationId}/events/{eventId}")
