@@ -1084,7 +1084,7 @@ paths:
         200:
           description: Returns a single organization tile
           schema:
-            $ref: '#/definitions/TilesArticle'
+            $ref: '#/definitions/Tile'
         400:
           description: Invalid request was sent to the server
           schema:
