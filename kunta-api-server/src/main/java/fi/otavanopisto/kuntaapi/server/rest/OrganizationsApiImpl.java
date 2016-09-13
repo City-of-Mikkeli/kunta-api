@@ -37,6 +37,8 @@ import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassProvider;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceProvider;
+import fi.otavanopisto.kuntaapi.server.integrations.TileId;
+import fi.otavanopisto.kuntaapi.server.integrations.TileProvider;
 import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
 import fi.otavanopisto.kuntaapi.server.rest.model.Banner;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
@@ -45,6 +47,7 @@ import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
+import fi.otavanopisto.kuntaapi.server.rest.model.Tile;
 
 /**
  * REST Service implementation
@@ -85,6 +88,9 @@ public class OrganizationsApiImpl extends OrganizationsApi {
 
   @Inject
   private Instance<BannerProvider> bannerProviders;
+
+  @Inject
+  private Instance<TileProvider> tileProviders;
 
   @Override
   public Response listOrganizations(String businessName, String businessCode) {
@@ -476,9 +482,108 @@ public class OrganizationsApiImpl extends OrganizationsApi {
       .build();
   }
   
+  /* Tiles */
+  
+  @Override
+  public Response listOrganizationTiles(String organizationIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    
+    List<Tile> result = new ArrayList<>();
+   
+    for (TileProvider tileProvider : getTileProviders()) {
+      result.addAll(tileProvider.listOrganizationTiles(organizationId));
+    }
+    
+    return Response.ok(result)
+      .build();
+  }
+
+  @Override
+  public Response findOrganizationTile(String organizationIdParam, String tileIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    TileId tileId = toTileId(tileIdParam);
+    
+    for (TileProvider tileProvider : getTileProviders()) {
+      Tile tile = tileProvider.findOrganizationTile(organizationId, tileId);
+      if (tile != null) {
+        return Response.ok(tile)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response listOrganizationTileImages(String organizationIdParam, String tileIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    TileId tileId = toTileId(tileIdParam);
+    
+    List<Attachment> result = new ArrayList<>();
+   
+    for (TileProvider tileProvider : getTileProviders()) {
+      result.addAll(tileProvider.listOrganizationTileImages(organizationId, tileId));
+    }
+    
+    return Response.ok(result)
+      .build();
+  }
+
+  @Override
+  public Response findOrganizationTileImage(String organizationIdParam, String tileIdParam, String imageIdParam) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    TileId tileId = toTileId(tileIdParam);
+    AttachmentId attachmentId = toAttachmentId(imageIdParam);
+    
+    for (TileProvider tileProvider : getTileProviders()) {
+      Attachment attachment = tileProvider.findTileImage(organizationId, tileId, attachmentId);
+      if (attachment != null) {
+        return Response.ok(attachment)
+          .build();
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+
+  @Override
+  public Response getOrganizationTileImageData(String organizationIdParam, String tileIdParam, String imageIdParam, Integer size) {
+    OrganizationId organizationId = toOrganizationId(organizationIdParam);
+    TileId tileId = toTileId(tileIdParam);
+    AttachmentId attachmentId = toAttachmentId(imageIdParam);
+    
+    for (TileProvider tileProvider : getTileProviders()) {
+      AttachmentData attachmentData = tileProvider.getTileImageData(organizationId, tileId, attachmentId, size);
+      if (attachmentData != null) {
+        try (InputStream stream = new ByteArrayInputStream(attachmentData.getData())) {
+          return Response.ok(stream, attachmentData.getType())
+              .build();
+        } catch (IOException e) {
+          logger.log(Level.SEVERE, FAILED_TO_STREAM_IMAGE_TO_CLIENT, e);
+          return Response.status(Status.INTERNAL_SERVER_ERROR)
+            .entity(INTERNAL_SERVER_ERROR)
+            .build();
+        }
+      }
+    }
+    
+    return Response.status(Status.NOT_FOUND)
+      .build();
+  }
+  
   private BannerId toBannerId(String id) {
     if (StringUtils.isNotBlank(id)) {
       return new BannerId(KuntaApiConsts.IDENTIFIER_NAME, id);
+    }
+    
+    return null;
+  }
+  
+  private TileId toTileId(String id) {
+    if (StringUtils.isNotBlank(id)) {
+      return new TileId(KuntaApiConsts.IDENTIFIER_NAME, id);
     }
     
     return null;
@@ -608,5 +713,17 @@ public class OrganizationsApiImpl extends OrganizationsApi {
     
     return Collections.unmodifiableList(result);
   }
+  
+  private List<TileProvider> getTileProviders() {
+    List<TileProvider> result = new ArrayList<>();
+    
+    Iterator<TileProvider> iterator = tileProviders.iterator();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    
+    return Collections.unmodifiableList(result);
+  }
+
 }
 
