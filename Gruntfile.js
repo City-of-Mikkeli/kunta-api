@@ -49,7 +49,7 @@ module.exports = function(grunt) {
           -l javascript \
           --template-dir kunta-api-spec/templates/javascript \
           -o kunta-api-spec/languages/javascript/ \
-          --additional-properties usePromises=true,projectName=kunta-api-client,projectVersion=0.0.5'
+          --additional-properties usePromises=true,projectName=kunta-api-client,projectVersion=0.0.6'
       },
       'generate-php-client': {
         command : 'java -jar swagger-codegen-cli.jar generate \

@@ -15,6 +15,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
+import fi.otavanopisto.kuntaapi.server.integrations.TileId;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 
 /**
@@ -163,6 +164,25 @@ public class MwpIdProvider implements IdProvider {
       identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.BANNER, MwpConsts.IDENTIFIER_NAME, bannerId.getId());
       if (identifier != null) {
         return new BannerId(MwpConsts.IDENTIFIER_NAME, identifier.getSourceId());
+      }
+    }
+    
+    return null;
+  }
+
+  @Override
+  public TileId translate(TileId tileId, String target) {
+    Identifier identifier;
+    
+    if (MwpConsts.IDENTIFIER_NAME.equals(tileId.getSource())) {
+      identifier = identifierController.findIdentifierById(tileId);
+      if (identifier != null) {
+        return new TileId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
+      }
+    } else if (KuntaApiConsts.IDENTIFIER_NAME.equals(tileId.getSource())) {
+      identifier = identifierController.findIdentifierByTypeSourceAndKuntaApiId(IdType.TILE, MwpConsts.IDENTIFIER_NAME, tileId.getId());
+      if (identifier != null) {
+        return new TileId(MwpConsts.IDENTIFIER_NAME, identifier.getSourceId());
       }
     }
     

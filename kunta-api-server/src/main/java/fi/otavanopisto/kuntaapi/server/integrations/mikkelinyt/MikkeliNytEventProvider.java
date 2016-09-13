@@ -37,7 +37,6 @@ import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpCache;
 import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpClient;
 import fi.otavanopisto.kuntaapi.server.integrations.GenericHttpClient.Response;
 import fi.otavanopisto.kuntaapi.server.integrations.IdController;
-import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
@@ -401,7 +400,7 @@ public class MikkeliNytEventProvider implements EventProvider {
     
     if (kuntaApiId == null) {
       logger.info(String.format("Found new MikkeliNyt attachment %s", imageId));
-      Identifier newIdentifier = identifierController.createIdentifier(IdType.ATTACHMENT, MikkeliNytConsts.IDENTIFIER_NAME, imageId);
+      Identifier newIdentifier = identifierController.createIdentifier(mikkeliNytId);
       kuntaApiId = new AttachmentId(KuntaApiConsts.IDENTIFIER_NAME, newIdentifier.getKuntaApiId());
     }
     
@@ -427,7 +426,7 @@ public class MikkeliNytEventProvider implements EventProvider {
     EventId kuntaApiId = idController.translateEventId(mikkeliNytId, KuntaApiConsts.IDENTIFIER_NAME);
     if (kuntaApiId == null) {
       logger.info(String.format("Found new MikkeliNyt event %s", nytEvent.getId()));
-      Identifier newIdentifier = identifierController.createIdentifier(IdType.EVENT, MikkeliNytConsts.IDENTIFIER_NAME, nytEvent.getId());
+      Identifier newIdentifier = identifierController.createIdentifier(mikkeliNytId);
       kuntaApiId = new EventId(KuntaApiConsts.IDENTIFIER_NAME, newIdentifier.getKuntaApiId());
     }
     

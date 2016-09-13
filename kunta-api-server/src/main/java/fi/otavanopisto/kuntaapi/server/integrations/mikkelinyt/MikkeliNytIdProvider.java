@@ -15,6 +15,7 @@ import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceClassId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
+import fi.otavanopisto.kuntaapi.server.integrations.TileId;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 
 /**
@@ -109,6 +110,11 @@ public class MikkeliNytIdProvider implements IdProvider {
 
   @Override
   public BannerId translate(BannerId bannerId, String target) {
+    return null;
+  }
+  
+  @Override
+  public TileId translate(TileId tileId, String target) {
     return null;
   }
 

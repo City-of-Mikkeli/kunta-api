@@ -181,6 +181,26 @@ public class IdController {
     
     return null;
   }
+  
+  /**
+   * Translates tile id into into target id
+   * 
+   * @param tileId id to be translated
+   * @param target target
+   * @return translated id or null if translation has failed
+   */
+  public TileId translateTileId(TileId tileId, String target) {
+    if (StringUtils.equals(tileId.getSource(), target)) {
+      return tileId;
+    }
+    
+    IdProvider idProvider = getIdProvider(tileId.getSource(), target);
+    if (idProvider != null) {
+      return idProvider.translate(tileId, target);
+    }
+    
+    return null;
+  }
 
   /**
    * Translates both ids into Kunta Api ids and check whether they match
@@ -318,6 +338,24 @@ public class IdController {
   public boolean idsEqual(BannerId id1, BannerId id2) {
     BannerId kuntaApiId1 = translateBannerId(id1, KuntaApiConsts.IDENTIFIER_NAME);
     BannerId kuntaApiId2 = translateBannerId(id2, KuntaApiConsts.IDENTIFIER_NAME);
+    
+    if (kuntaApiId1 == null || kuntaApiId2 == null) {
+      return false;
+    }
+    
+    return kuntaApiId1.equals(kuntaApiId2);
+  }
+
+  /**
+   * Translates both ids into Kunta Api ids and check whether they match
+   * 
+   * @param id1 id1
+   * @param id2 id2
+   * @return whether ids match
+   */
+  public boolean idsEqual(TileId id1, TileId id2) {
+    TileId kuntaApiId1 = translateTileId(id1, KuntaApiConsts.IDENTIFIER_NAME);
+    TileId kuntaApiId2 = translateTileId(id2, KuntaApiConsts.IDENTIFIER_NAME);
     
     if (kuntaApiId1 == null || kuntaApiId2 == null) {
       return false;

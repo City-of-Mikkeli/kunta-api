@@ -21,6 +21,7 @@ public enum IdType {
   
   NEWS_ARTICLE,
   
-  BANNER
+  BANNER,
   
+  TILE
 }
