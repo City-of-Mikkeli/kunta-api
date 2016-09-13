@@ -25,35 +25,30 @@ public class IdentifierController {
   private IdentifierController() {
   }
 
-  public Identifier createIdentifier(String type, String source, String sourceId) {
-    String kuntaApiId = UUID.randomUUID().toString();
-    return createIdentifier(type, kuntaApiId, source, sourceId);
-  }
-
   /**
    * Creates new identifier.
    * 
-   * @param type type of identifier
-   * @param source source of identifier
-   * @param sourceId id in source system
+   * @param id identifier
    * @return created identifier
-   * @deprecated
    */
-  @Deprecated
-  public Identifier createIdentifier(IdType type, String source, String sourceId) {
-    return createIdentifier(type.toString(), source, sourceId);
+  public Identifier createIdentifier(Id id) {
+    String kuntaApiId = UUID.randomUUID().toString();
+    return createIdentifier(id.getType().toString(), kuntaApiId, id.getSource(), id.getId());
   }
   
-  public Identifier createIdentifier(IdType type, String kuntaApiId, String source, String sourceId) {
-    return createIdentifier(type.toString(), kuntaApiId, source, sourceId);
-  }
-  
-  public Identifier createIdentifier(String type, String kuntaApiId, String source, String sourceId) {
-    return identifierDAO.create(type, kuntaApiId, source, sourceId);
+  /**
+   * Creates new identifier and assigns a Kunta API id for it
+   * 
+   * @param id identifier
+   * @param kuntaApiId Kunta API id to be assigned
+   * @return created identifier
+   */
+  public Identifier createIdentifier(Id id, String kuntaApiId) {
+    return createIdentifier(id.getType().toString(), kuntaApiId, id.getSource(), id.getId());
   }
 
-  public Identifier createIdentifier(Id id) {
-    return createIdentifier(id.getType().toString(), id.getSource(), id.getId());
+  private Identifier createIdentifier(String type, String kuntaApiId, String source, String sourceId) {
+    return identifierDAO.create(type, kuntaApiId, source, sourceId);
   }
 
   public Identifier findIdentifierByTypeSourceAndId(String type, String source, String sourceId) {

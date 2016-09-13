@@ -78,6 +78,15 @@ public interface IdProvider {
    * @return translated id
    */
   public BannerId translate(BannerId bannerId, String target);
+  
+  /**
+   * Translate tile id
+   * 
+   * @param tileId original id
+   * @param target target type
+   * @return translated id
+   */
+  public TileId translate(TileId tileId, String target);
 
   /**
    * Translate attachment id

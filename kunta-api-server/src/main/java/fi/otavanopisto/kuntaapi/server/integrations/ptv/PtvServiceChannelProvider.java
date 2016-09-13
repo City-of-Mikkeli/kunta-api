@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
 import fi.otavanopisto.kuntaapi.server.integrations.IdController;
-import fi.otavanopisto.kuntaapi.server.integrations.IdType;
 import fi.otavanopisto.kuntaapi.server.integrations.KuntaApiConsts;
 import fi.otavanopisto.kuntaapi.server.integrations.OrganizationId;
 import fi.otavanopisto.kuntaapi.server.integrations.ServiceChannelId;
@@ -112,7 +111,7 @@ public class PtvServiceChannelProvider extends AbstractPtvProvider implements Se
     
     ServiceChannelId kuntaApiId = idController.translateServiceChannelId(ptvId,  KuntaApiConsts.IDENTIFIER_NAME);
     if (kuntaApiId == null) {
-      Identifier identifier = identifierController.createIdentifier(IdType.SERVICE_CHANNEL, ptvId.getSource(), ptvId.getId());
+      Identifier identifier = identifierController.createIdentifier(ptvId);
       logger.info(String.format("Discovered new electric service channel %s", ptvId.toString()));
       kuntaApiId = new ServiceChannelId(KuntaApiConsts.IDENTIFIER_NAME, identifier.getKuntaApiId());
     }

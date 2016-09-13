@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 import fi.otavanopisto.mwp.client.ApiResponse;
 import fi.otavanopisto.mwp.client.model.Page;
@@ -68,7 +69,7 @@ public class MwpServiceWarmup {
         
         Identifier identifier = identifierController.findIdentifierByTypeSourceAndId(IdType.SERVICE, MwpConsts.IDENTIFIER_NAME, pageId);
         if (identifier == null) {
-          identifierController.createIdentifier(IdType.SERVICE, kuntaApiId, MwpConsts.IDENTIFIER_NAME, pageId);
+          identifierController.createIdentifier(new ServiceId(MwpConsts.IDENTIFIER_NAME, pageId), kuntaApiId);
           discoverCount++;
         }
       }

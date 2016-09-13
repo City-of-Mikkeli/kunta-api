@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import fi.otavanopisto.kuntaapi.server.controllers.IdentifierController;
 import fi.otavanopisto.kuntaapi.server.integrations.IdType;
+import fi.otavanopisto.kuntaapi.server.integrations.ServiceId;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 import fi.otavanopisto.ptv.client.ApiResponse;
 import fi.otavanopisto.ptv.client.model.VmOpenApiGuidPage;
@@ -72,7 +73,7 @@ public class PtvServiceWarmup {
       for (String guid : pageData.getGuidList()) {
         Identifier identifier = identifierController.findIdentifierByTypeSourceAndId(IdType.SERVICE, PtvConsts.IDENTIFIFER_NAME, guid);
         if (identifier == null) {
-          identifierController.createIdentifier(IdType.SERVICE, PtvConsts.IDENTIFIFER_NAME, guid);
+          identifierController.createIdentifier(new ServiceId(PtvConsts.IDENTIFIFER_NAME, guid));
           discoverCount++;
         }
       }
