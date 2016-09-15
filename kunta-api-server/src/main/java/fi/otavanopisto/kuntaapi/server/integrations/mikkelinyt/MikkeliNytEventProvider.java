@@ -280,6 +280,9 @@ public class MikkeliNytEventProvider implements EventProvider {
   
   private Attachment loadEventImageAttachment(OrganizationId organizationId, AttachmentId imageId) {
     AttachmentData attachmentData = getImageData(organizationId, imageId);
+    if (attachmentData == null) {
+      return null;  
+    }
     
     long size = getImageSize(attachmentData);
     Attachment attachment = new Attachment();
@@ -290,6 +293,10 @@ public class MikkeliNytEventProvider implements EventProvider {
   }
   
   private long getImageSize(AttachmentData attachmentData) {
+    if ((attachmentData == null) || (attachmentData.getData() == null)) {
+      return -1;
+    }
+    
     return attachmentData.getData().length;
   }
   

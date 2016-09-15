@@ -59,6 +59,7 @@
     <!-- Wildfly -->
     
     <wildfly-spec-api.version>10.1.0.Final</wildfly-spec-api.version>
+    <hibernate-ogm-cassandra.version>5.0.1.Final</hibernate-ogm-cassandra.version>
     
     <!-- Integrations -->
     
@@ -97,7 +98,7 @@
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <archive>
             <manifestEntries>
-              <Dependencies>org.apache.httpcomponents, org.infinispan, org.apache.commons.io, com.fasterxml.jackson.core.jackson-annotations, com.fasterxml.jackson.core.jackson-databind, com.fasterxml.jackson.datatype.jackson-datatype-jsr310</Dependencies>
+              <Dependencies>org.hibernate.ogm services, org.hibernate.ogm.cassandra services, org.hibernate.search.orm services, org.apache.httpcomponents, org.infinispan, org.apache.commons.io, com.fasterxml.jackson.core.jackson-annotations, com.fasterxml.jackson.core.jackson-databind, com.fasterxml.jackson.datatype.jackson-datatype-jsr310</Dependencies>
             </manifestEntries>
           </archive>
         </configuration>
@@ -270,6 +271,26 @@
       <artifactId>hibernate-entitymanager</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-orm</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate.ogm</groupId>
+      <artifactId>hibernate-ogm-cassandra</artifactId>
+      <scope>provided</scope>
+      <version>${hibernate-ogm-cassandra.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-engine</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
 
     <dependency>
       <groupId>org.hibernate</groupId>

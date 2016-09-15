@@ -13,6 +13,11 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -24,15 +29,19 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Cacheable(true)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "organizationKuntaApiId", "settingKey" }) })
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Indexed
 public class OrganizationSetting {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue (strategy = GenerationType.TABLE, generator="organizationsetting-uuid")
+  @GenericGenerator (name="organizationsetting-uuid", strategy = "org.hibernate.id.UUIDGenerator")
+  @DocumentId
+  private String id;
 
   @Column(nullable = false, name = "settingKey")
   @NotNull
   @NotEmpty
+  @Field (analyze = Analyze.NO)
   private String key;
 
   @Column(nullable = false)
@@ -44,9 +53,10 @@ public class OrganizationSetting {
   @Column(nullable = false)
   @NotNull
   @NotEmpty
+  @Field (analyze = Analyze.NO)
   private String organizationKuntaApiId;
   
-  public Long getId() {
+  public String getId() {
     return id;
   }
   

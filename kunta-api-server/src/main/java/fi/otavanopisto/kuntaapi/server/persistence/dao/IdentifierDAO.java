@@ -1,13 +1,22 @@
 package fi.otavanopisto.kuntaapi.server.persistence.dao;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
+import org.infinispan.persistence.spi.PersistenceException;
 
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier;
 import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier_;
@@ -19,6 +28,11 @@ import fi.otavanopisto.kuntaapi.server.persistence.model.Identifier_;
  */
 @Dependent
 public class IdentifierDAO extends AbstractDAO<Identifier> {
+  
+  @PostConstruct
+  public void init() {
+    identifierLookup = Collections.synchronizedMap(new HashMap<>());
+  }
 
   /**
    * Creates new Identifier entity
@@ -37,7 +51,7 @@ public class IdentifierDAO extends AbstractDAO<Identifier> {
     identifier.setSource(source);
     identifier.setSourceId(sourceId);
     
-    return persist(identifier);
+    return storeToLookup(persist(identifier));
   }
 
   /**
@@ -49,6 +63,11 @@ public class IdentifierDAO extends AbstractDAO<Identifier> {
    * @return found identifier or null if non found
    */
   public Identifier findByTypeSourceAndSourceId(String type, String source, String sourceId) {
+    Identifier lookedup = findLookupBySourceSourceId(type, source, sourceId);
+    if (lookedup != null) {
+      return lookedup;
+    }
+
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -75,6 +94,11 @@ public class IdentifierDAO extends AbstractDAO<Identifier> {
    * @return found identifier or null if non found
    */
   public Identifier findByTypeSourceAndKuntaApiId(String type, String source, String kuntaApiId) {
+    Identifier lookedup = findLookupBySourceKuntaApiId(type, source, kuntaApiId);
+    if (lookedup != null) {
+      return lookedup;
+    }
+    
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -102,6 +126,11 @@ public class IdentifierDAO extends AbstractDAO<Identifier> {
    * @return
    */
   public List<Identifier> listByTypeAndSource(String type, String source, Integer firstResult, Integer maxResults) {
+    List<Identifier> lookedup = listLookupByTypeSource(type, source);
+    if (lookedup != null) {
+      return lookedup;
+    }
+    
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -127,4 +156,56 @@ public class IdentifierDAO extends AbstractDAO<Identifier> {
     return query.getResultList();
   }
   
+  private Identifier findLookupBySourceKuntaApiId(String type, String source, String kuntaApiId) {
+    return getSingleLookupIdentifer(createTypeSourceKuntaApiMapKey(type, source, kuntaApiId));
+  }
+  
+  private Identifier findLookupBySourceSourceId(String type, String source, String sourceId) {
+    return getSingleLookupIdentifer(createTypeSourceIdMapKey(type, source, sourceId));
+  }
+
+  private List<Identifier> listLookupByTypeSource(String type, String source) {
+    return identifierLookup.get(createTypeSourceMapKey(type, source));
+  }
+  
+  private Identifier getSingleLookupIdentifer(String key) {
+    List<Identifier> identifiers = identifierLookup.get(key);
+    if (identifiers == null || identifiers.isEmpty()) {
+      return null;
+    }
+    
+    if (identifiers.size() > 1) {
+      throw new PersistenceException(String.format("SingleResult lookup returned %d elements", identifiers.size()));
+    }
+    
+    return identifiers.get(0);
+  }
+
+  private String createTypeSourceKuntaApiMapKey(String type, String source, String kuntaApiId) {
+    return StringUtils.join(new String[] { "TSK", type, source, kuntaApiId }, "/");
+  }
+  
+  private String createTypeSourceIdMapKey(String type, String source, String sourceId) {
+    return StringUtils.join(new String[] { "TSI", type, source, sourceId }, "/");
+  }
+  
+  private String createTypeSourceMapKey(String type, String source) {
+    return StringUtils.join(new String[] { "TS", type, source }, "/");
+  }
+  
+  private Identifier storeToLookup(Identifier identifier) {
+    identifierLookup.put(createTypeSourceKuntaApiMapKey(identifier.getType(), identifier.getSource(), identifier.getKuntaApiId()), Arrays.asList(identifier));
+    identifierLookup.put(createTypeSourceIdMapKey(identifier.getType(), identifier.getSource(), identifier.getSourceId()), Arrays.asList(identifier));
+  
+    String typeSourceKey = createTypeSourceMapKey(identifier.getType(), identifier.getSource());
+    if (identifierLookup.containsKey(typeSourceKey)) {
+      identifierLookup.get(typeSourceKey).add(identifier);
+    } else {
+      identifierLookup.put(typeSourceKey, new ArrayList<>(Arrays.asList(identifier)));
+    }
+    
+    return identifier;
+  }
+  
+  private Map<String, List<Identifier>> identifierLookup;
 }
