@@ -4,5 +4,6 @@
 
   <display-name>Kunta API</display-name>
   <description>Kunta API Server</description>
-
+  <distributable/>
+  
 </web-app>
