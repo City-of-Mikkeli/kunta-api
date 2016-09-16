@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Temporarily disabled";
+exit 0
+
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN}" ] && [ -n "${SONAR_TOKEN}" ]; then
 
   # It's a pull-request, run SonarQube analysis in the pull-request and execute tests
