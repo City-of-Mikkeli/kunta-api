@@ -1,15 +1,15 @@
 package fi.otavanopisto.kuntaapi.server.rest;
 
+import fi.otavanopisto.kuntaapi.server.rest.model.OrganizationSetting;
 import fi.otavanopisto.kuntaapi.server.rest.model.BadRequest;
-import fi.otavanopisto.kuntaapi.server.rest.model.Service;
 import fi.otavanopisto.kuntaapi.server.rest.model.Forbidden;
-import fi.otavanopisto.kuntaapi.server.rest.model.NotImplemented;
 import fi.otavanopisto.kuntaapi.server.rest.model.InternalServerError;
+import fi.otavanopisto.kuntaapi.server.rest.model.Service;
+import fi.otavanopisto.kuntaapi.server.rest.model.NotImplemented;
 import fi.otavanopisto.kuntaapi.server.rest.model.NotFound;
 import fi.otavanopisto.kuntaapi.server.rest.model.NewsArticle;
 import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
-import fi.otavanopisto.kuntaapi.server.rest.model.OrganizationSetting;
 import fi.otavanopisto.kuntaapi.server.rest.model.Tile;
 import fi.otavanopisto.kuntaapi.server.rest.model.Banner;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
@@ -28,9 +28,21 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-19T18:51:03.543+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-19T19:46:12.740+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
+
+    @POST
+    @Path("/{organizationId}/settings/{settingId}")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Creates organization setting", notes = "Creates organization setting ", response = OrganizationSetting.class, tags={ "Settings",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns create organization setting", response = OrganizationSetting.class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = OrganizationSetting.class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = OrganizationSetting.class),
+        @ApiResponse(code = 500, message = "Internal server error", response = OrganizationSetting.class) })
+    public abstract Response createOrganizationSetting(@PathParam("organizationId") String organizationId,@PathParam("settingId") String settingId,OrganizationSetting setting);
 
     @POST
     @Path("/{organizationId}/services")
