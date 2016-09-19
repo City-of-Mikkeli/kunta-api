@@ -9,9 +9,9 @@ import fi.otavanopisto.kuntaapi.server.rest.model.NotFound;
 import fi.otavanopisto.kuntaapi.server.rest.model.NewsArticle;
 import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
+import fi.otavanopisto.kuntaapi.server.rest.model.OrganizationSetting;
 import fi.otavanopisto.kuntaapi.server.rest.model.Tile;
 import fi.otavanopisto.kuntaapi.server.rest.model.Banner;
-import fi.otavanopisto.kuntaapi.server.rest.model.OrganizationSetting;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
@@ -28,7 +28,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-19T18:07:46.129+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-19T18:51:03.543+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -142,6 +142,18 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Attachment.class),
         @ApiResponse(code = 500, message = "Internal server error", response = Attachment.class) })
     public abstract Response findOrganizationNewsArticleImage(@PathParam("organizationId") String organizationId,@PathParam("newsArticleId") String newsArticleId,@PathParam("imageId") String imageId);
+
+    @GET
+    @Path("/{organizationId}/settings/{settingId}")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Finds organizations setting", notes = "Finds single organization setting ", response = OrganizationSetting.class, tags={ "Settings",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns a single organization setting", response = OrganizationSetting.class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = OrganizationSetting.class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = OrganizationSetting.class),
+        @ApiResponse(code = 500, message = "Internal server error", response = OrganizationSetting.class) })
+    public abstract Response findOrganizationSetting(@PathParam("organizationId") String organizationId,@PathParam("settingId") String settingId);
 
     @GET
     @Path("/{organizationId}/tiles/{tileId}")
@@ -386,6 +398,18 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 404, message = "Not found", response = Service.class, responseContainer = "List"),
         @ApiResponse(code = 500, message = "Internal server error", response = Service.class, responseContainer = "List") })
     public abstract Response listServices(@PathParam("organizationId") String organizationId,@QueryParam("serviceClassId") String serviceClassId);
+
+    @PUT
+    @Path("/{organizationId}/settings/{settingId}")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Updates an organization setting", notes = "Updates an organization setting ", response = OrganizationSetting.class, tags={ "Settings",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns a single an updated organization setting", response = OrganizationSetting.class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = OrganizationSetting.class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = OrganizationSetting.class),
+        @ApiResponse(code = 500, message = "Internal server error", response = OrganizationSetting.class) })
+    public abstract Response updateOrganizationSetting(@PathParam("organizationId") String organizationId,@PathParam("settingId") String settingId);
 
     @PUT
     @Path("/{organizationId}/services/{serviceId}")
