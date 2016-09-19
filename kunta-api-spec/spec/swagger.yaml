@@ -1363,6 +1363,10 @@ paths:
           required: true
           type: string
           format: uuid
+        - name: setting
+          in: body
+          schema:
+            $ref: '#/definitions/OrganizationSetting'
       tags:
         - Settings
       responses:
