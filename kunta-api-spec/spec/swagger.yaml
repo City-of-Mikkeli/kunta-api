@@ -1234,6 +1234,155 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/settings/:
+    get:
+      operationId: listOrganizationSettings
+      summary: Lists organizations settings
+      description: |
+        Lists organizations settings
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: key
+          in: query
+          description: Setting key
+          type: string
+      tags:
+        - Settings
+      responses:
+        200:
+          description: Returns a list of settings
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OrganizationSetting'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/settings/{settingId}:
+    get:
+      operationId: findOrganizationSetting
+      summary: Finds organizations setting
+      description: |
+        Finds single organization setting
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: settingId
+          in: path
+          description: Setting id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Settings
+      responses:
+        200:
+          description: Returns a single organization setting
+          schema:
+            $ref: '#/definitions/OrganizationSetting'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+    put:
+      operationId: updateOrganizationSetting
+      summary: Updates an organization setting
+      description: |
+        Updates an organization setting
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: settingId
+          in: path
+          description: Setting id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Settings
+      responses:
+        200:
+          description: Returns a single an updated organization setting
+          schema:
+            $ref: '#/definitions/OrganizationSetting'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+    delete:
+      operationId: deleteOrganizationSetting
+      summary: Deletes an organization setting
+      description: |
+        Deletes an organization setting
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: settingId
+          in: path
+          description: Setting id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Settings
+      responses:
+        204:
+          description: Successful removal
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+            
 definitions:
   Attachment:
     properties:
@@ -1513,6 +1662,15 @@ definitions:
       contents:
         type: string
       link:
+        type: string
+  OrganizationSetting:
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      value:
         type: string
   InternalServerError:
     type: object
