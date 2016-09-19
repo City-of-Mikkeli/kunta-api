@@ -11,6 +11,7 @@ import fi.otavanopisto.kuntaapi.server.rest.model.Attachment;
 import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Tile;
 import fi.otavanopisto.kuntaapi.server.rest.model.Banner;
+import fi.otavanopisto.kuntaapi.server.rest.model.OrganizationSetting;
 import fi.otavanopisto.kuntaapi.server.rest.model.Organization;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceClass;
 import fi.otavanopisto.kuntaapi.server.rest.model.ServiceElectronicChannel;
@@ -27,7 +28,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-12T16:10:57.263+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-19T18:07:46.129+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -44,6 +45,18 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 500, message = "Internal server error", response = Service.class, responseContainer = "List"),
         @ApiResponse(code = 501, message = "Returned when selected service does support modification of data", response = Service.class, responseContainer = "List") })
     public abstract Response createService(@PathParam("organizationId") String organizationId,Service body);
+
+    @DELETE
+    @Path("/{organizationId}/settings/{settingId}")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Deletes an organization setting", notes = "Deletes an organization setting ", response = void.class, tags={ "Settings",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 204, message = "Successful removal", response = void.class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = void.class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = void.class),
+        @ApiResponse(code = 500, message = "Internal server error", response = void.class) })
+    public abstract Response deleteOrganizationSetting(@PathParam("organizationId") String organizationId,@PathParam("settingId") String settingId);
 
     @DELETE
     @Path("/{organizationId}/services/{serviceId}")
@@ -286,6 +299,18 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Attachment.class, responseContainer = "List"),
         @ApiResponse(code = 500, message = "Internal server error", response = Attachment.class, responseContainer = "List") })
     public abstract Response listOrganizationNewsArticleImages(@PathParam("organizationId") String organizationId,@PathParam("newsArticleId") String newsArticleId);
+
+    @GET
+    @Path("/{organizationId}/settings/")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Lists organizations settings", notes = "Lists organizations settings ", response = OrganizationSetting.class, responseContainer = "List", tags={ "Settings",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns a list of settings", response = OrganizationSetting.class, responseContainer = "List"),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = OrganizationSetting.class, responseContainer = "List"),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = OrganizationSetting.class, responseContainer = "List"),
+        @ApiResponse(code = 500, message = "Internal server error", response = OrganizationSetting.class, responseContainer = "List") })
+    public abstract Response listOrganizationSettings(@PathParam("organizationId") String organizationId,@QueryParam("key") String key);
 
     @GET
     @Path("/{organizationId}/tiles/{tileId}/images")
