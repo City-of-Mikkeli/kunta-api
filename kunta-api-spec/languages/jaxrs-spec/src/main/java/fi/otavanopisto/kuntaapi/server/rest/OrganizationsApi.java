@@ -28,12 +28,12 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-19T19:46:12.740+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-19T19:50:53.030+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
     @POST
-    @Path("/{organizationId}/settings/{settingId}")
+    @Path("/{organizationId}/settings/")
     @Consumes({ "application/json;charset=utf-8" })
     @Produces({ "application/json;charset=utf-8" })
     @ApiOperation(value = "Creates organization setting", notes = "Creates organization setting ", response = OrganizationSetting.class, tags={ "Settings",  })
@@ -42,7 +42,7 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = OrganizationSetting.class),
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = OrganizationSetting.class),
         @ApiResponse(code = 500, message = "Internal server error", response = OrganizationSetting.class) })
-    public abstract Response createOrganizationSetting(@PathParam("organizationId") String organizationId,@PathParam("settingId") String settingId,OrganizationSetting setting);
+    public abstract Response createOrganizationSetting(@PathParam("organizationId") String organizationId,OrganizationSetting setting);
 
     @POST
     @Path("/{organizationId}/services")
