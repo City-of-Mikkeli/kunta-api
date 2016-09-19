@@ -28,7 +28,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-19T19:50:53.030+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-19T19:55:32.900+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -421,7 +421,7 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = OrganizationSetting.class),
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = OrganizationSetting.class),
         @ApiResponse(code = 500, message = "Internal server error", response = OrganizationSetting.class) })
-    public abstract Response updateOrganizationSetting(@PathParam("organizationId") String organizationId,@PathParam("settingId") String settingId);
+    public abstract Response updateOrganizationSetting(@PathParam("organizationId") String organizationId,@PathParam("settingId") String settingId,OrganizationSetting setting);
 
     @PUT
     @Path("/{organizationId}/services/{serviceId}")
