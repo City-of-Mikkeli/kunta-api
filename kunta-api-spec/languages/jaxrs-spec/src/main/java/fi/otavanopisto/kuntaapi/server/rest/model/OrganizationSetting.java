@@ -10,7 +10,7 @@ import java.util.Objects;
 public class OrganizationSetting   {
   
   private String id = null;
-  private String name = null;
+  private String key = null;
   private String value = null;
 
   /**
@@ -31,18 +31,18 @@ public class OrganizationSetting   {
 
   /**
    **/
-  public OrganizationSetting name(String name) {
-    this.name = name;
+  public OrganizationSetting key(String key) {
+    this.key = key;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public String getName() {
-    return name;
+  public String getKey() {
+    return key;
   }
-  public void setName(String name) {
-    this.name = name;
+  public void setKey(String key) {
+    this.key = key;
   }
 
   /**
@@ -72,13 +72,13 @@ public class OrganizationSetting   {
     }
     OrganizationSetting organizationSetting = (OrganizationSetting) o;
     return Objects.equals(id, organizationSetting.id) &&
-        Objects.equals(name, organizationSetting.name) &&
+        Objects.equals(key, organizationSetting.key) &&
         Objects.equals(value, organizationSetting.value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, value);
+    return Objects.hash(id, key, value);
   }
 
   @Override
@@ -87,7 +87,7 @@ public class OrganizationSetting   {
     sb.append("class OrganizationSetting {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    key: ").append(toIndentedString(key)).append("\n");
     sb.append("    value: ").append(toIndentedString(value)).append("\n");
     sb.append("}");
     return sb.toString();
