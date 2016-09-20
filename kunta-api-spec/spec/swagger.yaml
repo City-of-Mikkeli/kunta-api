@@ -1707,7 +1707,7 @@ definitions:
       id:
         type: string
         format: uuid
-      name:
+      key:
         type: string
       value:
         type: string
