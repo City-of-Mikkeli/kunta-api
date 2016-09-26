@@ -1,7 +1,0 @@
-/javascript/
-/php/
-jaxrs-spec/target
-jaxrs-spec/.swagger-codegen-ignore
-jaxrs-spec/pom.xml.before
-jaxrs-spec/swagger.json
-jaxrs-spec/LICENSE
