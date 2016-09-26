@@ -8,7 +8,7 @@ author:
   url: "https://metatavu.fi"
 
 # Build settings
-baseurl: /kunta-api/ # Change this to your relative path (ex: /blog/), or leave just a /
+baseurl: /kunta-api # Change this to your relative path (ex: /blog/), or leave just a /
 markdown: kramdown
 source: .
 destination: ./_site
