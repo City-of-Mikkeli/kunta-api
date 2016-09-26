@@ -816,6 +816,364 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/pages:
+    get:
+      operationId: listOrganizationPages
+      summary: Lists organizations pages
+      description: |
+        Lists organizations pages
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: parentId
+          in: query
+          description: List parents child pages
+          required: false
+          type: string
+          format: uuid
+      tags:
+        - Pages
+      responses:
+        200:
+          description: Returns a list of pages
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Page'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/pages/{pageId}:
+    get:
+      operationId: findOrganizationPage
+      summary: Finds organizations page
+      description: |
+        Finds single organization page
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: pageId
+          in: path
+          description: page id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Pages
+      responses:
+        200:
+          description: Returns a single organization page
+          schema:
+            $ref: '#/definitions/Page'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/files:
+    get:
+      operationId: listOrganizationFiles
+      summary: Lists organizations files
+      description: |
+        Lists organizations files
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: pageId
+          in: query
+          description: Filter with page
+          required: false
+          type: string
+          format: uuid
+      tags:
+        - Files
+      responses:
+        200:
+          description: Returns a list of organizations files
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/File'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/files/{fileId}:
+    get:
+      operationId: findOrganizationFile
+      summary: Finds organizations file
+      description: |
+        Finds single organization file
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: fileId
+          in: path
+          description: file id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Files
+      responses:
+        200:
+          description: Returns a single organization file
+          schema:
+            $ref: '#/definitions/Page'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/files/{fileId}/data:
+    get:
+      produces:
+        - application/octet-stream
+      operationId: getOrganizationFileData
+      summary: Returns an organization file data
+      description: |
+        Returns an organization file data
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: fileId
+          in: path
+          description: file id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Files
+      responses:
+        200:
+          description: Returns an organization file data
+          schema:
+            type: string
+            format: binary
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/menus:
+    get:
+      operationId: listOrganizationMenus
+      summary: Lists organizations menus
+      description: |
+        Lists organizations menus
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: slug
+          in: query
+          description: Filter with slug
+          required: false
+          type: string
+      tags:
+        - Menus
+      responses:
+        200:
+          description: Returns a list of organizations menus
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Menu'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/menus/{menuId}:
+    get:
+      operationId: findOrganizationMenu
+      summary: Finds organizations menu
+      description: |
+        Finds single organization menu
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: menuId
+          in: path
+          description: menu id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Menus
+      responses:
+        200:
+          description: Returns a single organization menu
+          schema:
+            $ref: '#/definitions/Menu'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/menus/{menuId}/items:
+    get:
+      operationId: listOrganizationMenuItems
+      summary: Lists organizations menu items
+      description: |
+        Lists organization menu items
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: menuId
+          in: path
+          description: menu id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Menus
+      responses:
+        200:
+          description: Returns a list of organizations menu items
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MenuItem'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/menus/{menuId}/items/{menuItemId}:
+    get:
+      operationId: findOrganizationMenuItem
+      summary: Finds organization menu item
+      description: |
+        Finds single organization menu item
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: menuId
+          in: path
+          description: menu id
+          required: true
+          type: string
+          format: uuid
+        - name: menuItemId
+          in: path
+          description: menu item id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Menus
+      responses:
+        200:
+          description: Returns a single organization menu item
+          schema:
+            $ref: '#/definitions/MenuItem'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
   /organizations/{organizationId}/banners:
     get:
       operationId: listOrganizationBanners
@@ -1492,6 +1850,61 @@ definitions:
       published:
         type: string
         format: date-time
+  Page:
+    properties:
+      id:
+        type: string
+        format: uuid
+      slug:
+        type: string
+      titles:
+        type: array
+        items:
+          $ref: '#/definitions/LocalizedValue'
+      contents:
+        type: array
+        items:
+          $ref: '#/definitions/LocalizedValue'
+      parentId:
+        type: string
+        format: uuid
+  Menu:
+    properties:
+      id:
+        type: string
+        format: uuid
+      slug:
+        type: string
+  MenuItem:
+    properties:
+      id:
+        type: string
+        format: uuid
+      slug:
+        type: string
+      pageId:
+        type: string
+        format: uuid
+      fileId:
+        type: string
+        format: uuid
+      menuId:
+        type: string
+        format: uuid
+  File:
+    properties:
+      id:
+        type: string
+        format: uuid
+      slug:
+        type: string
+      title:
+        type: string
+      contentType:
+        type: string
+      size:
+        type: integer
+        format: int64
   Banner:
     properties:
       id:
