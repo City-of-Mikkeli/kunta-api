@@ -10,6 +10,7 @@ import java.util.Objects;
 public class MenuItem   {
   
   private String id = null;
+  private String label = null;
   private String parentItemId = null;
   private String type = null;
   private String pageId = null;
@@ -30,6 +31,22 @@ public class MenuItem   {
   }
   public void setId(String id) {
     this.id = id;
+  }
+
+  /**
+   **/
+  public MenuItem label(String label) {
+    this.label = label;
+    return this;
+  }
+
+  
+  @ApiModelProperty(example = "null", value = "")
+  public String getLabel() {
+    return label;
+  }
+  public void setLabel(String label) {
+    this.label = label;
   }
 
   /**
@@ -123,6 +140,7 @@ public class MenuItem   {
     }
     MenuItem menuItem = (MenuItem) o;
     return Objects.equals(id, menuItem.id) &&
+        Objects.equals(label, menuItem.label) &&
         Objects.equals(parentItemId, menuItem.parentItemId) &&
         Objects.equals(type, menuItem.type) &&
         Objects.equals(pageId, menuItem.pageId) &&
@@ -132,7 +150,7 @@ public class MenuItem   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, parentItemId, type, pageId, fileId, externalUrl);
+    return Objects.hash(id, label, parentItemId, type, pageId, fileId, externalUrl);
   }
 
   @Override
@@ -141,6 +159,7 @@ public class MenuItem   {
     sb.append("class MenuItem {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    label: ").append(toIndentedString(label)).append("\n");
     sb.append("    parentItemId: ").append(toIndentedString(parentItemId)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    pageId: ").append(toIndentedString(pageId)).append("\n");
