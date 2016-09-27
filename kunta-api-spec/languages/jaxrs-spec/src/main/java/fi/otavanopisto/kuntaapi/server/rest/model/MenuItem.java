@@ -10,10 +10,11 @@ import java.util.Objects;
 public class MenuItem   {
   
   private String id = null;
-  private String slug = null;
+  private String parentItemId = null;
+  private String type = null;
   private String pageId = null;
   private String fileId = null;
-  private String menuId = null;
+  private String externalUrl = null;
 
   /**
    **/
@@ -33,18 +34,34 @@ public class MenuItem   {
 
   /**
    **/
-  public MenuItem slug(String slug) {
-    this.slug = slug;
+  public MenuItem parentItemId(String parentItemId) {
+    this.parentItemId = parentItemId;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public String getSlug() {
-    return slug;
+  public String getParentItemId() {
+    return parentItemId;
   }
-  public void setSlug(String slug) {
-    this.slug = slug;
+  public void setParentItemId(String parentItemId) {
+    this.parentItemId = parentItemId;
+  }
+
+  /**
+   **/
+  public MenuItem type(String type) {
+    this.type = type;
+    return this;
+  }
+
+  
+  @ApiModelProperty(example = "null", value = "")
+  public String getType() {
+    return type;
+  }
+  public void setType(String type) {
+    this.type = type;
   }
 
   /**
@@ -81,18 +98,18 @@ public class MenuItem   {
 
   /**
    **/
-  public MenuItem menuId(String menuId) {
-    this.menuId = menuId;
+  public MenuItem externalUrl(String externalUrl) {
+    this.externalUrl = externalUrl;
     return this;
   }
 
   
   @ApiModelProperty(example = "null", value = "")
-  public String getMenuId() {
-    return menuId;
+  public String getExternalUrl() {
+    return externalUrl;
   }
-  public void setMenuId(String menuId) {
-    this.menuId = menuId;
+  public void setExternalUrl(String externalUrl) {
+    this.externalUrl = externalUrl;
   }
 
 
@@ -106,15 +123,16 @@ public class MenuItem   {
     }
     MenuItem menuItem = (MenuItem) o;
     return Objects.equals(id, menuItem.id) &&
-        Objects.equals(slug, menuItem.slug) &&
+        Objects.equals(parentItemId, menuItem.parentItemId) &&
+        Objects.equals(type, menuItem.type) &&
         Objects.equals(pageId, menuItem.pageId) &&
         Objects.equals(fileId, menuItem.fileId) &&
-        Objects.equals(menuId, menuItem.menuId);
+        Objects.equals(externalUrl, menuItem.externalUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, slug, pageId, fileId, menuId);
+    return Objects.hash(id, parentItemId, type, pageId, fileId, externalUrl);
   }
 
   @Override
@@ -123,10 +141,11 @@ public class MenuItem   {
     sb.append("class MenuItem {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    slug: ").append(toIndentedString(slug)).append("\n");
+    sb.append("    parentItemId: ").append(toIndentedString(parentItemId)).append("\n");
+    sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    pageId: ").append(toIndentedString(pageId)).append("\n");
     sb.append("    fileId: ").append(toIndentedString(fileId)).append("\n");
-    sb.append("    menuId: ").append(toIndentedString(menuId)).append("\n");
+    sb.append("    externalUrl: ").append(toIndentedString(externalUrl)).append("\n");
     sb.append("}");
     return sb.toString();
   }
