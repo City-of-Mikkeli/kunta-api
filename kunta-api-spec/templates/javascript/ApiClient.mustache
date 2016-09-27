@@ -425,6 +425,9 @@
    * @returns An instance of the specified type.
    */
 {{/emitJSDoc}}  exports.convertToType = function(data, type) {
+    if (data === null) {
+      return null;
+    }
     switch (type) {
       case 'Boolean':
         return Boolean(data);
