@@ -2068,7 +2068,10 @@ definitions:
       id:
         type: string
         format: uuid
-      slug:
+      parentItemId:
+        type: string
+        format: uuid
+      type:
         type: string
       pageId:
         type: string
@@ -2076,9 +2079,8 @@ definitions:
       fileId:
         type: string
         format: uuid
-      menuId:
+      externalUrl:
         type: string
-        format: uuid
   File:
     properties:
       id:
