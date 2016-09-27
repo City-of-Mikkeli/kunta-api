@@ -2068,6 +2068,8 @@ definitions:
       id:
         type: string
         format: uuid
+      label:
+        type: string
       parentItemId:
         type: string
         format: uuid
