@@ -899,6 +899,143 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/pages/{pageId}/images:
+    get:
+      operationId: listOrganizationPageImages
+      summary: Returns a list of organization page images
+      description: |
+        Returns a list of organization page images
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: pageId
+          in: path
+          description: Page id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Pages
+      responses:
+        200:
+          description: Returns list of organization page images
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Attachment'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/pages/{pageId}/images/{imageId}:
+    get:
+      operationId: findOrganizationPageImage
+      summary: Returns a single organiztion page image
+      description: |
+        Returns a single organiztion page image
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: pageId
+          in: path
+          description: Page Id
+          required: true
+          type: string
+          format: uuid
+        - name: imageId
+          in: path
+          description: Page image id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Pages
+      responses:
+        200:
+          description: Returns an organization page image
+          schema:
+            $ref: '#/definitions/Attachment'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/pages/{pageId}/images/{imageId}/data:
+    get:
+      produces:
+        - application/octet-stream
+      operationId: getOrganizationPageImageData
+      summary: Returns an organization page image data
+      description: |
+        Returns an organization page image data
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: pageId
+          in: path
+          description: Page id
+          required: true
+          type: string
+          format: uuid
+        - name: imageId
+          in: path
+          description: Page image id
+          required: true
+          type: string
+          format: uuid
+        - name: size
+          in: query
+          description: Maximum width or height of image
+          required: false
+          type: integer
+          format: int32
+      tags:
+        - Pages
+      responses:
+        200:
+          description: Returns an organization page image data
+          schema:
+            type: string
+            format: binary
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
   /organizations/{organizationId}/files:
     get:
       operationId: listOrganizationFiles
