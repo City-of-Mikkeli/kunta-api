@@ -32,7 +32,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-28T10:40:55.546+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-28T10:51:35.900+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -208,6 +208,18 @@ public abstract class OrganizationsApi extends AbstractApi {
     public abstract Response findOrganizationPage(@PathParam("organizationId") String organizationId,@PathParam("pageId") String pageId);
 
     @GET
+    @Path("/{organizationId}/pages/{pageId}/images/{imageId}")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Returns a single organiztion page image", notes = "Returns a single organiztion page image ", response = Attachment.class, tags={ "Pages",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns an organization page image", response = Attachment.class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = Attachment.class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Attachment.class),
+        @ApiResponse(code = 500, message = "Internal server error", response = Attachment.class) })
+    public abstract Response findOrganizationPageImage(@PathParam("organizationId") String organizationId,@PathParam("pageId") String pageId,@PathParam("imageId") String imageId);
+
+    @GET
     @Path("/{organizationId}/settings/{settingId}")
     @Consumes({ "application/json;charset=utf-8" })
     @Produces({ "application/json;charset=utf-8" })
@@ -303,6 +315,18 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = byte[].class),
         @ApiResponse(code = 500, message = "Internal server error", response = byte[].class) })
     public abstract Response getOrganizationNewsArticleImageData(@PathParam("organizationId") String organizationId,@PathParam("newsArticleId") String newsArticleId,@PathParam("imageId") String imageId,@QueryParam("size") Integer size);
+
+    @GET
+    @Path("/{organizationId}/pages/{pageId}/images/{imageId}/data")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/octet-stream" })
+    @ApiOperation(value = "Returns an organization page image data", notes = "Returns an organization page image data ", response = byte[].class, tags={ "Pages",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns an organization page image data", response = byte[].class),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = byte[].class),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = byte[].class),
+        @ApiResponse(code = 500, message = "Internal server error", response = byte[].class) })
+    public abstract Response getOrganizationPageImageData(@PathParam("organizationId") String organizationId,@PathParam("pageId") String pageId,@PathParam("imageId") String imageId,@QueryParam("size") Integer size);
 
     @GET
     @Path("/{organizationId}/tiles/{tileId}/images/{imageId}/data")
@@ -423,6 +447,18 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Attachment.class, responseContainer = "List"),
         @ApiResponse(code = 500, message = "Internal server error", response = Attachment.class, responseContainer = "List") })
     public abstract Response listOrganizationNewsArticleImages(@PathParam("organizationId") String organizationId,@PathParam("newsArticleId") String newsArticleId);
+
+    @GET
+    @Path("/{organizationId}/pages/{pageId}/images")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Returns a list of organization page images", notes = "Returns a list of organization page images ", response = Attachment.class, responseContainer = "List", tags={ "Pages",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns list of organization page images", response = Attachment.class, responseContainer = "List"),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = Attachment.class, responseContainer = "List"),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Attachment.class, responseContainer = "List"),
+        @ApiResponse(code = 500, message = "Internal server error", response = Attachment.class, responseContainer = "List") })
+    public abstract Response listOrganizationPageImages(@PathParam("organizationId") String organizationId,@PathParam("pageId") String pageId);
 
     @GET
     @Path("/{organizationId}/pages")
