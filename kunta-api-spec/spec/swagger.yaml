@@ -899,6 +899,46 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/InternalServerError'
+  /organizations/{organizationId}/pages/{pageId}/content:
+    get:
+      operationId: findOrganizationPageContent
+      summary: Returns organizations page content in all available languages
+      description: |
+        Returns single organization page content in all available languages
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization id
+          required: true
+          type: string
+          format: uuid
+        - name: pageId
+          in: path
+          description: page id
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Pages
+      responses:
+        200:
+          description: Returns single page content in all available languages
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/LocalizedValue'
+        400:
+          description: Invalid request was sent to the server
+          schema:
+            $ref: '#/definitions/BadRequest'
+        403:
+          description: Attempted to make a call with unauthorized client
+          schema:
+            $ref: '#/definitions/Forbidden'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/InternalServerError'
   /organizations/{organizationId}/pages/{pageId}/images:
     get:
       operationId: listOrganizationPageImages
@@ -2188,10 +2228,6 @@ definitions:
       slug:
         type: string
       titles:
-        type: array
-        items:
-          $ref: '#/definitions/LocalizedValue'
-      contents:
         type: array
         items:
           $ref: '#/definitions/LocalizedValue'
