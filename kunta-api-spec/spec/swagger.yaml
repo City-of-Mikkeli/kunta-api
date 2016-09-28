@@ -831,10 +831,15 @@ paths:
           format: uuid
         - name: parentId
           in: query
-          description: List parents child pages
+          description: Filter results by parent id
           required: false
           type: string
           format: uuid
+        - name: path
+          in: query
+          description: Filter results by page path
+          required: false
+          type: string
       tags:
         - Pages
       responses:
