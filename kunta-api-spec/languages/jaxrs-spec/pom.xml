@@ -4,7 +4,7 @@
   <artifactId>kunta-api-spec</artifactId>
   <packaging>jar</packaging>
   <name>kunta-api-spec</name>
-  <version>0.0.29-SNAPSHOT</version>
+  <version>0.0.29</version>
   <description>Kunta API specifications</description>
   <url>https://github.com/otavanopisto/kunta-api</url>
 
@@ -38,7 +38,7 @@
     <developerConnection>scm:git:git@github.com:otavanopisto/kunta-api.git</developerConnection>
     <url>git@github.com:otavanopisto/kunta-api.git</url>
     <connection>scm:git:git@github.com:otavanopisto/kunta-api.git</connection>
-    <tag>HEAD</tag>
+    <tag>0.0.29</tag>
   </scm>
 
   <organization>
