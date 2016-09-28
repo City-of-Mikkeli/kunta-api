@@ -32,7 +32,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-28T08:43:37.191+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-28T10:40:55.546+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -103,7 +103,7 @@ public abstract class OrganizationsApi extends AbstractApi {
     @Path("/{organizationId}/banners/{bannerId}/images/{imageId}")
     @Consumes({ "application/json;charset=utf-8" })
     @Produces({ "application/json;charset=utf-8" })
-    @ApiOperation(value = "Returns a single organiztion banner image", notes = "Returns a single organiztion banner image ", response = Attachment.class, tags={ "News",  })
+    @ApiOperation(value = "Returns a single organiztion banner image", notes = "Returns a single organiztion banner image ", response = Attachment.class, tags={ "Banners",  })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "Returns an organization banner image", response = Attachment.class),
         @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = Attachment.class),
@@ -260,7 +260,7 @@ public abstract class OrganizationsApi extends AbstractApi {
     @Path("/{organizationId}/banners/{bannerId}/images/{imageId}/data")
     @Consumes({ "application/json;charset=utf-8" })
     @Produces({ "application/octet-stream" })
-    @ApiOperation(value = "Returns an organization banner image data", notes = "Returns an organization banner image data ", response = byte[].class, tags={ "News",  })
+    @ApiOperation(value = "Returns an organization banner image data", notes = "Returns an organization banner image data ", response = byte[].class, tags={ "Banners",  })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "Returns an organization banner image data", response = byte[].class),
         @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = byte[].class),
