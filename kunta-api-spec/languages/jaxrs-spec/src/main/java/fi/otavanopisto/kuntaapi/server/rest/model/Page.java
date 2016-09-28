@@ -15,7 +15,6 @@ public class Page   {
   private String id = null;
   private String slug = null;
   private List<LocalizedValue> titles = new ArrayList<LocalizedValue>();
-  private List<LocalizedValue> contents = new ArrayList<LocalizedValue>();
   private String parentId = null;
 
   /**
@@ -68,22 +67,6 @@ public class Page   {
 
   /**
    **/
-  public Page contents(List<LocalizedValue> contents) {
-    this.contents = contents;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "")
-  public List<LocalizedValue> getContents() {
-    return contents;
-  }
-  public void setContents(List<LocalizedValue> contents) {
-    this.contents = contents;
-  }
-
-  /**
-   **/
   public Page parentId(String parentId) {
     this.parentId = parentId;
     return this;
@@ -111,13 +94,12 @@ public class Page   {
     return Objects.equals(id, page.id) &&
         Objects.equals(slug, page.slug) &&
         Objects.equals(titles, page.titles) &&
-        Objects.equals(contents, page.contents) &&
         Objects.equals(parentId, page.parentId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, slug, titles, contents, parentId);
+    return Objects.hash(id, slug, titles, parentId);
   }
 
   @Override
@@ -128,7 +110,6 @@ public class Page   {
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    slug: ").append(toIndentedString(slug)).append("\n");
     sb.append("    titles: ").append(toIndentedString(titles)).append("\n");
-    sb.append("    contents: ").append(toIndentedString(contents)).append("\n");
     sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
     sb.append("}");
     return sb.toString();

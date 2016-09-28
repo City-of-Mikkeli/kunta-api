@@ -13,6 +13,7 @@ import fi.otavanopisto.kuntaapi.server.rest.model.Event;
 import fi.otavanopisto.kuntaapi.server.rest.model.Page;
 import fi.otavanopisto.kuntaapi.server.rest.model.Menu;
 import fi.otavanopisto.kuntaapi.server.rest.model.MenuItem;
+import fi.otavanopisto.kuntaapi.server.rest.model.LocalizedValue;
 import fi.otavanopisto.kuntaapi.server.rest.model.Tile;
 import fi.otavanopisto.kuntaapi.server.rest.model.Banner;
 import java.io.File;
@@ -32,7 +33,7 @@ import java.util.List;
 @Api(description = "the organizations API")
 @Consumes({ "application/json;charset=utf-8" })
 @Produces({ "application/json;charset=utf-8" })
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-28T11:06:42.476+03:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2016-09-28T12:48:43.462+03:00")
 
 public abstract class OrganizationsApi extends AbstractApi {
 
@@ -206,6 +207,18 @@ public abstract class OrganizationsApi extends AbstractApi {
         @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = Page.class),
         @ApiResponse(code = 500, message = "Internal server error", response = Page.class) })
     public abstract Response findOrganizationPage(@PathParam("organizationId") String organizationId,@PathParam("pageId") String pageId);
+
+    @GET
+    @Path("/{organizationId}/pages/{pageId}/content")
+    @Consumes({ "application/json;charset=utf-8" })
+    @Produces({ "application/json;charset=utf-8" })
+    @ApiOperation(value = "Returns organizations page content in all available languages", notes = "Returns single organization page content in all available languages ", response = LocalizedValue.class, responseContainer = "List", tags={ "Pages",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Returns single page content in all available languages", response = LocalizedValue.class, responseContainer = "List"),
+        @ApiResponse(code = 400, message = "Invalid request was sent to the server", response = LocalizedValue.class, responseContainer = "List"),
+        @ApiResponse(code = 403, message = "Attempted to make a call with unauthorized client", response = LocalizedValue.class, responseContainer = "List"),
+        @ApiResponse(code = 500, message = "Internal server error", response = LocalizedValue.class, responseContainer = "List") })
+    public abstract Response findOrganizationPageContent(@PathParam("organizationId") String organizationId,@PathParam("pageId") String pageId);
 
     @GET
     @Path("/{organizationId}/pages/{pageId}/images/{imageId}")
