@@ -9,4 +9,4 @@ Kunta APIin voidaan rakentaa useampia erilaisia esityskerroksia, jotka hyödynt�
 
 Kunta APIn hallintatyökalulla (WordPress) voidaan lisätä PTV-informaatioon kuvia ja tekstejä eli PTV-dataa voidaan tällä tavalla ”rikastaa”. Samalla hallintatyökalulla tuotetaan Kunta APIin sellainen informaatio, joka ei tule mistään muusta tietolähteestä. Näitä ovat esim. tiedotteet, uutiset jne. 
 
-<img src="https://lh4.googleusercontent.com/euxXovr4LwpNWznaEgelRdENZxjdEG_AVXC6WZMeik_CYTADWOGUQ_d54QnwKCdQSZfA3zZhNQHG-3Q=w2880-h1490">
+<img src="http://jlauha2.pp.fi//Kunta_API_arkkitehtuurikuvaus.png">
