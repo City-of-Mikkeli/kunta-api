@@ -1,4 +1,8 @@
 ---
-title: Hello World
+title: Kunta API kehitystyö edistyy
 ---
-Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam quasi maxime quas repudiandae nam id temporibus, at et non officiis consectetur voluptate deserunt officia minima placeat tempore illum asperiores quo assumenda praesentium? Facilis libero error ratione doloribus debitis delectus asperiores minima ab velit quam. Natus ea, vero totam recusandae autem, corporis minima, animi eos perferendis omnis ut asperiores magni tempore. Repellendus aliquam saepe perspiciatis laborum, excepturi sit libero dignissimos debitis eaque itaque quos, accusantium sed amet tempora temporibus perferendis possimus, quisquam minus fuga! Laudantium, tenetur, consectetur! Quas itaque hic consequatur accusamus consectetur, quia odio eos amet quasi pariatur! Ratione, similique.
+Otavan Opisto toteuttaa Mikkelin kaupungille www-uudistuksen, jossa lähtökohtana on PTV:n hyödyntäminen. PTV:n data haetaan ja jalostetaan Kunta API-rajapintapalvelun kautta www-sivuille. Saman Kunta API -rajapinnan kautta integroidaan myös muita kunnan käyttämiä tietolähteitä esim. CaseM, tapahtumakalenteri, puhelinluettelo jne. Tämä helpottaa ylläpitäjien työtä ja säästää työaikaa. 
+
+Www-sivut otetaan käyttöön 1.1.2017.
+
+Lisätietoja antaa Jere Lauha, jere.lauha@otavanopisto.fi, p. 044 794 5323
