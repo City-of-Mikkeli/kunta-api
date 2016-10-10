@@ -8,3 +8,5 @@ Kunta API on keskusrajapintapalvelu, jonka avulla samaan rajapintaan voidaan koo
 Kunta APIin voidaan rakentaa useampia erilaisia esityskerroksia, jotka hyödyntävät APIn koostamaa informaatiota. Yksi tällainen esityskerros on esim. www-sivusto. Muita esityskerroksia voivat olla esim. mobiiliapplikaatio, kolmannen osapuolen sovellus tms. Avoin rajapinta mahdollistaa esim. oppilaitoksille mahdollisuuden käyttää rajapintaa esim. ohjelmoinnin koulutuksissa.
 
 Kunta APIn hallintatyökalulla (WordPress) voidaan lisätä PTV-informaatioon kuvia ja tekstejä eli PTV-dataa voidaan tällä tavalla ”rikastaa”. Samalla hallintatyökalulla tuotetaan Kunta APIin sellainen informaatio, joka ei tule mistään muusta tietolähteestä. Näitä ovat esim. tiedotteet, uutiset jne. 
+
+<img src="https://lh4.googleusercontent.com/euxXovr4LwpNWznaEgelRdENZxjdEG_AVXC6WZMeik_CYTADWOGUQ_d54QnwKCdQSZfA3zZhNQHG-3Q=w2880-h1490">
