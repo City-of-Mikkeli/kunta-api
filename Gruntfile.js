@@ -9,17 +9,8 @@ module.exports = function(grunt) {
   grunt.initConfig({
     'clean': {
       'clean-javascript': ['kunta-api-spec/languages/javascript'],
-      'clean-jaxrs-generated-cruft': ['kunta-api-spec/languages/jaxrs-spec/src/main/java/fi/otavanopisto/kuntaapi/server/RestApplication.java'],
       'clean-management-composer-files': ['wordpress-plugins/kunta-api-management/vendor'],
       'remove-wordpress': [ config.wordpress.path ]
-    },
-    'copy': {
-      'copy-jaxrs-extras': {
-        src: '**',
-        dest: 'kunta-api-spec/languages/jaxrs-spec/',
-        cwd: 'kunta-api-spec/extras/jaxrs-spec/',
-        expand: true
-      }
     },
     'curl': {
       'download-swagger-codegen':  {
@@ -64,36 +55,6 @@ module.exports = function(grunt) {
         options: {
           execOptions: {
             cwd: 'kunta-api-spec/languages/php/kunta-api-php-client/'
-          }
-        }
-      },
-      'generate-jaxrs-spec': {
-        command : 'mv kunta-api-spec/languages/jaxrs-spec/pom.xml kunta-api-spec/languages/jaxrs-spec/pom.xml.before && \
-          java -jar swagger-codegen-cli.jar generate \
-          -i kunta-api-spec/spec/swagger.yaml \
-          -l jaxrs-spec \
-          --api-package fi.otavanopisto.kuntaapi.server.rest \
-          --model-package fi.otavanopisto.kuntaapi.server.rest.model \
-          --group-id fi.otavanopisto.kunta-api \
-          --artifact-id kunta-api-spec \
-          --artifact-version `mvn -f kunta-api-spec/languages/jaxrs-spec/pom.xml.before -q -Dexec.executable=\'echo\' -Dexec.args=\'${project.version}\' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec` \
-          --template-dir kunta-api-spec/templates/jax-rs-spec \
-          --additional-properties dateLibrary=java8 \
-          -o kunta-api-spec/languages/jaxrs-spec/'
-      },
-      'install-jaxrs-spec': {
-        command : 'mvn install',
-        options: {
-          execOptions: {
-            cwd: 'kunta-api-spec/languages/jaxrs-spec/'
-          }
-        }
-      },
-      'release-jaxrs-spec': {
-        command : 'git add src pom.xml && git commit -m "Generated source" && git push && mvn -B release:clean release:prepare release:perform',
-        options: {
-          execOptions: {
-            cwd: 'kunta-api-spec/languages/jaxrs-spec/'
           }
         }
       },
@@ -244,7 +205,6 @@ module.exports = function(grunt) {
   grunt.registerTask('create-javascript-client', ['clean:clean-javascript', 'shell:generate-javascript-client']);
   grunt.registerTask('create-php-client', ['shell:generate-php-client', 'shell:publish-php-client']);
   grunt.registerTask('install-php-client', ['clean:clean-management-composer-files', 'shell:update-management-composer-files']);
-  grunt.registerTask('create-jaxrs-spec', ['shell:generate-jaxrs-spec', 'clean:clean-jaxrs-generated-cruft', 'copy:copy-jaxrs-extras', 'shell:install-jaxrs-spec', 'shell:release-jaxrs-spec']);
   grunt.registerTask('publish-javascript-client', ['create-javascript-client', 'publish:publish-javascript-client']);
   grunt.registerTask('install-javascript-client-to-www', ['shell:pack-javascript-client', 'shell:install-javascript-client-www']);
   
@@ -253,5 +213,5 @@ module.exports = function(grunt) {
   grunt.registerTask('update-management-wordpress-plugins', ["wp-cli:update-plugins"]);
   grunt.registerTask('install-management-wordpress-plugins', ["wp-cli:plugins"]);
 
-  grunt.registerTask('default', [ 'download-dependencies', 'create-jaxrs-spec', 'create-javascript-client', 'create-php-client', 'install-php-client']);
+  grunt.registerTask('default', [ 'download-dependencies', 'create-javascript-client', 'create-php-client', 'install-php-client']);
 };
