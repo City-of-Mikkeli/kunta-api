@@ -8,7 +8,6 @@ module.exports = function(grunt) {
   
   grunt.initConfig({
     'clean': {
-      'clean-javascript': ['kunta-api-spec/languages/javascript'],
       'clean-management-composer-files': ['wordpress-plugins/kunta-api-management/vendor'],
       'remove-wordpress': [ config.wordpress.path ]
     },
@@ -34,14 +33,6 @@ module.exports = function(grunt) {
       }
     },
     'shell': {
-      'generate-javascript-client': {
-        command : 'java -jar swagger-codegen-cli.jar generate \
-          -i kunta-api-spec/spec/swagger.yaml \
-          -l javascript \
-          --template-dir kunta-api-spec/templates/javascript \
-          -o kunta-api-spec/languages/javascript/ \
-          --additional-properties usePromises=true,projectName=kunta-api-client,projectVersion=0.0.6'
-      },
       'generate-php-client': {
         command : 'java -jar swagger-codegen-cli.jar generate \
           -i kunta-api-spec/spec/swagger.yaml \
@@ -55,22 +46,6 @@ module.exports = function(grunt) {
         options: {
           execOptions: {
             cwd: 'kunta-api-spec/languages/php/kunta-api-php-client/'
-          }
-        }
-      },
-      'pack-javascript-client': {
-        command: 'npm pack',
-        options: {
-          execOptions: {
-            cwd: 'kunta-api-spec/languages/javascript'
-          }
-        }
-      },
-      'install-javascript-client-www': {
-        command: 'npm install ../kunta-api-spec/languages/javascript/kunta-api-client-0.0.1.tgz',
-        options: {
-          execOptions: {
-            cwd: 'kunta-api-www'
           }
         }
       },
@@ -92,11 +67,6 @@ module.exports = function(grunt) {
       },
       'wordpress-management-plugin': {
         'command': 'ln -Fs ../../../wordpress-plugins/kunta-api-management kunta-api-management/wp-content/plugins'
-      }
-    },
-    'publish': {
-      'publish-javascript-client': {
-        src: ['kunta-api-spec/languages/javascript']
       }
     },
     'mustache_render': {
@@ -202,16 +172,13 @@ module.exports = function(grunt) {
   });
   
   grunt.registerTask('download-dependencies', 'if:require-swagger-codegen');
-  grunt.registerTask('create-javascript-client', ['clean:clean-javascript', 'shell:generate-javascript-client']);
   grunt.registerTask('create-php-client', ['shell:generate-php-client', 'shell:publish-php-client']);
   grunt.registerTask('install-php-client', ['clean:clean-management-composer-files', 'shell:update-management-composer-files']);
-  grunt.registerTask('publish-javascript-client', ['create-javascript-client', 'publish:publish-javascript-client']);
-  grunt.registerTask('install-javascript-client-to-www', ['shell:pack-javascript-client', 'shell:install-javascript-client-www']);
   
   grunt.registerTask('uninstall-management-wordpress', ['mustache_render:wordpressdb-drop', 'mysqlrunfile:wordpressdb-drop', 'clean:remove-wordpress' ]);
   grunt.registerTask('install-management-wordpress', ['mustache_render:wordpressdb', 'mysqlrunfile:wordpressdb', 'wp-cli:download', 'wp-cli:config', "wp-cli:install", "shell:wordpress-languages-writable", "wp-cli:plugins", "shell:wordpress-management-plugin", "http:visit-wordpress-admin", "wp-cli:update-languages"]);
   grunt.registerTask('update-management-wordpress-plugins', ["wp-cli:update-plugins"]);
   grunt.registerTask('install-management-wordpress-plugins', ["wp-cli:plugins"]);
 
-  grunt.registerTask('default', [ 'download-dependencies', 'create-javascript-client', 'create-php-client', 'install-php-client']);
+  grunt.registerTask('default', [ 'download-dependencies', 'create-php-client', 'install-php-client']);
 };
