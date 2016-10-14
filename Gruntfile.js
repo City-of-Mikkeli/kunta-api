@@ -8,7 +8,6 @@ module.exports = function(grunt) {
   
   grunt.initConfig({
     'clean': {
-      'clean-management-composer-files': ['wordpress-plugins/kunta-api-management/vendor'],
       'remove-wordpress': [ config.wordpress.path ]
     },
     'curl': {
@@ -17,46 +16,7 @@ module.exports = function(grunt) {
         dest: 'swagger-codegen-cli.jar'
       }
     },
-    'if': {
-      'require-swagger-codegen': {
-        options: {
-          test: function(){
-            try {
-              fs.accessSync('swagger-codegen-cli.jar');
-              return true;
-            } catch (e) {
-              return false;
-            }
-          } 
-        },
-        ifFalse: [ 'curl:download-swagger-codegen' ]
-      }
-    },
     'shell': {
-      'generate-php-client': {
-        command : 'java -jar swagger-codegen-cli.jar generate \
-          -i kunta-api-spec/spec/swagger.yaml \
-          -l php \
-          --template-dir kunta-api-spec/templates/php \
-          -o kunta-api-spec/languages/php/ \
-          --additional-properties packagePath=kunta-api-php-client,composerVendorName=otavanopisto,composerProjectName=kunta-api-php-client,artifactVersion=0.0.1-alpha1,variableNamingConvention=camelCase,invokerPackage=KuntaAPI,apiPackage=KuntaAPI\\\\Api,modelPackage=KuntaAPI\\\\Model'
-      },
-      'publish-php-client': {
-        command : 'sh git_push.sh',
-        options: {
-          execOptions: {
-            cwd: 'kunta-api-spec/languages/php/kunta-api-php-client/'
-          }
-        }
-      },
-      'update-management-composer-files': {
-        command: 'composer clear-cache && composer update',
-        options: {
-          execOptions: {
-            cwd: 'wordpress-plugins/kunta-api-management'
-          }
-        }
-      },
       'wordpress-languages-writable': {
         command: 'chmod a+w languages',
         options: {
@@ -171,14 +131,8 @@ module.exports = function(grunt) {
     }
   });
   
-  grunt.registerTask('download-dependencies', 'if:require-swagger-codegen');
-  grunt.registerTask('create-php-client', ['shell:generate-php-client', 'shell:publish-php-client']);
-  grunt.registerTask('install-php-client', ['clean:clean-management-composer-files', 'shell:update-management-composer-files']);
-  
   grunt.registerTask('uninstall-management-wordpress', ['mustache_render:wordpressdb-drop', 'mysqlrunfile:wordpressdb-drop', 'clean:remove-wordpress' ]);
   grunt.registerTask('install-management-wordpress', ['mustache_render:wordpressdb', 'mysqlrunfile:wordpressdb', 'wp-cli:download', 'wp-cli:config', "wp-cli:install", "shell:wordpress-languages-writable", "wp-cli:plugins", "shell:wordpress-management-plugin", "http:visit-wordpress-admin", "wp-cli:update-languages"]);
   grunt.registerTask('update-management-wordpress-plugins', ["wp-cli:update-plugins"]);
   grunt.registerTask('install-management-wordpress-plugins', ["wp-cli:plugins"]);
-
-  grunt.registerTask('default', [ 'download-dependencies', 'create-php-client', 'install-php-client']);
 };
