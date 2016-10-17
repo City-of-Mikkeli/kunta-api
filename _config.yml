@@ -1,38 +1,25 @@
 # Site settings
 title: Kunta API
+header-img: img/main_banner.jpg
+email: info@metatavu.fi
+copyright_name: Metatavu Oy
 description: "Solution to combine municipality services under single API."
-url: "https://github.com/otavanopisto/kunta-api"
-author:
-  name: "Metatavu Oy"
-  email: "info@metatavu.fi"
-  url: "https://metatavu.fi"
+baseurl: ""
+url: "https://metatavu.fi"
+twitter_username:
+github_username: otavanopisto/kunta-api
+facebook_username: 
+email_username:  info@metatavu.fi
+
+# Google Analytics
+# To enable google analytics, uncomment below line with a valid Google Tracking ID
+# google_tracking_id:
 
 # Build settings
-baseurl: / # Change this to your relative path (ex: /blog/), or leave just a /
 markdown: kramdown
-source: .
-destination: ./_site
-permalink: /:title
-paginate: 8
-paginate_path: /page:num/
+highlighter: rouge
+permalink: pretty
+paginate: 5
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
 
-# Default values
-defaults:
-  -
-    scope:
-      path: ""
-      type: "posts"
-    values:
-      layout: "post"
-
-# Plugins
-gems:
-  - jekyll-paginate
-
-# Custom variables
-version: "0.0.1"
-
-# Options
-custom_header: false
-custom_nav_footer: false
-reverse: false
+gems: [jekyll-paginate]

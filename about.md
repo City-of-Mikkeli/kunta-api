@@ -1,6 +1,8 @@
 ---
 layout: page
-title: Kunta API
+title: "About"
+description: "Mikä on Kunta API?"
+header-img: "img/main_banner.jpg"
 ---
 ## Mikä on Kunta API?
 Kunta API on keskusrajapintapalvelu, jonka avulla samaan rajapintaan voidaan koostaa informaatiota useasta eri lähteestä. Tietolähteitä voi olla esim. PTV, CaseM, puhelinluettelo, tapahtumakalenteri jne. Oikeastaan mikä tahansa kunnan käyttämä tietojärjestelmä, joka tarjoaa rajapinnan, voidaan integroida Kunta APIin. 
