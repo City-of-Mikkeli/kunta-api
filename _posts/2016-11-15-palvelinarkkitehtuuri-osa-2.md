@@ -15,7 +15,7 @@ Yleisin ja esimmäinen käyttötarkoitus datalle on esittää se verkkosivulla m
 <img src="/img/kunta-api.svg" style="border: 1px solid #000; margin-top: 20px; padding: 10px; width: 100%;"/> 
 <em style="font-size: 80%;"><b>Kunta API palvelinarkkitehtuurikuva.</b></em>
 
-Kunta API:n ytimen muodostaa Wildfly klusteri. Klusteri koostuu n-määrästä serveri koneita (kuvassa Worker) sekä klusterin hallintapalvelusta (kuvassa Master) sekä edustapalvelimesta (kuvassa Nginx).
+Kunta API:n ytimen muodostaa [Wildfly](http://wildfly.org/) klusteri. Klusteri koostuu n-määrästä serveri koneita (kuvassa Worker) sekä klusterin hallintapalvelusta (kuvassa Master) sekä edustapalvelimesta (kuvassa Nginx).
 
 Kunta API:a voidaan kuvailla eräänlaisena data aggregaattorina. Sen tähtävänä on hakea tietoja erillisiltä järjestelmiltä ja normalisoida ne yhteiseen muotoon.
 
