@@ -6,7 +6,7 @@ author:     "Antti Leppä"
 header-img: "img/main_banner.jpg"
 ---
 
-Meille on tullut kyselyitä Kunta API:n palvelinarkkitehtuuriin liitten, joten päätimme kehitystiimin puolelta vastata kyselyihin muutaman blogipostauksen muodossa. Tämä on toinen postaus, joka käsittelee itse Kunta API:a. Voit lukea ensimmäisen RESTful PTV:tä käsittelevän osan täältä.
+Meille on tullut kyselyitä Kunta API:n palvelinarkkitehtuuriin liitten, joten päätimme kehitystiimin puolelta vastata kyselyihin muutaman blogipostauksen muodossa. Tämä on toinen postaus, joka käsittelee itse Kunta API:a. Voit lukea ensimmäisen RESTful PTV:tä käsittelevän osan [täältä](https://www.kunta-api.fi/2016/11/15/palvelinarkkitehtuuri-osa-1/).
 
 Kunta API on palvelu, joka yhdistää erilaisten kunnallisten järjestelmien datoja yhden rajapinnan alle. Rajapinta mahdollistaa näiden tietojen esittämisen ja käsittelemisen toisissa järjestelmissä sekä tietojen yhdistämisen ja rikastamisen.
 
