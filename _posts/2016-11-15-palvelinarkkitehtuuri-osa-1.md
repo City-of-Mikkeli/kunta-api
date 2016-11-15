@@ -16,7 +16,7 @@ Syntyneen palvelun nimeksi tuli RESTful PTV.
 
 Palvelu on hyvin olennainen osa Kunta API:n arkkitehtuuria, joten ensimmäisessä postauksesa kuvaamme sen palvelinarkkitehtuuria.
 
-<img src="/img/restful.svg" style="border: 1px solid #000; margin: top: 20px; bottom: 20px;"/> *RESTful PTV palvelinarkkitehtuurikuva.*
+<img src="/img/restful.svg" style="border: 1px solid #000; margin-top: 20px; margin-bottom: 20px; padding: 10px; width: 100%;"/> *RESTful PTV palvelinarkkitehtuurikuva.*
 
 RESTful PTV toimii välittäjäpalvelimena PTV:n sekä asiakasohjelmien välillä. Palvelun yleiseen toimintalogiikkaan on syytä perehtyä toisessa blogipostauksessa mutta pääpiirteittäin sen tehtävänä on muuttaa PTV:n data helpommin käsiteltäväksi sekä taata palvelun jatkuva saatavuus.
 
