@@ -48,4 +48,4 @@ Itse klusteri on rakennettu [Wildfly 10.1.0.Final](http://wildfly.org/) JavaEE s
 Tuotantoympäristössä koneiden tehot ja määrät tulevat toki nousemaan mutta testitarkoitukseen tehot riittävät mainiosti.
 
 ---
-Kunta API on syntynyt osana Mikkelin Lupaus 2016 -hanketta.
+Kunta API on syntynyt osana [Mikkelin Lupaus 2016](http://www.mikkeli.fi/lupaus) -hanketta.
