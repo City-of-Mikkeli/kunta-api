@@ -6,7 +6,7 @@ author:     "Antti Leppä"
 header-img: "img/main_banner.jpg"
 ---
 
-Meille on tullut kyselyitä Kunta API:n palvelinarkkitehtuuriin liitten, joten päätimme kehitstytiimin puolelta vastata kyselyihin muutaman blogipostauksen muodossa.
+Meille on tullut kyselyitä Kunta API:n palvelinarkkitehtuuriin liittyen, joten päätimme kehitystiimin puolelta vastata kyselyihin muutaman blogipostauksen muodossa.
 
 Kunta API on luonteeltaan dataa useista eri lähteistä koostava ja rikastava palvelu. Tällä hetkellä palvelun merkittävin datalähde on [PTV](https://esuomi.fi/palveluntarjoajille/palvelutietovaranto/), joten tämän datan hienostunut käsittely on erityisen tärkeätä projektin onnistumiselle.
 
