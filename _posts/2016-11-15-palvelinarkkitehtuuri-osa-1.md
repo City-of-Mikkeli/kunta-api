@@ -17,7 +17,7 @@ Syntyneen palvelun nimeksi tuli RESTful PTV.
 Palvelu on hyvin olennainen osa Kunta API:n arkkitehtuuria, joten ensimmäisessä postauksesa kuvaamme sen palvelinarkkitehtuuria.
 
 <img src="/img/restful.svg" style="border: 1px solid #000; margin-top: 20px; padding: 10px; width: 100%;"/> 
-*RESTful PTV palvelinarkkitehtuurikuva.*
+<em style="font-size: 80%;"><b>RESTful PTV palvelinarkkitehtuurikuva.</b></em>
 
 RESTful PTV toimii välittäjäpalvelimena PTV:n sekä asiakasohjelmien välillä. Palvelun yleiseen toimintalogiikkaan on syytä perehtyä toisessa blogipostauksessa mutta pääpiirteittäin sen tehtävänä on muuttaa PTV:n data helpommin käsiteltäväksi sekä taata palvelun jatkuva saatavuus.
 
@@ -43,11 +43,7 @@ Testiympäristö pöyrii kolmella koneella (1 x master ja 2 x worker), joista jo
 
 *Ubuntu Xenial (16.04 LTS) käyttöjärjestelmä, 2 x x86 -prosessoria sekä 2 Gt muistia sekä 50 Gt SSD -kovalevy.*
 
- 
-
-Itse klusteri on rakennettu Wildfly 10.1.0.Final JavaEE sovelluspalvelinten päälle ja Datagridinä toimii Infinispan 8.2, edustapalvelimena Nginx 1.10.1, tietokantapalvelimena MySQL 5.7.16.
-
- 
+Itse klusteri on rakennettu [Wildfly 10.1.0.Final](http://wildfly.org/) JavaEE sovelluspalvelinten päälle ja Datagridinä toimii [Infinispan 8.2](http://infinispan.org/), edustapalvelimena [Nginx 1.10.1](https://www.nginx.com/), tietokantapalvelimena [MySQL 5.7.16](www.mysql.com).
 
 Tuotantoympäristössä koneiden tehot ja määrät tulevat toki nousemaan mutta testitarkoitukseen tehot riittävät mainiosti.
 
