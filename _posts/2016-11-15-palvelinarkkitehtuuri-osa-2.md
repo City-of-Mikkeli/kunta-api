@@ -6,9 +6,7 @@ author:     "Antti Leppä"
 header-img: "img/main_banner.jpg"
 ---
 
-Meille on tullut kyselyitä Kunta API:n palvelinarkkitehtuuriin liitten, joten päätimme kehitstytiimin puolelta vastata kyselyihin muutaman blogipostauksen muodossa. Tämä on toinen postaus, joka käsittelee itse Kunta API:a. Voit lukea ensimmäisen RESTful PTV:tä käsittelevän osan täältä.
-
-Kunta API on syntynyt osana Mikkelin Lupaus 2016 -hanketta.
+Meille on tullut kyselyitä Kunta API:n palvelinarkkitehtuuriin liitten, joten päätimme kehitystiimin puolelta vastata kyselyihin muutaman blogipostauksen muodossa. Tämä on toinen postaus, joka käsittelee itse Kunta API:a. Voit lukea ensimmäisen RESTful PTV:tä käsittelevän osan täältä.
 
 Kunta API on palvelu, joka yhdistää erilaisten kunnallisten järjestelmien datoja yhden rajapinnan alle. Rajapinta mahdollistaa näiden tietojen esittämisen ja käsittelemisen toisissa järjestelmissä sekä tietojen yhdistämisen ja rikastamisen.
 
@@ -23,7 +21,7 @@ Kunta API:a voidaan kuvailla eräänlaisena data aggregaattorina. Sen tähtävä
 
 Kunta API:n yksi tehtävistä on säilöä ulkoisten järjestelmien dataa välimuistiin, jotta se olisi mahdollisimman nopeasti saatavilla käyttäjille. Tämän lisäksi se ylläpitää saamiaan tietoja siltä varalta, että ulkoiset järjestelmät eivät jostakin syystä pysty juuri sillä hetkellä niitä tarjoamaan.
 
-Tähän Kunta API hyödyntää Infinispan-nimistä Datagridiä. Infinispan on hajautettu nimi/arvo tietovaranto, joka kykenee käsittelemään suuria tietomääriä valtavalla nopeudella. Kunta API:ssa Infinispan on hajautettu Worker -koneille, joten klusterin kasvaessa myös tietovarannon tehot ja koko kasvavat.
+Tähän Kunta API hyödyntää [Infinispan](http://infinispan.org/)-nimistä Datagridiä. [Infinispan](http://infinispan.org/) on hajautettu nimi/arvo tietovaranto, joka kykenee käsittelemään suuria tietomääriä valtavalla nopeudella. Kunta API:ssa [Infinispan](http://infinispan.org/) on hajautettu Worker -koneille, joten klusterin kasvaessa myös tietovarannon tehot ja koko kasvavat.
 
 Kunta API myös tarjoaa mahdollisuuden hakea tietoja siihen liitetyistä tietolähteistä. Tietojen indexointiin ja hakemiseen Kunta API käyttää erillistä Elastic Search -klusteria. Elastic Search on erityisesti suurien tietomäärien indexointiin ja hakemiseen erikoistunut palvelu.
 
