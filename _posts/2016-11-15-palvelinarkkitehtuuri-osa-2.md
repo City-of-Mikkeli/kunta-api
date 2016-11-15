@@ -23,21 +23,21 @@ Kunta API:n yksi tehtävistä on säilöä ulkoisten järjestelmien dataa välim
 
 Tähän Kunta API hyödyntää [Infinispan](http://infinispan.org/)-nimistä Datagridiä. [Infinispan](http://infinispan.org/) on hajautettu nimi/arvo tietovaranto, joka kykenee käsittelemään suuria tietomääriä valtavalla nopeudella. Kunta API:ssa [Infinispan](http://infinispan.org/) on hajautettu Worker -koneille, joten klusterin kasvaessa myös tietovarannon tehot ja koko kasvavat.
 
-Kunta API myös tarjoaa mahdollisuuden hakea tietoja siihen liitetyistä tietolähteistä. Tietojen indexointiin ja hakemiseen Kunta API käyttää erillistä Elastic Search -klusteria. Elastic Search on erityisesti suurien tietomäärien indexointiin ja hakemiseen erikoistunut palvelu.
+Kunta API myös tarjoaa mahdollisuuden hakea tietoja siihen liitetyistä tietolähteistä. Tietojen indexointiin ja hakemiseen Kunta API käyttää erillistä [Elastic Search](https://www.elastic.co/) -klusteria. [Elastic Search](https://www.elastic.co/) on erityisesti suurien tietomäärien indexointiin ja hakemiseen erikoistunut palvelu.
 
-Viimeisenä virallisena osana Kunta API:n ydintä toimii edustapalvelin Nginx. Palvelimen tehtävänä on ottaa vastaan asiakasohjelmilta tulevat kutsut, toimia kuormantasaajana (Load balancer), salata kutsut https-salauksella sekä pakata lähetettävät tiedot.
+Viimeisenä virallisena osana Kunta API:n ydintä toimii edustapalvelin [Nginx](https://www.nginx.com/). Palvelimen tehtävänä on ottaa vastaan asiakasohjelmilta tulevat kutsut, toimia kuormantasaajana (Load balancer), salata kutsut https-salauksella sekä pakata lähetettävät tiedot.
 
 Ytimen tilaa valvoo erillinen Cluster Controller. Sovelluksen tehtävänä on monitoroida Worker-koneiden tilaa ja tiputtaa hitaat tai vikaantuneet koneet pois klusterista sekä varmistaa, että esimerkiksi päivitystilanteessa asiakkaat tulevat aina palvelluksi.
 
 Yksi Kunta API:n ytimestä erillinen mutta selkeästi palvelukokoneisuuteen kuuluva osa on hallintapalvelu. Hallintapalvelun tehtävänä on tarjota sisällöntuottajille sekä muille hallinnoijille käyttöliittymä tietojen hallintaan sekä esimerkiksi PTV-datan rikastamiseen.
 
-Hallintapalvelu pyörii hyvin yleisesti käytössä olevan sisällönhallintajärjestelmän Wordpressin päällä. Teknisesti katsoen hallintapalvelu on integraatio muiden joukossa mutta sen luonteesta johtuen integraatio on hyvin syvä. Palvelu on omalla palvelimellaan ja säilöö omat datansa paikalliseen MySQL-tietokantaan.
+Hallintapalvelu pyörii hyvin yleisesti käytössä olevan sisällönhallintajärjestelmän [Wordpressin](https://wordpress.org/) päällä. Teknisesti katsoen hallintapalvelu on integraatio muiden joukossa mutta sen luonteesta johtuen integraatio on hyvin syvä. Palvelu on omalla palvelimellaan ja säilöö omat datansa paikalliseen [MySQL](https://www.mysql.com/)-tietokantaan.
 
 Toinen ytimestä erillinen mutta myöskin selkeästi palvelukokonaisuuteen kuuluva osa on www-esityskerros tai tuttavallisemmin sanottuna verkkosivu. Kunta API:n luonteen vuoksi verkkosivun voisi toteuttaa haluamallaan tavalla mutta esimerkiksi www.mikkeli.fi -projektin osalta kehitystiimi päätyi tekemään esityskerroksen NodeJs -palveluna. Esityskerroksen tehtävänä on nimensä mukaisesti esittää Kunta API:n tarjoamaa tietoa verkkosivuna.
 
 Teknisesti katsoen esityskerros on siis vain Kunta API:n asiakasohjelma ja se voisi aivan yhtä hyvin olla esimerkiksi mobiiliapplikaatio tai vaikkapa bussin valotaulu mikäli siinä haluttaisiin esittää jotain Kunta API:n dataa.
 
-Esityskerros sisältää myös Nginx- edustapalvelimen, jonka tehtävä on vastaava kun Kunta API:ssa eli vastaanottaa kutsut, tasata kuormaa, salata sekä pakata liikenne. 
+Esityskerros sisältää myös [Nginx](https://www.nginx.com/)- edustapalvelimen, jonka tehtävä on vastaava kun Kunta API:ssa eli vastaanottaa kutsut, tasata kuormaa, salata sekä pakata liikenne. 
 
 **Teknisiä tietoja Kunta API:sta:**
 
