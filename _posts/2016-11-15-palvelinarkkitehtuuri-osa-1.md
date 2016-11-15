@@ -19,23 +19,23 @@ Palvelu on hyvin olennainen osa Kunta API:n arkkitehtuuria, joten ensimmäisess�
 <img src="/img/restful.svg" style="border: 1px solid #000; margin-top: 20px; padding: 10px; width: 100%;"/> 
 <em style="font-size: 80%;"><b>RESTful PTV palvelinarkkitehtuurikuva.</b></em>
 
-RESTful PTV toimii välittäjäpalvelimena PTV:n sekä asiakasohjelmien välillä. Palvelun yleiseen toimintalogiikkaan on syytä perehtyä toisessa blogipostauksessa mutta pääpiirteittäin sen tehtävänä on muuttaa PTV:n data helpommin käsiteltäväksi sekä taata palvelun jatkuva saatavuus.
+RESTful PTV toimii välittäjäpalvelimena PTV:n sekä asiakasohjelmien välillä. Palvelun yleiseen toimintalogiikkaan on syytä perehtyä toisessa blogipostauksessa, mutta pääpiirteittäin sen tehtävänä on muuttaa PTV:n data helpommin käsiteltäväksi sekä taata palvelun jatkuva saatavuus.
 
 Jatkuva saatavuus onkin RESTful PTV:n yksi tärkeimmistä ominaisuuksista, sillä mikäli palvelu ei ole saatavissa ei myöskään asiakasohjelmilla (esim. kuntien sivuilla) ole PTV:n tarjoamia tietoja saatavilla.
 
-Jatkuva saatavuus on varmistettu klusteroimalla sovellus. Käytännössä tämä tarkoittaa sitä, että sovellus pyörii yht'aikaisesti useilla palvelimilla (kuvassa Worker 1-n) ja kutsuja ohjataan erillisestä edustapalvelimesta (Master + Nginx) aina kaikkein vähiten kuormittuneelle palvelimelle.
+Jatkuva saatavuus on varmistettu klusteroimalla sovellus. Käytännössä tämä tarkoittaa sitä, että sovellus pyörii samanaikaisesti useilla palvelimilla (kuvassa Worker 1-n) ja kutsuja ohjataan erillisestä edustapalvelimesta (Master + Nginx) aina kaikkein vähiten kuormittuneelle palvelimelle.
 
 Edustapalvelimella päivystää myös erillinen klusterin valvontasovellus (kuvassa Cluster Controller), joka tarkkailee klusterin tilaa ja poistaa vikautuneet serverit pois klusterista.
 
 Järjestelmän tilaa monitoroidaan toki useilla monitotointijärjestelmillä sekä loppukädessä myös ihmisvoimin. 
 
-Strategiaa kutsutaan yleisesti termillä High Availability (HA) ja termi viittaa siihen, että palvelu on aina käyttäjien saatavilla. Strategia mahdollistaa myös palvelun skaalaamisen suuremmalle käyttäjämäärälle lisäämällä siihen lisää serveritä eli Worker -koneita.
+Strategiaa kutsutaan yleisesti termillä High Availability (HA) ja termi viittaa siihen, että palvelu on aina käyttäjien saatavilla. Strategia mahdollistaa myös palvelun skaalaamisen suuremmalle käyttäjämäärälle lisäämällä siihen lisää servereitä eli Worker -koneita.
 
 Yksi merkittävä osa palvelua on Infinispan -niminen datagridi. Infinispan säilöö PTV:stä haettua dataa ja mahdollistaa tiedon toimittamisen hyvin nopeasti asiakasohjelmille. Jos tarkkoja ollaan Infinispan säilöö dataansa vain hetkeksi aikaa ja itse varsinaisen säilömisen hoitaa MySQL-tietokanta.
 
 Tietokanta on usein HA-järjestelmien pullonkaula ja täten se on usein ko. järjestelmissä myös klusteroitu mutta RESTful PTV:n tapauksessa tietokanta toimii enemmänkin datan passivointitarkoituksessa, joten kannan nopeudella ei ole paljonkaan vaikutusta järjestelmän nopeuteen.
 
-Viimeisenä komponenttina palvelussa  on webpalvelin Nginx. Nginxin tehtävänä on ottaa vastaan varsinaiset kutsut ja välittää ne vähiten kuormittuneille palvelimille (Load balancer). Tämän lisäksi Nginx hoitaa https-salauksen, pakaa kutsut sekä hoitelee yleisesti kaiken liikenteen ulkoverkon ja palvelinten välillä.
+Viimeisenä komponenttina palvelussa  on webpalvelin Nginx. Nginxin tehtävänä on ottaa vastaan varsinaiset kutsut ja välittää ne vähiten kuormittuneille palvelimille (Load balancer). Tämän lisäksi Nginx hoitaa https-salauksen, pakkaa kutsut sekä hoitelee yleisesti kaiken liikenteen ulkoverkon ja palvelinten välillä.
 
 **Lopuksi vielä hieman teknisiä yksityiskohtia:**
 
