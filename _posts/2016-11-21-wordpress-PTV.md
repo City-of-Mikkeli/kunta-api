@@ -6,7 +6,7 @@ author:     "Jere Lauha"
 header-img: "img/main_banner.jpg"
 ---
 
-Toteutimme mikkeli.fi projektin yhteydessä RESTful PTV -välipalvelimen, 
+Toteutimme mikkeli.fi projektin yhteydessä RESTful PTV -välipalvelimen (https://www.kunta-api.fi/2016/11/15/palvelinarkkitehtuuri-osa-1/), 
 joka muuntaa PTV:stä tulevan datan REST-standardin mukaiseksi. 
 Nykyinen PTV rajapinta ei tarjoa REST-standardin mukaista dataa ulos, joten jouduimme Mikkelin casessa
 rakentamaan tämän "välipalvelimen" PTV:n ja Kunta APIn väliin. Tämä
