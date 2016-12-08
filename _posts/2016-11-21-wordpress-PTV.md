@@ -33,5 +33,5 @@ jne. käyttöön.
 
 Lisätietoja:
 
-Jere Lauha, p. 044 794 5323 tai 044 290 9201
-jere.lauha@otavanopisto.fi
+Jere Lauha, p. 044 290 9201
+jere.lauha@metatavu.fi
