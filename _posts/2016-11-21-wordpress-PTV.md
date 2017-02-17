@@ -16,7 +16,7 @@ informaation esim. Kunta APIn käyttöön.
 RESTful PTV:tä hyödyntää myös jatkossa WordPressiin toteutettava
 PTV-plugin (laajennus), joka mahdollistaa PTV:n sisällön tuomisen
 WordPress sivustoon. Jatkossa plugin tulee hyödyntämään myös PTV:n
-OUT-rajapintaa, jolloin PTV tietojen ylläpito onnistuu WordPressin
+IN-rajapintaa, jolloin PTV tietojen ylläpito onnistuu WordPressin
 kautta. PTV -plugin toteutetaan joulukuun 2016 aikana ja se on
 kunnille ilmainen.
 
